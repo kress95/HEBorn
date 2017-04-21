@@ -184,7 +184,10 @@ getTopicMsg topic =
             "account.create"
 
         TopicAccountLogout ->
-            "account.get"
+            "account.logout"
+
+        TopicAccountBootstrap ->
+            "bootstrap"
 
 
 getTopicChannel : RequestTopic -> Channel
@@ -198,6 +201,9 @@ getTopicChannel topic =
 
         TopicAccountLogout ->
             ChannelRequests
+
+        TopicAccountBootstrap ->
+            ChannelAccount
 
 
 getChannelAddress : Channel -> TopicContext -> String
