@@ -37,7 +37,6 @@ type CoreMsg
     | OnLocationChange Location
     | DispatchEvent Event
     | DispatchResponse RequestStoreData ( ResponseCode, Json.Decode.Value )
-      -- | WSReceivedMessage String
     | NewResponse ( RequestID, ResponseCode, Json.Decode.Value )
     | NoOp
 
