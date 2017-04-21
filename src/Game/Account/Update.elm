@@ -2,7 +2,8 @@ module Game.Account.Update exposing (..)
 
 import Utils
 import Driver.Websocket.Messages exposing (Msg(UpdateSocketParams, JoinChannel))
-import Core.Messages exposing (CoreMsg(MsgWebsocket))
+import Core.Dispatcher exposing (callAccount, callWebsocket)
+import Core.Messages exposing (CoreMsg)
 import Game.Models exposing (GameModel)
 import Game.Messages exposing (GameMsg)
 import Game.Account.Messages exposing (AccountMsg(..))
@@ -21,19 +22,22 @@ update msg model game =
                 model_ =
                     setToken model (Just token)
 
-                cmd =
-                    requestBootstrap account_id
-
                 coreCmd =
-                    [ MsgWebsocket
+                    [ callWebsocket
                         (UpdateSocketParams ( token, account_id ))
-                    , MsgWebsocket
-                        (JoinChannel ( "account:" ++ account_id, "notification" ))
-                    , MsgWebsocket
-                        (JoinChannel ( "requests", "requests" ))
+                    , callWebsocket
+                        (JoinChannel ("account:" ++ account_id))
+                    , callWebsocket (JoinChannel ("requests"))
                     ]
             in
-                ( { model_ | id = Just account_id }, cmd, coreCmd )
+                ( { model_ | id = Just account_id }, Cmd.none, coreCmd )
+
+        JoinedAccount id ->
+            let
+                cmd =
+                    requestBootstrap id
+            in
+                ( model, cmd, [] )
 
         Logout ->
             let
