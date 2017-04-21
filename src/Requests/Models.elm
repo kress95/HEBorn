@@ -31,6 +31,8 @@ module Requests.Models
         , ResponseForLogin(..)
         , ResponseLoginPayload
         , ResponseForLogout(..)
+        , ResponseBootstrapPayload
+        , ResponseForBootstrap(..)
         , ResponseForEventCool(..)
         , ResponseEventCoolPayload
         )
@@ -55,6 +57,7 @@ type Request
     | RequestSignUp
     | RequestLogin
     | RequestLogout
+    | RequestBootstrap
     | RequestInvalid
     | NewRequest NewRequestData
 
@@ -117,6 +120,7 @@ type RequestPayloadArgs
     | RequestSignUpPayload RequestSignUpArgs
     | RequestLoginPayload RequestLoginArgs
     | RequestLogoutPayload RequestLogoutArgs
+    | RequestEmptyPayload
 
 
 
@@ -152,6 +156,7 @@ type Response
     | ResponseSignUp ResponseForSignUp
     | ResponseLogin ResponseForLogin
     | ResponseLogout ResponseForLogout
+    | ResponseBootstrap ResponseForBootstrap
     | ResponseEventCool ResponseForEventCool
     | ResponseEmpty
     | ResponseInvalid
@@ -227,6 +232,15 @@ type ResponseForLogout
     | ResponseLogoutInvalid
 
 
+type ResponseForBootstrap
+    = ResponseBootstrapOk ResponseBootstrapPayload
+    | ResponseBootstrapInvalid
+
+
+type alias ResponseBootstrapPayload =
+    { server_id : String }
+
+
 
 {- Responses for Events -}
 
@@ -272,6 +286,9 @@ encodeData args =
             Json.Encode.object
                 [ ( "token", Json.Encode.string args.token ) ]
 
+        RequestEmptyPayload ->
+            Json.Encode.null
+
 
 type RequestDriver
     = DriverWebsocket
@@ -291,6 +308,7 @@ type RequestTopic
     = TopicAccountLogin
     | TopicAccountCreate
     | TopicAccountLogout
+    | TopicAccountBootstrap
 
 
 getTopicDriver : RequestTopic -> RequestDriver
