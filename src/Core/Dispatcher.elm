@@ -1,6 +1,7 @@
 module Core.Dispatcher
     exposing
-        ( callAccount
+        ( callWebsocket
+        , callAccount
         , callNetwork
         , callServer
         , callFilesystem
@@ -12,10 +13,11 @@ module Core.Dispatcher
         , callInstance
         )
 
-import Core.Messages exposing (CoreMsg(MsgGame, MsgOS, MsgApp))
+import Core.Messages exposing (CoreMsg(MsgGame, MsgOS, MsgApp, MsgWebsocket))
 import Game.Messages exposing (GameMsg(..))
 import OS.Messages exposing (OSMsg(..))
 import Apps.Messages exposing (AppMsg(..))
+import Driver.Websocket.Messages as Websocket
 import Game.Meta.Messages as Meta
 import Game.Account.Messages as Account
 import Game.Network.Messages as Network
@@ -52,6 +54,11 @@ callOS =
 callApps : AppMsg -> CoreMsg
 callApps =
     MsgApp
+
+
+callWebsocket : Websocket.Msg -> CoreMsg
+callWebsocket msg =
+    MsgWebsocket msg
 
 
 callAccount : Account.AccountMsg -> CoreMsg
@@ -99,5 +106,6 @@ callLogViewer msg =
     callApps (MsgLogViewer msg)
 
 
+callInstance : AppMsg -> CoreMsg
 callInstance msg =
     callApps msg

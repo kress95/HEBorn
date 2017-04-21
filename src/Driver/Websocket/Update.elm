@@ -1,8 +1,10 @@
 module Driver.Websocket.Update exposing (update)
 
-import Utils
+import Json.Encode
+import Json.Decode exposing (decodeString, string, decodeValue)
 import Phoenix.Socket as Socket
 import Phoenix.Channel as Channel
+import Utils
 import Driver.Websocket.Models
     exposing
         ( Model
@@ -15,6 +17,7 @@ import Driver.Websocket.Messages exposing (Msg(..))
 import Events.Models exposing (decodeEvent)
 import Core.Messages exposing (CoreMsg(NoOp, DispatchEvent, NewResponse))
 import Core.Models exposing (CoreModel)
+import Notifications.Websocket as Notifications
 
 
 update : Msg -> Model -> CoreModel -> ( Model, Cmd Msg, List CoreMsg )
@@ -31,21 +34,34 @@ update msg model core =
             in
                 ( { model | socket = socket_ }, Cmd.none, [] )
 
-        JoinChannel args ->
+        Joined topic ->
+            let
+                domain =
+                    case (decodeValue string topic) of
+                        Ok s ->
+                            s
+
+                        Err _ ->
+                            ""
+
+                subscriberNotification =
+                    Notifications.getJoinSubscribers domain
+            in
+                ( model, Cmd.none, [ subscriberNotification ] )
+
+        JoinChannel topic ->
             let
                 ( model_, cmd ) =
                     if model.defer then
                         ( { model | defer = False }
-                        , Utils.delay 0.5 <| JoinChannel args
+                        , Utils.delay 0.5 <| JoinChannel topic
                         )
                     else
                         let
-                            ( topic, event ) =
-                                args
-
                             channel =
                                 Channel.init topic
-                                    |> Channel.on event (\m -> NewNotification m)
+                                    |> Channel.onJoin (\_ -> Joined (Json.Encode.string topic))
+                                    |> Channel.on "notification" (\m -> NewNotification m)
                                     |> Channel.withDebug
 
                             channels_ =
