@@ -150,35 +150,22 @@ addFile filesystem file =
         path =
             getFilePath file
 
-        filesOnPath =
-            getFilesOnPath filesystem path
-
-        newFiles =
-            filesOnPath ++ [ file ]
-
-        filesystem_ =
-            case file of
-                StdFile _ ->
-                    if (pathExists filesystem path) then
-                        Dict.insert path newFiles filesystem
-                    else
-                        filesystem
-
-                {- Adding a folder is a special case. We need to ensure our model
-                   recognizes this new folder as a valid path, so it can store
-                   its own StdFiles
-                -}
-                Folder _ ->
-                    let
-                        filesystem1 =
-                            Dict.insert path newFiles filesystem
-
-                        newPath =
-                            path ++ pathSeparator ++ (getFileName file)
-                    in
-                        Dict.insert newPath [] filesystem1
+        files =
+            file :: (getFilesOnPath filesystem path)
     in
-        filesystem_
+        case file of
+            StdFile _ ->
+                if (pathExists filesystem path) then
+                    Dict.insert path files filesystem
+                else
+                    filesystem
+
+            -- when adding a new folder we also need to insert a new
+            -- path to hold it's files
+            Folder _ ->
+                filesystem
+                    |> Dict.insert path files
+                    |> Dict.insert (fullFilePath file) []
 
 
 getFilesOnPath : Filesystem -> FilePath -> List File
@@ -271,3 +258,21 @@ rootPath =
 pathSeparator : String
 pathSeparator =
     "/"
+
+
+fullFilePath : File -> String
+fullFilePath file =
+    let
+        name =
+            getFileName file
+
+        path =
+            getFilePath file
+    in
+        case file of
+            StdFile _ ->
+                -- TODO: add extension
+                path ++ pathSeparator ++ name
+
+            Folder _ ->
+                path ++ pathSeparator ++ name

@@ -3,7 +3,7 @@ module Game.Servers.Filesystem.ModelTest exposing (all)
 import Expect
 import Test exposing (Test, describe)
 import Fuzz exposing (int, tuple)
-import TestUtils exposing (fuzz, once, ensureDifferentSeed)
+import TestUtils exposing (fuzz, once, ensureDifferentSeed, isSubset)
 import Gen.Filesystem as Gen
 import Helper.Filesystem as Helper exposing (addFileRecursively)
 import Game.Servers.Filesystem.Models exposing (..)
@@ -145,8 +145,8 @@ addFileGenericTests =
                     getFilesOnPath model_ path
             in
                 Expect.equal
-                    ([ folder ] ++ [ file1 ] ++ [ file2 ])
-                    filesOnPath
+                    True
+                    (isSubset [ file2, file1, folder ] filesOnPath)
     ]
 
 
