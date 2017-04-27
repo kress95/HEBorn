@@ -72,6 +72,18 @@ listOfSeed size seed =
         ( list, seed2 )
 
 
+boolSeed : Seed -> ( Bool, Seed )
+boolSeed seed =
+    Random.step
+        Random.bool
+        seed
+
+
+bool : Int -> Bool
+bool seedInt =
+    fuzz1 seedInt boolSeed
+
+
 intSeed seed =
     Random.step
         (RandomInt.anyInt)
