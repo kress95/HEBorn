@@ -10,7 +10,14 @@ import Game.Servers.Filesystem.Models exposing (FilePath)
 import Apps.Instances.Models as Instance exposing (InstanceID)
 import Apps.Context as Context
 import Apps.Browser.Messages exposing (Msg(..))
-import Apps.Browser.Models exposing (Model, Browser, getState)
+import Apps.Browser.Models
+    exposing
+        ( Model
+        , Browser
+        , getState
+        , getPage
+        , getPageContent
+        )
 import Apps.Browser.Context.Models exposing (Context(..))
 import Apps.Browser.Context.View exposing (contextView, contextNav, contextContent)
 import Apps.Browser.Style exposing (Classes(..))
@@ -39,9 +46,18 @@ view model id game =
 
 viewBrowserMain : Browser -> GameModel -> Html Msg
 viewBrowserMain browser game =
-    div
-        [ contextContent
-        , class
-            [ Content ]
-        ]
-        []
+    let
+        content =
+            browser
+                |> getPage
+                |> getPageContent
+    in
+        div []
+            [ div [ class [ HeaderBar ] ]
+                [ div [ class [ Toolbar ] ]
+                    [ div [ class [ AddressBar ] ]
+                        [ input [ placeholder "Search..." ] [ text content ]
+                        ]
+                    ]
+                ]
+            ]
