@@ -6,6 +6,7 @@ module Utils.TabList
         , length
         , singleton
         , current
+        , focus
         , put
         , drop
         , dropLeft
@@ -225,6 +226,56 @@ filter fun { front, back } =
             List.length back_
     in
         { front = front_, back = back, index = index }
+
+
+focus : Int -> TabList a -> TabList a
+focus position list =
+    -- [0 1 2 3] [4 5 6 7]
+    let
+        { front, back, index } =
+            list
+
+        relativeIndex =
+            position - index
+
+        itemIndex =
+            abs relativeIndex
+    in
+        if relativeIndex > 0 then
+            -- focus item after the current one
+            let
+                front_ =
+                    List.drop itemIndex front
+
+                append =
+                    List.take itemIndex front
+
+                back_ =
+                    back ++ append
+
+                index_ =
+                    index + (List.length append)
+            in
+                { front = front_, back = back_, index = index_ }
+        else if relativeIndex < 0 then
+            -- focus item before the current one
+            let
+                prepend =
+                    List.drop itemIndex back
+
+                front_ =
+                    prepend ++ front
+
+                back_ =
+                    List.take itemIndex back
+
+                index_ =
+                    List.length back_
+            in
+                { front = front_, back = back_, index = index_ }
+        else
+            -- already focused
+            list
 
 
 withIndex : Int -> List a -> ( List ( a, Int ), Int )
