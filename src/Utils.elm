@@ -10,6 +10,7 @@ module Utils
         )
 
 import Dict
+import Maybe exposing (andThen, withDefault)
 import Time
 import Task
 import Process
@@ -94,3 +95,53 @@ andJust callback maybe =
 
         Nothing ->
             Nothing
+
+
+{-| Groups dictionary entries, useful for avoiding multiple filters
+-}
+groupDictBy :
+    (comparable -> a -> comparable1)
+    -> Dict.Dict comparable a
+    -> Dict.Dict comparable1 (List a)
+groupDictBy fun dict =
+    let
+        reducer =
+            \key item acc ->
+                let
+                    group =
+                        fun key item
+
+                    list =
+                        acc
+                            |> Dict.get group
+                            |> andJust (\list -> item :: list)
+                            |> withDefault [ item ]
+                in
+                    Dict.insert group list acc
+    in
+        Dict.foldl reducer Dict.empty dict
+
+
+{-| Groups list entries, useful for avoiding multiple filters
+-}
+groupListBy :
+    (a -> comparable)
+    -> List a
+    -> Dict.Dict comparable (List a)
+groupListBy fun list =
+    let
+        reducer =
+            \item acc ->
+                let
+                    group =
+                        fun item
+
+                    list =
+                        acc
+                            |> Dict.get group
+                            |> andJust (\list -> item :: list)
+                            |> withDefault [ item ]
+                in
+                    Dict.insert group list acc
+    in
+        List.foldl reducer Dict.empty list
