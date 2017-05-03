@@ -1,29 +1,41 @@
 module Apps.Browser.Models
     exposing
         ( Browser
-        , ContextBrowser
-        , Model
+        , BrowserTab
         , BrowserHistory
         , BrowserPage
+        , PageContent
         , PageURL
+        , Model
+        , ContextBrowser
         , initialBrowser
         , initialModel
         , initialBrowserContext
         , getBrowserInstance
         , getBrowserContext
         , getState
+        , getTabList
+        , getTitle
+        , getTab
+        , getTabTitle
         , getPage
         , getPageURL
+        , getPageTitle
         , getPageContent
         , getPreviousPages
         , getNextPages
+        , newTab
+        , openTab
+        , openTabBackground
+        , focusTab
         , gotoPage
-        , gotoURL
         , gotoPreviousPage
         , gotoNextPage
+        , closeTab
         )
 
-import Maybe
+import Maybe as Maybe exposing (andThen, withDefault)
+import Utils exposing (andJust)
 import Apps.Instances.Models as Instance
     exposing
         ( Instances
@@ -34,26 +46,40 @@ import Html exposing (Html, div, text)
 import Apps.Browser.Messages exposing (Msg(..))
 import Apps.Context as Context exposing (ContextApp)
 import Apps.Browser.Context.Models as Menu
+import Utils.SlidingList as SlidingList exposing (SlidingList)
 
 
 type alias PageURL =
     String
 
 
+type alias PageTitle =
+    String
+
+
+type alias PageContent =
+    String
+
+
 type alias BrowserPage =
-    { url : PageURL, content : String }
+    { url : PageURL
+    , content : PageContent
+    , title : PageTitle
+    }
 
 
 type alias BrowserHistory =
-    List BrowserPage
+    SlidingList BrowserPage
+
+
+type alias BrowserTab =
+    { addressBar : String
+    , history : BrowserHistory
+    }
 
 
 type alias Browser =
-    { addressBar : PageURL
-    , page : BrowserPage
-    , previousPages : BrowserHistory
-    , nextPages : BrowserHistory
-    }
+    SlidingList BrowserTab
 
 
 type alias ContextBrowser =
@@ -63,17 +89,6 @@ type alias ContextBrowser =
 type alias Model =
     { instances : Instances ContextBrowser
     , menu : Menu.Model
-    }
-
-
-initialBrowser : Browser
-initialBrowser =
-    { addressBar = "about:blank"
-
-    -- FIXME: update the content
-    , page = { url = "about:blank", content = "" }
-    , previousPages = []
-    , nextPages = []
     }
 
 
@@ -115,9 +130,37 @@ getState model id =
         (getBrowserInstance model.instances id)
 
 
-getPage : Browser -> BrowserPage
-getPage browser =
-    browser.page
+getTabList : Browser -> List BrowserTab
+getTabList browser =
+    SlidingList.toList browser
+
+
+getTab : Browser -> BrowserTab
+getTab browser =
+    browser
+        |> SlidingList.current
+        |> withDefault initialTab
+
+
+getTitle : Browser -> PageTitle
+getTitle browser =
+    browser
+        |> getTab
+        |> getTabTitle
+
+
+getTabTitle : BrowserTab -> PageTitle
+getTabTitle tab =
+    tab
+        |> getPage
+        |> getPageTitle
+
+
+getPage : BrowserTab -> BrowserPage
+getPage tab =
+    tab.history
+        |> SlidingList.current
+        |> withDefault initialPage
 
 
 getPageURL : BrowserPage -> PageURL
@@ -125,108 +168,150 @@ getPageURL page =
     page.url
 
 
-getPageContent : BrowserPage -> String
+getPageTitle : BrowserPage -> PageTitle
+getPageTitle page =
+    page.title
+
+
+getPageContent : BrowserPage -> PageContent
 getPageContent page =
     page.content
 
 
-getPreviousPages : Browser -> BrowserHistory
-getPreviousPages browser =
-    browser.previousPages
+getPreviousPages : BrowserTab -> List BrowserPage
+getPreviousPages tab =
+    SlidingList.getRear tab.history
 
 
-getNextPages : Browser -> BrowserHistory
-getNextPages browser =
-    browser.nextPages
+getNextPages : BrowserTab -> List BrowserPage
+getNextPages tab =
+    SlidingList.getFront tab.history
+
+
+newTab : Browser -> Browser
+newTab browser =
+    SlidingList.cons initialTab browser
+
+
+openTab : BrowserPage -> Browser -> Browser
+openTab page browser =
+    let
+        tab =
+            { addressBar = getPageURL page
+            , history = SlidingList.singleton page
+            }
+    in
+        SlidingList.consAside tab browser
+
+
+openTabBackground : BrowserPage -> Browser -> Browser
+openTabBackground page browser =
+    let
+        tab =
+            { addressBar = getPageURL page
+            , history = SlidingList.singleton page
+            }
+    in
+        browser
+            |> SlidingList.consAside tab
+            |> SlidingList.rollBackward
+
+
+focusTab : Int -> Browser -> Browser
+focusTab nth browser =
+    SlidingList.focusNth nth browser
 
 
 gotoPage : BrowserPage -> Browser -> Browser
-gotoPage page browser =
-    if page /= getPage browser then
-        let
-            previousPages =
-                browser.page :: (getPreviousPages browser)
-        in
-            { browser
-                | addressBar = getPageURL page
-                , page = page
-                , previousPages = previousPages
-                , nextPages = []
-            }
+gotoPage newPage browser =
+    let
+        tab =
+            getTab browser
+
+        page =
+            getPage tab
+
+        history =
+            if newPage /= page then
+                tab.history
+                    |> SlidingList.consAside newPage
+                    |> SlidingList.clearFront
+            else
+                tab.history
+
+        tab_ =
+            { tab | addressBar = getPageURL newPage, history = history }
+    in
+        SlidingList.replace tab_ browser
+
+
+gotoPreviousPage : Browser -> Browser
+gotoPreviousPage =
+    rollHistory SlidingList.rollBackward
+
+
+gotoNextPage : Browser -> Browser
+gotoNextPage =
+    rollHistory SlidingList.rollForward
+
+
+closeTab : Int -> Browser -> Browser
+closeTab nth browser =
+    browser
+        |> SlidingList.removeNth nth
+        |> ensureInitialTab
+
+
+
+-- private
+
+
+ensureInitialTab : Browser -> Browser
+ensureInitialTab browser =
+    if SlidingList.isEmpty browser then
+        SlidingList.cons initialTab browser
     else
         browser
 
 
-gotoURL : PageURL -> Browser -> Browser
-gotoURL url browser =
-    -- FIXME: update the content
-    gotoPage { url = url, content = "" } browser
+initialPage : BrowserPage
+initialPage =
+    { url = "about:blank", title = "", content = "" }
 
 
-gotoPreviousPage : Browser -> Browser
-gotoPreviousPage browser =
+initialTab : BrowserTab
+initialTab =
     let
-        maybeReorderedHistory =
-            reorderHistory getPreviousPages getNextPages browser
+        page =
+            initialPage
     in
-        case maybeReorderedHistory of
-            Just ( page, prev, next ) ->
-                { browser
-                    | page = page
-                    , previousPages = prev
-                    , nextPages = next
-                }
-
-            Nothing ->
-                browser
+        { addressBar = getPageURL page
+        , history = SlidingList.singleton page
+        }
 
 
-gotoNextPage : Browser -> Browser
-gotoNextPage browser =
+initialBrowser : Browser
+initialBrowser =
+    SlidingList.singleton initialTab
+
+
+rollHistory : (BrowserHistory -> BrowserHistory) -> Browser -> Browser
+rollHistory roll browser =
     let
-        maybeReorderedHistory =
-            reorderHistory getNextPages getPreviousPages browser
+        tab =
+            getTab browser
+
+        history =
+            roll tab.history
     in
-        case maybeReorderedHistory of
-            Just ( page, next, prev ) ->
-                { browser
-                    | page = page
-                    , previousPages = prev
-                    , nextPages = next
-                }
-
-            Nothing ->
-                browser
-
-
-reorderHistory :
-    (Browser -> BrowserHistory)
-    -> (Browser -> BrowserHistory)
-    -> Browser
-    -> Maybe ( BrowserPage, BrowserHistory, BrowserHistory )
-reorderHistory getFromList getToList browser =
-    let
-        from =
-            getFromList browser
-
-        to =
-            getToList browser
-
-        oldPage =
-            getPage browser
-    in
-        case List.head from of
-            Just newPage ->
-                let
-                    from_ =
-                        from
-                            |> List.tail
-                            |> Maybe.withDefault ([])
-
-                    to_ =
-                        oldPage :: to
-                in
-                    Just ( newPage, from_, to_ )
-
-            Nothing ->
-                Nothing
+        history
+            |> SlidingList.current
+            |> andJust
+                (\page ->
+                    { tab
+                        | addressBar = getPageURL page
+                        , history = history
+                    }
+                )
+            |> andJust (flip SlidingList.replace browser)
+            |> withDefault browser
