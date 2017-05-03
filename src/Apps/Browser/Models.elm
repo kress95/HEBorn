@@ -1,29 +1,35 @@
 module Apps.Browser.Models
     exposing
         ( Browser
-        , ContextBrowser
-        , Model
+        , BrowserTab
         , BrowserHistory
         , BrowserPage
+        , PageContent
         , PageURL
+        , Model
+        , ContextBrowser
         , initialBrowser
         , initialModel
         , initialBrowserContext
         , getBrowserInstance
         , getBrowserContext
         , getState
+        , getTab
+        , getTabList
         , getPage
         , getPageURL
         , getPageContent
         , getPreviousPages
         , getNextPages
+        , focusTab
+        , openPage
         , gotoPage
-        , gotoURL
         , gotoPreviousPage
         , gotoNextPage
         )
 
-import Maybe
+import Maybe as Maybe exposing (andThen, withDefault)
+import Utils exposing (andJust)
 import Apps.Instances.Models as Instance
     exposing
         ( Instances
@@ -34,26 +40,35 @@ import Html exposing (Html, div, text)
 import Apps.Browser.Messages exposing (Msg(..))
 import Apps.Context as Context exposing (ContextApp)
 import Apps.Browser.Context.Models as Menu
+import Utils.TabList as TabList exposing (TabList)
 
 
 type alias PageURL =
     String
 
 
+type alias PageContent =
+    String
+
+
 type alias BrowserPage =
-    { url : PageURL, content : String }
+    { url : PageURL
+    , content : PageContent
+    }
 
 
 type alias BrowserHistory =
-    List BrowserPage
+    TabList BrowserPage
+
+
+type alias BrowserTab =
+    { addressBar : String
+    , history : BrowserHistory
+    }
 
 
 type alias Browser =
-    { addressBar : PageURL
-    , page : BrowserPage
-    , previousPages : BrowserHistory
-    , nextPages : BrowserHistory
-    }
+    TabList BrowserTab
 
 
 type alias ContextBrowser =
@@ -66,15 +81,14 @@ type alias Model =
     }
 
 
+initialPage : BrowserPage
+initialPage =
+    { url = "about:blank", content = "" }
+
+
 initialBrowser : Browser
 initialBrowser =
-    { addressBar = "about:blank"
-
-    -- FIXME: update the content
-    , page = { url = "about:blank", content = "" }
-    , previousPages = []
-    , nextPages = []
-    }
+    TabList.singleton (newTab initialPage)
 
 
 initialModel : Model
@@ -115,9 +129,19 @@ getState model id =
         (getBrowserInstance model.instances id)
 
 
-getPage : Browser -> BrowserPage
-getPage browser =
-    browser.page
+getTab : Browser -> Maybe BrowserTab
+getTab browser =
+    TabList.current browser
+
+
+getTabList : Browser -> List BrowserTab
+getTabList browser =
+    TabList.toList browser
+
+
+getPage : BrowserTab -> Maybe BrowserPage
+getPage tab =
+    TabList.current tab.history
 
 
 getPageURL : BrowserPage -> PageURL
@@ -125,108 +149,130 @@ getPageURL page =
     page.url
 
 
-getPageContent : BrowserPage -> String
+getPageContent : BrowserPage -> PageContent
 getPageContent page =
     page.content
 
 
-getPreviousPages : Browser -> BrowserHistory
-getPreviousPages browser =
-    browser.previousPages
+getPreviousPages : BrowserTab -> List BrowserPage
+getPreviousPages tab =
+    TabList.back tab.history
 
 
-getNextPages : Browser -> BrowserHistory
-getNextPages browser =
-    browser.nextPages
+getNextPages : BrowserTab -> List BrowserPage
+getNextPages tab =
+    TabList.front tab.history
+
+
+focusTab : Int -> Browser -> Browser
+focusTab tabIndex browser =
+    TabList.focus tabIndex browser
+
+
+openPage : BrowserPage -> Browser -> Browser
+openPage page browser =
+    TabList.pushFront (newTab page) browser
 
 
 gotoPage : BrowserPage -> Browser -> Browser
 gotoPage page browser =
-    if page /= getPage browser then
-        let
-            previousPages =
-                browser.page :: (getPreviousPages browser)
-        in
-            { browser
-                | addressBar = getPageURL page
-                , page = page
-                , previousPages = previousPages
-                , nextPages = []
-            }
-    else
-        browser
+    let
+        maybePage =
+            case getTab browser of
+                Just tab ->
+                    getPage tab
+
+                Nothing ->
+                    Nothing
+    in
+        case maybePage of
+            Just page_ ->
+                if page /= page_ then
+                    -- browser
+                    -- |> getTab
+                    -- |> andThen (\tab TabList.pushFront page )
+                    -- |> andJust updateTab
+                    -- |> andJust
+                    --     (\tab ->
+                    --         browser
+                    --             |> TabList.drop
+                    --             |> TabList.pushFront tab
+                    --     )
+                    -- |> withDefault browser
+                    browser
+                else
+                    browser
 
 
-gotoURL : PageURL -> Browser -> Browser
-gotoURL url browser =
-    -- FIXME: update the content
-    gotoPage { url = url, content = "" } browser
+
+-- case maybePage of
+--     Just page ->
+--         let
+--             tab_ =
+--                 tab.history
+--                     |> TabList.pushFront page
+--                     |> updateTab tab
+--         in
+--             browser
+--                 |> TabList.drop
+--                 |> TabList.pushFront tab_
+--     Nothing ->
+--         browser
 
 
 gotoPreviousPage : Browser -> Browser
-gotoPreviousPage browser =
-    let
-        maybeReorderedHistory =
-            reorderHistory getPreviousPages getNextPages browser
-    in
-        case maybeReorderedHistory of
-            Just ( page, prev, next ) ->
-                { browser
-                    | page = page
-                    , previousPages = prev
-                    , nextPages = next
-                }
-
-            Nothing ->
-                browser
+gotoPreviousPage =
+    moveHistory TabList.backward
 
 
 gotoNextPage : Browser -> Browser
-gotoNextPage browser =
-    let
-        maybeReorderedHistory =
-            reorderHistory getNextPages getPreviousPages browser
-    in
-        case maybeReorderedHistory of
-            Just ( page, next, prev ) ->
-                { browser
-                    | page = page
-                    , previousPages = prev
-                    , nextPages = next
-                }
+gotoNextPage =
+    moveHistory TabList.forward
 
-            Nothing ->
+
+newTab : BrowserPage -> BrowserTab
+newTab page =
+    { addressBar = getPageURL page
+    , history = TabList.singleton page
+    }
+
+
+updateTab : BrowserTab -> BrowserHistory -> BrowserTab
+updateTab tab history =
+    case TabList.current history of
+        Just page ->
+            { tab | addressBar = getPageURL page, history = history }
+
+        Nothing ->
+            tab
+
+updatePage : BrowserPage -> Browser -> Browser
+updatePage page browser =
+    case getTab browser ->
+        Just tab ->
+            -- page.
+            -- TabList.pushFront 
+            -- case getPage tab ->
+            --     Just page ->
+                    
+            --     Nothing ->
+            --         browser
+        Nothing ->
+            browser
+
+moveHistory : (BrowserHistory -> BrowserHistory) -> Browser -> Browser
+moveHistory fun browser =
+    case TabList.current browser of
+        Just tab ->
+            let
+                tab_ =
+                    tab.history
+                        |> fun
+                        |> updateTab tab
+            in
                 browser
+                    |> TabList.drop
+                    |> TabList.pushFront tab_
 
-
-reorderHistory :
-    (Browser -> BrowserHistory)
-    -> (Browser -> BrowserHistory)
-    -> Browser
-    -> Maybe ( BrowserPage, BrowserHistory, BrowserHistory )
-reorderHistory getFromList getToList browser =
-    let
-        from =
-            getFromList browser
-
-        to =
-            getToList browser
-
-        oldPage =
-            getPage browser
-    in
-        case List.head from of
-            Just newPage ->
-                let
-                    from_ =
-                        from
-                            |> List.tail
-                            |> Maybe.withDefault ([])
-
-                    to_ =
-                        oldPage :: to
-                in
-                    Just ( newPage, from_, to_ )
-
-            Nothing ->
-                Nothing
+        Nothing ->
+            browser
