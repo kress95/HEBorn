@@ -59,26 +59,18 @@ current { front } =
 
 
 put : a -> TabList a -> TabList a
-put item list =
-    let
-        { front } =
-            list
-    in
-        { list | front = item :: front }
+put item ({ front } as list) =
+    { list | front = item :: front }
 
 
 drop : TabList a -> TabList a
-drop list =
-    let
-        { front } =
-            list
-    in
-        case List.tail front of
-            Just tail ->
-                { list | front = tail }
+drop ({ front } as list) =
+    case List.tail front of
+        Just tail ->
+            { list | front = tail }
 
-            Nothing ->
-                backward { list | front = [] }
+        Nothing ->
+            backward { list | front = [] }
 
 
 dropLeft : TabList a -> TabList a
@@ -87,25 +79,18 @@ dropLeft { front } =
 
 
 dropRight : TabList a -> TabList a
-dropRight list =
-    let
-        { front } =
-            list
-    in
-        case List.head front of
-            Just head ->
-                { list | front = [ head ] }
+dropRight ({ front } as list) =
+    case List.head front of
+        Just head ->
+            { list | front = [ head ] }
 
-            Nothing ->
-                backward { list | front = [] }
+        Nothing ->
+            backward { list | front = [] }
 
 
 push : a -> TabList a -> TabList a
-push item list =
+push item ({ front } as list) =
     let
-        { front } =
-            list
-
         tail =
             front
                 |> List.tail
@@ -135,43 +120,35 @@ back { back } =
 
 
 forward : TabList a -> TabList a
-forward list =
-    let
-        { front, back, index } =
-            list
-    in
-        case List.head front of
-            Just item ->
-                let
-                    front_ =
-                        front
-                            |> List.tail
-                            |> Maybe.withDefault ([])
-                in
-                    { front = front_, back = item :: back, index = index + 1 }
+forward ({ front, back, index } as list) =
+    case List.head front of
+        Just item ->
+            let
+                front_ =
+                    front
+                        |> List.tail
+                        |> Maybe.withDefault ([])
+            in
+                { front = front_, back = item :: back, index = index + 1 }
 
-            Nothing ->
-                list
+        Nothing ->
+            list
 
 
 backward : TabList a -> TabList a
-backward list =
-    let
-        { front, back, index } =
-            list
-    in
-        case List.head back of
-            Just item ->
-                let
-                    back_ =
-                        back
-                            |> List.tail
-                            |> Maybe.withDefault ([])
-                in
-                    { front = item :: front, back = back_, index = index - 1 }
+backward ({ front, back, index } as list) =
+    case List.head back of
+        Just item ->
+            let
+                back_ =
+                    back
+                        |> List.tail
+                        |> Maybe.withDefault ([])
+            in
+                { front = item :: front, back = back_, index = index - 1 }
 
-            Nothing ->
-                list
+        Nothing ->
+            list
 
 
 toList : TabList a -> List a
@@ -194,7 +171,7 @@ toIndexedList { front, back } =
 
 
 map : (a -> a) -> TabList a -> TabList a
-map fun list =
+map fun ({ front, back } as list) =
     let
         { front, back } =
             list
@@ -229,12 +206,8 @@ filter fun { front, back } =
 
 
 focus : Int -> TabList a -> TabList a
-focus position list =
-    -- [0 1 2 3] [4 5 6 7]
+focus position ({ front, back, index } as list) =
     let
-        { front, back, index } =
-            list
-
         relativeIndex =
             position - index
 
@@ -292,11 +265,8 @@ indexedApply :
     -> b
     -> TabList a
     -> TabList c
-indexedApply operation fun list =
+indexedApply operation fun ({ front, back } as list) =
     let
-        { front, back } =
-            list
-
         ( revBack, index ) =
             back
                 |> List.reverse
