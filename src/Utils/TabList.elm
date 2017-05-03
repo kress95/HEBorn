@@ -26,67 +26,85 @@ import Maybe exposing (Maybe)
 
 
 type alias TabList a =
-    ( List a, List a )
+    { front : List a
+    , back : List a
+    , index : Int
+    }
 
 
 empty : TabList a
 empty =
-    ( [], [] )
+    { front = [], back = [], index = 0 }
 
 
 isEmpty : TabList a -> Bool
-isEmpty ( back, front ) =
-    (List.isEmpty back) && (List.isEmpty front)
+isEmpty { index, front } =
+    (index == 0) && (List.isEmpty front)
 
 
 length : TabList a -> Int
-length ( back, front ) =
-    (List.length back) + (List.length front)
+length { index, front } =
+    index + (List.length front)
 
 
 singleton : a -> TabList a
 singleton head =
-    ( [], [ head ] )
+    { front = [ head ], back = [], index = 0 }
 
 
 current : TabList a -> Maybe a
-current ( _, front ) =
+current { front } =
     List.head front
 
 
 put : a -> TabList a -> TabList a
-put item ( back, front ) =
-    ( back, item :: front )
+put item list =
+    let
+        { front } =
+            list
+    in
+        { list | front = item :: front }
 
 
 drop : TabList a -> TabList a
-drop ( back, front ) =
-    case List.tail front of
-        Just tail ->
-            ( back, tail )
+drop list =
+    let
+        { front } =
+            list
+    in
+        case List.tail front of
+            Just tail ->
+                { list | front = tail }
 
-        Nothing ->
-            backward ( back, [] )
+            Nothing ->
+                backward { list | front = [] }
 
 
 dropLeft : TabList a -> TabList a
-dropLeft ( _, front ) =
-    ( [], front )
+dropLeft { front } =
+    { front = front, back = [], index = 0 }
 
 
 dropRight : TabList a -> TabList a
-dropRight ( back, front ) =
-    case List.head front of
-        Just head ->
-            ( back, [ head ] )
+dropRight list =
+    let
+        { front } =
+            list
+    in
+        case List.head front of
+            Just head ->
+                { list | front = [ head ] }
 
-        Nothing ->
-            backward ( back, [] )
+            Nothing ->
+                backward { list | front = [] }
 
 
 push : a -> TabList a -> TabList a
-push item ( back, front ) =
+push item list =
     let
+        { front } =
+            list
+
         tail =
             front
                 |> List.tail
@@ -100,68 +118,93 @@ push item ( back, front ) =
                 Nothing ->
                     item :: tail
     in
-        ( back, front_ )
+        { list | front = front_ }
 
 
 front : TabList a -> List a
-front ( _, front ) =
+front { front } =
     front
         |> List.tail
         |> Maybe.withDefault []
 
 
 back : TabList a -> List a
-back ( back, _ ) =
+back { back } =
     back
 
 
 forward : TabList a -> TabList a
-forward ( back, front ) =
-    case List.head front of
-        Just item ->
-            let
-                front_ =
-                    front
-                        |> List.tail
-                        |> Maybe.withDefault ([])
-            in
-                ( item :: back, front_ )
+forward list =
+    let
+        { front, back, index } =
+            list
+    in
+        case List.head front of
+            Just item ->
+                let
+                    front_ =
+                        front
+                            |> List.tail
+                            |> Maybe.withDefault ([])
+                in
+                    { front = front_, back = item :: back, index = index + 1 }
 
-        Nothing ->
-            ( back, front )
+            Nothing ->
+                list
 
 
 backward : TabList a -> TabList a
-backward ( back, front ) =
+backward list =
     let
-        ( front_, back_ ) =
-            forward ( front, back )
+        { front, back, index } =
+            list
     in
-        ( back_, front_ )
+        case List.head back of
+            Just item ->
+                let
+                    back_ =
+                        back
+                            |> List.tail
+                            |> Maybe.withDefault ([])
+                in
+                    { front = item :: front, back = back_, index = index - 1 }
+
+            Nothing ->
+                list
 
 
 toList : TabList a -> List a
-toList ( back, front ) =
+toList { back, front } =
     List.foldr (::) back front
 
 
 toIndexedList : TabList a -> List ( a, Int )
-toIndexedList ( back, front ) =
+toIndexedList { front, back } =
     let
         ( back_, length ) =
             back
                 |> List.reverse
-                |> index 0
+                |> withIndex 0
 
         ( front_, _ ) =
-            index length front
+            withIndex length front
     in
         List.foldr (::) (List.reverse back_) front_
 
 
 map : (a -> a) -> TabList a -> TabList a
-map fun ( back, front ) =
-    ( List.map fun back, List.map fun front )
+map fun list =
+    let
+        { front, back } =
+            list
+
+        front_ =
+            List.map fun front
+
+        back_ =
+            List.map fun back
+    in
+        { list | front = front_, back = back_ }
 
 
 indexedMap : (( a, Int ) -> a) -> TabList a -> TabList a
@@ -170,12 +213,22 @@ indexedMap fun list =
 
 
 filter : (a -> Bool) -> TabList a -> TabList a
-filter fun ( back, front ) =
-    ( List.filter fun back, List.filter fun front )
+filter fun { front, back } =
+    let
+        front_ =
+            List.filter fun front
+
+        back_ =
+            List.filter fun back
+
+        index =
+            List.length back_
+    in
+        { front = front_, back = back, index = index }
 
 
-index : Int -> List a -> ( List ( a, Int ), Int )
-index initial list =
+withIndex : Int -> List a -> ( List ( a, Int ), Int )
+withIndex initial list =
     let
         reducer =
             \item ( list, index ) -> ( ( item, index ) :: list, index + 1 )
@@ -184,19 +237,22 @@ index initial list =
 
 
 indexedApply :
-    (b -> List ( a, Int ) -> List a1)
+    (b -> List ( a, Int ) -> List c)
     -> b
-    -> ( List a, List a )
-    -> ( List a1, List a1 )
-indexedApply operation fun ( back, front ) =
+    -> TabList a
+    -> TabList c
+indexedApply operation fun list =
     let
-        ( revBack, length ) =
+        { front, back } =
+            list
+
+        ( revBack, index ) =
             back
                 |> List.reverse
-                |> index 0
+                |> withIndex 0
 
         ( revFront, _ ) =
-            index length front
+            withIndex index front
 
         back_ =
             revBack
@@ -206,4 +262,4 @@ indexedApply operation fun ( back, front ) =
         front_ =
             operation fun revFront
     in
-        ( back_, front_ )
+        { front = front_, back = back_, index = index }
