@@ -7,11 +7,12 @@ module Utils.TabList
         , singleton
         , current
         , focus
-        , put
+        , putAside
+        , pushFront
+        , pushBack
         , drop
         , dropLeft
         , dropRight
-        , push
         , front
         , back
         , forward
@@ -58,11 +59,6 @@ current { front } =
     List.head front
 
 
-put : a -> TabList a -> TabList a
-put item ({ front } as list) =
-    { list | front = item :: front }
-
-
 drop : TabList a -> TabList a
 drop ({ front } as list) =
     case List.tail front of
@@ -88,8 +84,18 @@ dropRight ({ front } as list) =
             backward { list | front = [] }
 
 
-push : a -> TabList a -> TabList a
-push item ({ front } as list) =
+pushFront : a -> TabList a -> TabList a
+pushFront item ({ front } as list) =
+    { list | front = item :: front }
+
+
+pushBack : a -> TabList a -> TabList a
+pushBack item ({ back, index } as list) =
+    { list | back = item :: back, index = index + 1 }
+
+
+putAside : a -> TabList a -> TabList a
+putAside item ({ front } as list) =
     let
         tail =
             front
