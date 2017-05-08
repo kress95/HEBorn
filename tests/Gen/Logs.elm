@@ -1,120 +1,124 @@
 module Gen.Logs exposing (..)
 
-import Arithmetic exposing (isEven)
+import Random.Pcg as Random exposing (Generator)
+import Fuzz exposing (Fuzzer)
 import Gen.Utils exposing (..)
 import Game.Servers.Logs.Models exposing (..)
 
 
-logID : Int -> LogID
-logID seedInt =
-    fuzz1 seedInt logIDSeed
+--------------------------------------------------------------------------------
+-- Fuzzers
+--------------------------------------------------------------------------------
 
 
-logIDSeed : StringSeed
-logIDSeed seed =
-    smallStringSeed seed
+logID : Fuzzer LogID
+logID =
+    fuzzer genLogID
 
 
-content : Int -> String
-content seedInt =
-    fuzz1 seedInt contentSeed
+logContent : Fuzzer LogContent
+logContent =
+    fuzzer genLogContent
 
 
-contentSeed : StringSeed
-contentSeed seed =
-    smallStringSeed seed
+logEntry : Fuzzer Log
+logEntry =
+    fuzzer genLogEntry
 
 
-stdLog : Int -> Log
-stdLog seedInt =
-    fuzz1 seedInt stdLogSeed
+noLog : Fuzzer Log
+noLog =
+    fuzzer genNoLog
 
 
-stdLogSeed : Seed -> ( Log, Seed )
-stdLogSeed seed =
+log : Fuzzer Log
+log =
+    fuzzer genLog
+
+
+logList : Fuzzer (List Log)
+logList =
+    fuzzer genLogList
+
+
+emptyLogs : Fuzzer Logs
+emptyLogs =
+    fuzzer genEmptyLogs
+
+
+nonEmptyLogs : Fuzzer Logs
+nonEmptyLogs =
+    fuzzer genNonEmptyLogs
+
+
+logs : Fuzzer Logs
+logs =
+    fuzzer genLogs
+
+
+model : Fuzzer Logs
+model =
+    logs
+
+
+
+--------------------------------------------------------------------------------
+-- Generators
+--------------------------------------------------------------------------------
+
+
+genLogID : Generator LogID
+genLogID =
+    unique
+
+
+genLogContent : Generator LogContent
+genLogContent =
+    unique
+
+
+genLogEntry : Generator Log
+genLogEntry =
+    Random.map2
+        (\id content -> LogEntry { id = id, content = content })
+        genLogID
+        genLogContent
+
+
+genNoLog : Generator Log
+genNoLog =
+    Random.constant NoLog
+
+
+genLog : Generator Log
+genLog =
+    Random.choices [ genLogEntry, genNoLog ]
+
+
+genLogList : Generator (List Log)
+genLogList =
+    Random.int 1 64
+        |> Random.andThen (\num -> Random.list num genLog)
+
+
+genEmptyLogs : Generator Logs
+genEmptyLogs =
+    Random.constant initialLogs
+
+
+genNonEmptyLogs : Generator Logs
+genNonEmptyLogs =
     let
-        ( id, seed1 ) =
-            logIDSeed seed
+        addLog_ =
+            flip addLog
 
-        ( content, seed2 ) =
-            contentSeed seed1
+        reduce =
+            (List.foldl addLog_ initialLogs) >> Random.constant
     in
-        ( stdLogArgs id content, seed2 )
+        genLogList
+            |> Random.andThen reduce
 
 
-stdLogArgs : LogID -> LogContent -> Log
-stdLogArgs id content =
-    LogEntry
-        { id = id
-        , content = content
-        }
-
-
-logsEmpty : Logs
-logsEmpty =
-    initialLogs
-
-
-model : Int -> Logs
-model seedInt =
-    logs seedInt
-
-
-log : Int -> Log
-log seedInt =
-    fuzz1 seedInt logSeed
-
-
-logSeed : Seed -> ( Log, Seed )
-logSeed seed =
-    let
-        ( result, seed_ ) =
-            intSeed seed
-    in
-        if isEven result then
-            stdLogSeed seed_
-        else
-            ( NoLog, seed_ )
-
-
-logList : Int -> List Log
-logList seedInt =
-    fuzz1 seedInt logListSeed
-
-
-logListSeed : Seed -> ( List Log, Seed )
-logListSeed seed =
-    let
-        ( size, seed_ ) =
-            intRangeSeed 1 100 seed
-
-        list =
-            List.range 1 size
-
-        reducer =
-            \_ ( logs, seed ) ->
-                let
-                    ( log, seed_ ) =
-                        logSeed seed
-                in
-                    ( log :: logs, seed_ )
-    in
-        List.foldl reducer ( [], seed_ ) list
-
-
-logs : Int -> Logs
-logs seedInt =
-    fuzz1 seedInt logsSeed
-
-
-logsSeed : Seed -> ( Logs, Seed )
-logsSeed seed =
-    let
-        ( logList, seed_ ) =
-            logListSeed seed
-
-        logs =
-            -- TODO: remove this lambda after moving logs to the last param
-            List.foldl (\log logs -> addLog logs log) logsEmpty logList
-    in
-        ( logs, seed_ )
+genLogs : Generator Logs
+genLogs =
+    Random.choices [ genEmptyLogs, genNonEmptyLogs ]
