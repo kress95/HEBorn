@@ -1,11 +1,11 @@
 module Gen.Utils exposing (..)
 
-import Shrink
-import Fuzz as Fuzz exposing (Fuzzer)
+import Fuzz exposing (Fuzzer)
 import Random.Pcg as Random exposing (Generator)
 import Random.Pcg.Char as RandomChar
 import Random.Pcg.Int as RandomInt
 import Random.Pcg.String as RandomString
+import Shrink exposing (noShrink)
 
 
 type alias Seed =
@@ -14,6 +14,21 @@ type alias Seed =
 
 type alias StringSeed =
     Seed -> ( String, Seed )
+
+
+unique : Generator String
+unique =
+    RandomString.rangeLengthString 64 64 RandomChar.english
+
+
+stringRange : Int -> Int -> Generator String
+stringRange min max =
+    RandomString.rangeLengthString min max RandomChar.english
+
+
+fuzzer : Generator a -> Fuzzer a
+fuzzer f =
+    Fuzz.custom f Shrink.noShrink
 
 
 listOfInt : Int -> Int -> List Int
