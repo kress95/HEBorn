@@ -1,9 +1,11 @@
 module Gen.Utils exposing (..)
 
-import Random
-import Random.Int
-import Random.String
-import Random.Char
+import Shrink
+import Fuzz as Fuzz exposing (Fuzzer)
+import Random.Pcg as Random exposing (Generator)
+import Random.Pcg.Char as RandomChar
+import Random.Pcg.Int as RandomInt
+import Random.Pcg.String as RandomString
 
 
 type alias Seed =
@@ -57,7 +59,7 @@ listOfSeed size seed =
 
 intSeed seed =
     Random.step
-        (Random.Int.anyInt)
+        (RandomInt.anyInt)
         seed
 
 
@@ -111,7 +113,7 @@ smallStringSeed seed =
 stringSeed : Int -> Int -> StringSeed
 stringSeed min max seed =
     Random.step
-        (Random.String.rangeLengthString min max Random.Char.english)
+        (RandomString.rangeLengthString min max RandomChar.english)
         seed
 
 
