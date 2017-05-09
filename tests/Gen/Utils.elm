@@ -111,11 +111,6 @@ floatRangeSeed min max seed =
         seed
 
 
-percentageSeed : Seed -> ( Float, Seed )
-percentageSeed seed =
-    floatRangeSeed 0 1 seed
-
-
 smallStringSeed : StringSeed
 smallStringSeed seed =
     stringSeed 1 64 seed
