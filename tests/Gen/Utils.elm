@@ -21,6 +21,11 @@ unique =
     RandomString.rangeLengthString 64 64 RandomChar.english
 
 
+percentage : Generator Float
+percentage =
+    Random.float 0 1
+
+
 fuzzer : Generator a -> Fuzzer a
 fuzzer f =
     Fuzz.custom f Shrink.noShrink
@@ -107,16 +112,6 @@ floatRangeSeed min max seed =
     Random.step
         (Random.float min max)
         seed
-
-
-percentage : Int -> Float
-percentage seedInt =
-    fuzz1 seedInt percentageSeed
-
-
-percentageSeed : Seed -> ( Float, Seed )
-percentageSeed seed =
-    floatRangeSeed 0 1 seed
 
 
 smallStringSeed : StringSeed
