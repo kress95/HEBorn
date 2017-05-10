@@ -87,6 +87,11 @@ processes =
     fuzzer genProcesses
 
 
+model : Fuzzer Processes
+model =
+    fuzzer genModel
+
+
 
 --------------------------------------------------------------------------------
 -- Generators
@@ -207,3 +212,8 @@ genNonEmptyProcesses =
 genProcesses : Generator Processes
 genProcesses =
     Random.choices [ genEmptyProcesses, genNonEmptyProcesses ]
+
+
+genModel : Generator Processes
+genModel =
+    genProcesses
