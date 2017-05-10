@@ -1,71 +1,150 @@
 module Gen.Servers exposing (..)
 
-import Dict
+import Gen.Filesystem
+import Gen.Logs
+import Gen.Processes
+import Random.Pcg.Char as RandomChar
+import Random.Pcg.String as RandomString
+import Random.Pcg.Extra as RandomExtra exposing (andMap)
+import Random.Pcg as Random exposing (Generator)
+import Fuzz exposing (Fuzzer)
 import Game.Shared exposing (IP)
 import Game.Servers.Models exposing (..)
-import Game.Servers.Filesystem.Models exposing (Filesystem)
-import Game.Servers.Logs.Models exposing (Logs)
-import Game.Servers.Processes.Models exposing (Processes)
-import Gen.Filesystem
-import Gen.Processes
 import Gen.Utils exposing (..)
 
 
-id : Int -> ServerID
-id seedInt =
-    fuzz1 seedInt idSeed
+--------------------------------------------------------------------------------
+-- Fuzzers
+--------------------------------------------------------------------------------
 
 
-idSeed : StringSeed
-idSeed seed =
-    smallStringSeed seed
+serverID : Fuzzer ServerID
+serverID =
+    fuzzer genServerID
 
 
-{-| ip is todo
+ip : Fuzzer IP
+ip =
+    fuzzer genIP
+
+
+noServer : Fuzzer Server
+noServer =
+    fuzzer genNoServer
+
+
+serverData : Fuzzer ServerData
+serverData =
+    fuzzer genServerData
+
+
+serverDataList : Fuzzer (List ServerData)
+serverDataList =
+    fuzzer genServerDataList
+
+
+server : Fuzzer Server
+server =
+    fuzzer genServer
+
+
+emptyServers : Fuzzer Servers
+emptyServers =
+    fuzzer genEmptyServers
+
+
+nonEmptyServers : Fuzzer Servers
+nonEmptyServers =
+    fuzzer genNonEmptyServers
+
+
+servers : Fuzzer Servers
+servers =
+    fuzzer genServers
+
+
+model : Fuzzer Servers
+model =
+    fuzzer genModel
+
+
+
+--------------------------------------------------------------------------------
+-- Generators
+--------------------------------------------------------------------------------
+
+
+genServerID : Generator ServerID
+genServerID =
+    unique
+
+
+{-| TODO: make a true IP generator
 -}
-ip : Int -> IP
-ip seedInt =
-    fuzz1 seedInt ipSeed
+genIP : Generator IP
+genIP =
+    RandomString.rangeLengthString 1 256 RandomChar.english
 
 
-ipSeed : StringSeed
-ipSeed seed =
-    smallStringSeed seed
+genNoServer : Generator Server
+genNoServer =
+    Random.constant NoServer
 
 
-server : Int -> Server
-server seedInt =
-    StdServer
-        (serverData seedInt)
-
-
-serverData : Int -> ServerData
-serverData seedInt =
+genServerData : Generator ServerData
+genServerData =
     let
-        ( id, ip ) =
-            fuzz2
-                seedInt
-                idSeed
-                ipSeed
+        buildServerDataRecord =
+            \id ip fs logs proc ->
+                { id = id
+                , ip = ip
+                , filesystem = fs
+                , logs = logs
+                , processes = proc
+                }
     in
-        serverArgs
-            id
-            ip
-            (Gen.Filesystem.fsRandom seedInt)
-            Dict.empty
-            (Gen.Processes.processes seedInt)
+        genServerID
+            |> Random.map buildServerDataRecord
+            |> andMap genIP
+            |> andMap Gen.Filesystem.genFilesystem
+            |> andMap Gen.Logs.genLogs
+            |> andMap Gen.Processes.genProcesses
 
 
-serverArgs : ServerID -> IP -> Filesystem -> Logs -> Processes -> ServerData
-serverArgs id ip filesystem logs processes =
-    { id = id
-    , ip = ip
-    , filesystem = filesystem
-    , logs = logs
-    , processes = processes
-    }
+genServerDataList : Generator (List ServerData)
+genServerDataList =
+    Random.int 1 64
+        |> Random.andThen (\num -> Random.list num genServerData)
 
 
-model : Int -> Servers
-model seedInt =
-    addServer initialServers (serverData seedInt)
+genServer : Generator Server
+genServer =
+    let
+        genServer_ =
+            Random.map StdServer genServerData
+    in
+        Random.choices [ genNoServer, genServer_ ]
+
+
+genEmptyServers : Generator Servers
+genEmptyServers =
+    Random.constant initialServers
+
+
+genNonEmptyServers : Generator Servers
+genNonEmptyServers =
+    let
+        reducer =
+            (List.foldl (flip addServer) initialServers) >> Random.constant
+    in
+        Random.andThen reducer genServerDataList
+
+
+genServers : Generator Servers
+genServers =
+    Random.choices [ genEmptyServers, genNonEmptyServers ]
+
+
+genModel : Generator Servers
+genModel =
+    genServers
