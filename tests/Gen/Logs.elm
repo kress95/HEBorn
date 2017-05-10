@@ -1,9 +1,10 @@
 module Gen.Logs exposing (..)
 
-import Random.Pcg as Random
+import Random.Pcg
     exposing
         ( Generator
         , constant
+        , int
         , map2
         , choices
         , andThen
@@ -105,7 +106,7 @@ genLog =
 
 genLogList : Generator (List Log)
 genLogList =
-    andThen (\num -> list num genLog) (Random.int 1 64)
+    andThen (genLog |> flip list) (int 1 10)
 
 
 genEmptyLogs : Generator Logs
