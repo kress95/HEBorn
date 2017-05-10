@@ -37,17 +37,11 @@ pathOperations =
 
 pathMoveAroundTests : List Test
 pathMoveAroundTests =
-    [ once (tuple ( int, int )) "can move to an existing folder" <|
-        \seed ->
+    [ once Playstate.one "can move to an existing folder" <|
+        \play ->
             let
-                ( seed1, seed2 ) =
-                    ensureDifferentSeed seed
-
                 explorer0 =
                     initialExplorer
-
-                play =
-                    Playstate.one seed1 seed2
 
                 ( game, server, folder ) =
                     ( play.game, play.server, play.valid.folder )
@@ -59,23 +53,20 @@ pathMoveAroundTests =
                     changePath explorer game (getFilePath folder)
             in
                 Expect.equal (getPath explorer_) (getFilePath folder)
-    , fuzz (tuple ( int, int )) "cant move to a non-existing folder" <|
-        \seed ->
+    , fuzz
+        (tuple ( Playstate.one, Gen.Filesystem.path ))
+        "cant move to a non-existing folder"
+      <|
+        \( play, path ) ->
             let
-                ( seed1, seed2 ) =
-                    ensureDifferentSeed seed
-
                 explorer =
                     initialExplorer
-
-                play =
-                    Playstate.one seed1 seed2
 
                 game =
                     play.game
 
                 explorer_ =
-                    changePath explorer game (Gen.Filesystem.path seed2)
+                    changePath explorer game path
             in
                 Expect.equal explorer explorer_
     ]
