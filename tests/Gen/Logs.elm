@@ -58,7 +58,7 @@ logs =
 
 model : Fuzzer Logs
 model =
-    logs
+    fuzzer genModel
 
 
 
@@ -122,3 +122,8 @@ genNonEmptyLogs =
 genLogs : Generator Logs
 genLogs =
     Random.choices [ genEmptyLogs, genNonEmptyLogs ]
+
+
+genModel : Generator Logs
+genModel =
+    genLogs
