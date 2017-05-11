@@ -12,22 +12,22 @@ import Requests.Models
         , Request
             ( NewRequest
             , RequestLogout
-            , RequestBootstrap
+            , RequestServer
             )
         , RequestTopic
             ( TopicAccountLogout
-            , TopicAccountBootstrap
+            , TopicAccountServer
             )
         , TopicContext
         , ResponseDecoder
         , ResponseCode(..)
         , Response
             ( ResponseLogout
-            , ResponseBootstrap
+            , ResponseServer
             )
         , ResponseForLogout(..)
-        , ResponseForBootstrap(..)
-        , ResponseBootstrapPayload
+        , ResponseForServer(..)
+        , ResponseServerPayload
         )
 import Requests.Update exposing (queueRequest)
 import Game.Messages exposing (GameMsg(Request))
@@ -35,15 +35,15 @@ import Game.Models exposing (GameModel, ResponseType)
 import Game.Account.Models exposing (Token)
 
 
-requestBootstrap : TopicContext -> Cmd GameMsg
-requestBootstrap accountID =
+requestServer : TopicContext -> Cmd GameMsg
+requestServer accountID =
     queueRequest
         (Request
             (NewRequest
                 (createRequestData
-                    RequestBootstrap
-                    decodeBootstrap
-                    TopicAccountBootstrap
+                    RequestServer
+                    decodeServer
+                    TopicAccountServer
                     accountID
                     (RequestEmptyPayload)
                 )
@@ -51,28 +51,28 @@ requestBootstrap accountID =
         )
 
 
-decodeBootstrap : ResponseDecoder
-decodeBootstrap rawMsg code =
+decodeServer : ResponseDecoder
+decodeServer rawMsg code =
     let
         decoder =
-            decode ResponseBootstrapPayload
+            decode ResponseServerPayload
                 |> required "server_id" string
     in
         case code of
             ResponseCodeOk ->
                 case decodeValue decoder rawMsg of
                     Ok msg ->
-                        ResponseBootstrap (ResponseBootstrapOk msg)
+                        ResponseServer (ResponseServerOk msg)
 
                     Err r ->
-                        ResponseBootstrap (ResponseBootstrapInvalid)
+                        ResponseServer (ResponseServerInvalid)
 
             _ ->
-                ResponseBootstrap (ResponseBootstrapInvalid)
+                ResponseServer (ResponseServerInvalid)
 
 
-requestBootstrapHandler : ResponseType
-requestBootstrapHandler response model =
+requestServerHandler : ResponseType
+requestServerHandler response model =
     case response of
         _ ->
             ( model, Cmd.none, [] )

@@ -8,7 +8,7 @@ import Game.Models exposing (GameModel)
 import Game.Messages exposing (GameMsg)
 import Game.Account.Messages exposing (AccountMsg(..))
 import Game.Account.Models exposing (setToken, getToken, AccountModel)
-import Game.Account.Requests exposing (requestLogout, requestBootstrap)
+import Game.Account.Requests exposing (requestLogout, requestServer)
 
 
 update : AccountMsg -> AccountModel -> GameModel -> ( AccountModel, Cmd GameMsg, List CoreMsg )
@@ -28,6 +28,8 @@ update msg model game =
                     , callWebsocket
                         (JoinChannel ("account:" ++ account_id))
                     , callWebsocket (JoinChannel ("requests"))
+                    , callWebsocket
+                        (JoinChannel ("server:10::B637:30F3:9868:91CA:82EF"))
                     ]
             in
                 ( { model_ | id = Just account_id }, Cmd.none, coreCmd )
@@ -35,7 +37,7 @@ update msg model game =
         JoinedAccount id ->
             let
                 cmd =
-                    requestBootstrap id
+                    requestServer id
             in
                 ( model, cmd, [] )
 
@@ -51,7 +53,7 @@ update msg model game =
             in
                 ( model_, cmd, [] )
 
-        Bootstrap data ->
+        Server data ->
             let
                 f =
                     Debug.log "RFECV" (toString data)

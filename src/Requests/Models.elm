@@ -31,8 +31,8 @@ module Requests.Models
         , ResponseForLogin(..)
         , ResponseLoginPayload
         , ResponseForLogout(..)
-        , ResponseBootstrapPayload
-        , ResponseForBootstrap(..)
+        , ResponseServerPayload
+        , ResponseForServer(..)
         , ResponseForEventCool(..)
         , ResponseEventCoolPayload
         )
@@ -57,7 +57,7 @@ type Request
     | RequestSignUp
     | RequestLogin
     | RequestLogout
-    | RequestBootstrap
+    | RequestServer
     | RequestInvalid
     | NewRequest NewRequestData
 
@@ -156,7 +156,7 @@ type Response
     | ResponseSignUp ResponseForSignUp
     | ResponseLogin ResponseForLogin
     | ResponseLogout ResponseForLogout
-    | ResponseBootstrap ResponseForBootstrap
+    | ResponseServer ResponseForServer
     | ResponseEventCool ResponseForEventCool
     | ResponseEmpty
     | ResponseInvalid
@@ -232,12 +232,12 @@ type ResponseForLogout
     | ResponseLogoutInvalid
 
 
-type ResponseForBootstrap
-    = ResponseBootstrapOk ResponseBootstrapPayload
-    | ResponseBootstrapInvalid
+type ResponseForServer
+    = ResponseServerOk ResponseServerPayload
+    | ResponseServerInvalid
 
 
-type alias ResponseBootstrapPayload =
+type alias ResponseServerPayload =
     { server_id : String }
 
 
@@ -308,7 +308,7 @@ type RequestTopic
     = TopicAccountLogin
     | TopicAccountCreate
     | TopicAccountLogout
-    | TopicAccountBootstrap
+    | TopicAccountServer
 
 
 getTopicDriver : RequestTopic -> RequestDriver

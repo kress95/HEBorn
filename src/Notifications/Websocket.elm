@@ -3,6 +3,7 @@ module Notifications.Websocket exposing (getJoinSubscribers)
 import Core.Messages exposing (CoreMsg(NoOp))
 import Core.Dispatcher exposing (..)
 import Game.Account.Messages as Account
+import Game.Servers.Messages as Servers
 
 
 type alias Domain =

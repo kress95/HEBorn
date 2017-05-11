@@ -3,13 +3,13 @@ module Game.Account.Messages exposing (AccountMsg(..))
 import Requests.Models
     exposing
         ( ResponseLoginPayload
-        , ResponseBootstrapPayload
+        , ResponseServerPayload
         )
 import Game.Account.Models exposing (AccountID)
 
 
 type AccountMsg
     = Login ResponseLoginPayload
-    | Bootstrap ResponseBootstrapPayload
+    | Server ResponseServerPayload
     | JoinedAccount AccountID
     | Logout

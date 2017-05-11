@@ -69,6 +69,7 @@ type alias WSMsgData =
 
 type Channel
     = ChannelAccount
+    | ChannelServer
     | ChannelRequests
 
 
@@ -186,8 +187,8 @@ getTopicMsg topic =
         TopicAccountLogout ->
             "account.logout"
 
-        TopicAccountBootstrap ->
-            "bootstrap"
+        TopicAccountServer ->
+            "server"
 
 
 getTopicChannel : RequestTopic -> Channel
@@ -202,8 +203,8 @@ getTopicChannel topic =
         TopicAccountLogout ->
             ChannelRequests
 
-        TopicAccountBootstrap ->
-            ChannelAccount
+        TopicAccountServer ->
+            ChannelServer
 
 
 getChannelAddress : Channel -> TopicContext -> String
@@ -211,6 +212,9 @@ getChannelAddress channel context =
     case channel of
         ChannelAccount ->
             "account:" ++ context
+
+        ChannelServer ->
+            "server" ++ context
 
         ChannelRequests ->
             "requests"
