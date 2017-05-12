@@ -1,6 +1,6 @@
 module Landing.Login.Requests exposing (..)
 
-import Json.Decode exposing (Decoder, string, decodeString, dict, decodeValue)
+import Json.Decode exposing (Decoder, string, dict, decodeValue)
 import Json.Decode.Pipeline exposing (decode, required, optional)
 import Requests.Models
     exposing
@@ -74,9 +74,6 @@ requestLogin username password =
 decodeLogin : ResponseDecoder
 decodeLogin rawMsg code =
     let
-        k =
-            Debug.log "<<<" (rawMsg)
-
         decoder =
             decode ResponseLoginPayload
                 |> required "token" string
@@ -89,11 +86,7 @@ decodeLogin rawMsg code =
                         ResponseLogin (ResponseLoginOk msg)
 
                     Err r ->
-                        let
-                            k =
-                                Debug.log ">>>>>>>" (toString r)
-                        in
-                            ResponseLogin (ResponseLoginInvalid)
+                        ResponseLogin (ResponseLoginInvalid)
 
             ResponseCodeNotFound ->
                 ResponseLogin (ResponseLoginFailed)

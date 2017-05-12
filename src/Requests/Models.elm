@@ -117,6 +117,7 @@ type RequestPayloadArgs
     | RequestSignUpPayload RequestSignUpArgs
     | RequestLoginPayload RequestLoginArgs
     | RequestLogoutPayload RequestLogoutArgs
+    | RequestEmptyPayload
 
 
 
@@ -271,6 +272,9 @@ encodeData args =
         RequestLogoutPayload args ->
             Json.Encode.object
                 [ ( "token", Json.Encode.string args.token ) ]
+
+        RequestEmptyPayload ->
+            Json.Encode.null
 
 
 type RequestDriver
