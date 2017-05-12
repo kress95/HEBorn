@@ -70,6 +70,7 @@ type alias WSMsgData =
 type Channel
     = ChannelAccount
     | ChannelRequests
+    | ChannelServer
 
 
 initialSocket : String -> Socket.Socket Msg
@@ -186,6 +187,12 @@ getTopicMsg topic =
         TopicAccountLogout ->
             "account.get"
 
+        TopicAccountServerIndex ->
+            "server.index"
+
+        TopicFileIndex ->
+            "file.index"
+
 
 getTopicChannel : RequestTopic -> Channel
 getTopicChannel topic =
@@ -199,6 +206,12 @@ getTopicChannel topic =
         TopicAccountLogout ->
             ChannelRequests
 
+        TopicAccountServerIndex ->
+            ChannelAccount
+
+        TopicFileIndex ->
+            ChannelServer
+
 
 getChannelAddress : Channel -> TopicContext -> String
 getChannelAddress channel context =
@@ -208,6 +221,9 @@ getChannelAddress channel context =
 
         ChannelRequests ->
             "requests"
+
+        ChannelServer ->
+            "server:" ++ context
 
 
 getResponse : Json.Decode.Value -> ( WSMsg WSMsgData, ResponseCode )

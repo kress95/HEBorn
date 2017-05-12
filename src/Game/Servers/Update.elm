@@ -66,3 +66,7 @@ update msg model game =
 
                 NoServer ->
                     ( model, Cmd.none, [] )
+
+        -- FIXME: cast the correct msg
+        Index _ ->
+            ( model, Cmd.none, [] )

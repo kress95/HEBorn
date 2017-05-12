@@ -10,6 +10,7 @@ module Core.Dispatcher
         , callExplorer
         , callLogViewer
         , callInstance
+        , callWebsocket
         )
 
 import Core.Messages exposing (CoreMsg(MsgGame, MsgOS, MsgApp))
@@ -52,6 +53,11 @@ callOS =
 callApps : AppMsg -> CoreMsg
 callApps =
     MsgApp
+
+
+callWebsocket : Websocket.Msg -> CoreMsg
+callWebsocket msg =
+    MsgWebsocket msg
 
 
 callAccount : Account.AccountMsg -> CoreMsg

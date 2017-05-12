@@ -32,6 +32,8 @@ module Requests.Models
         , ResponseLoginPayload
         , ResponseForLogout(..)
         , ResponseForEventCool(..)
+        , ResponseForFileIndex
+        , ResponseFileIndexPayload
         , ResponseEventCoolPayload
         )
 
@@ -55,6 +57,8 @@ type Request
     | RequestSignUp
     | RequestLogin
     | RequestLogout
+    | RequestServerIndex
+    | RequestFileIndex
     | RequestInvalid
     | NewRequest NewRequestData
 
@@ -117,6 +121,8 @@ type RequestPayloadArgs
     | RequestSignUpPayload RequestSignUpArgs
     | RequestLoginPayload RequestLoginArgs
     | RequestLogoutPayload RequestLogoutArgs
+    | RequestFileIndexPayload RequestFileIndexArgs
+    | RequestEmptyPayload
 
 
 
@@ -143,6 +149,10 @@ type alias RequestLogoutArgs =
     { token : String }
 
 
+type alias RequestFileIndexArgs =
+    {}
+
+
 
 -- Responses
 
@@ -153,6 +163,7 @@ type Response
     | ResponseLogin ResponseForLogin
     | ResponseLogout ResponseForLogout
     | ResponseEventCool ResponseForEventCool
+    | ResponseFileIndex ResponseForFileIndex
     | ResponseEmpty
     | ResponseInvalid
 
@@ -227,6 +238,17 @@ type ResponseForLogout
     | ResponseLogoutInvalid
 
 
+{-| FIXME: Make a proper response format
+-}
+type alias ResponseFileIndexPayload =
+    {}
+
+
+type ResponseForFileIndex
+    = ResponseIndexOk ResponseFileIndexPayload
+    | ResponseIndexInvalid
+
+
 
 {- Responses for Events -}
 
@@ -272,6 +294,12 @@ encodeData args =
             Json.Encode.object
                 [ ( "token", Json.Encode.string args.token ) ]
 
+        RequestFileIndexPayload args ->
+            Json.Encode.object []
+
+        RequestEmptyPayload ->
+            Json.Encode.object []
+
 
 type RequestDriver
     = DriverWebsocket
@@ -291,6 +319,8 @@ type RequestTopic
     = TopicAccountLogin
     | TopicAccountCreate
     | TopicAccountLogout
+    | TopicAccountServerIndex
+    | TopicFileIndex
 
 
 getTopicDriver : RequestTopic -> RequestDriver

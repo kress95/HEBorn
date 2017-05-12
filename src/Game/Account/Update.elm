@@ -7,10 +7,14 @@ import Game.Models exposing (GameModel)
 import Game.Messages exposing (GameMsg)
 import Game.Account.Messages exposing (AccountMsg(..))
 import Game.Account.Models exposing (setToken, getToken, AccountModel)
-import Game.Account.Requests exposing (requestLogout)
+import Game.Account.Requests exposing (requestLogout, requestServerIndex)
 
 
-update : AccountMsg -> AccountModel -> GameModel -> ( AccountModel, Cmd GameMsg, List CoreMsg )
+update :
+    AccountMsg
+    -> AccountModel
+    -> GameModel
+    -> ( AccountModel, Cmd GameMsg, List CoreMsg )
 update msg model game =
     case msg of
         Login data ->
@@ -22,15 +26,22 @@ update msg model game =
                     setToken model (Just token)
 
                 coreCmd =
-                    [ MsgWebsocket
+                    [ callWebsocket
                         (UpdateSocketParams ( token, account_id ))
-                    , MsgWebsocket
+                    , callWebsocket
                         (JoinChannel ( "account:" ++ account_id, "notification" ))
-                    , MsgWebsocket
+                    , callWebsocket
                         (JoinChannel ( "requests", "requests" ))
+
+                    -- TODO: move this to Server.Update
+                    , callWebsocket
+                        (JoinChannel ( "server:" ++ "10::B637:30F3:9868:91CA:82EF", "servers" ))
                     ]
             in
                 ( { model_ | id = Just account_id }, Cmd.none, coreCmd )
+
+        JoinedAccount id ->
+            ( model, requestServerIndex id, [] )
 
         Logout ->
             let

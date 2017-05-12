@@ -6,4 +6,5 @@ import Game.Account.Models exposing (AccountID)
 
 type AccountMsg
     = Login ResponseLoginPayload
+    | JoinedAccount AccountID
     | Logout

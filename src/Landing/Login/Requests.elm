@@ -14,7 +14,7 @@ import Requests.Models
             , RequestUsername
             , RequestLogin
             )
-        , RequestTopic(TopicAccountLogin)
+        , RequestTopic(TopicAccountLogin, TopicAccountServerIndex)
         , emptyTopicContext
         , Response
             ( ResponseUsernameExists

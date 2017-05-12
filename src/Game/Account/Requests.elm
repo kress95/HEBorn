@@ -5,12 +5,13 @@ import Json.Decode.Pipeline exposing (decode, required, optional)
 import Requests.Models
     exposing
         ( createRequestData
-        , RequestPayloadArgs(RequestLogoutPayload)
+        , RequestPayloadArgs(RequestLogoutPayload, RequestEmptyPayload)
         , Request
             ( NewRequest
             , RequestLogout
+            , RequestServerIndex
             )
-        , RequestTopic(TopicAccountLogout)
+        , RequestTopic(TopicAccountLogout, TopicAccountServerIndex)
         , TopicContext
         , Response(ResponseLogout)
         , ResponseDecoder
@@ -52,3 +53,28 @@ requestLogoutHandler response model =
     case response of
         _ ->
             ( model, Cmd.none, [] )
+
+
+requestServerIndex : TopicContext -> Cmd GameMsg
+requestServerIndex accountID =
+    queueRequest
+        (Request
+            (NewRequest
+                (createRequestData
+                    RequestServerIndex
+                    decodeServerIndex
+                    TopicAccountServerIndex
+                    accountID
+                    RequestEmptyPayload
+                )
+            )
+        )
+
+
+decodeServerIndex : ResponseDecoder
+decodeServerIndex rawMsg code =
+    -- Json.Encode.Value -> ResponseCode -> Response
+    -- TODO: add proper a decoder
+    case code of
+        _ ->
+            ResponseLogout (ResponseLogoutOk)
