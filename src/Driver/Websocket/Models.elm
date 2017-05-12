@@ -184,7 +184,7 @@ getTopicMsg topic =
             "account.create"
 
         TopicAccountLogout ->
-            "account.get"
+            "account.logout"
 
 
 getTopicChannel : RequestTopic -> Channel
