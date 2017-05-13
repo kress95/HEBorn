@@ -5,32 +5,33 @@ module Core.Models
         , initialModel
         )
 
-import Driver.Websocket.Models
-import Requests.Models
 import Router.Router exposing (Route)
-import Game.Models
-import OS.Models
-import Apps.Models
-import Landing.Models
+-- import Driver.Websocket.Models
+-- import Requests.Models
+-- import Game.Models
+-- import OS.Models
+-- import Apps.Models
+-- import Landing.Models
 
 
-type alias CoreModel =
-    { route : Route
-    , requests : Requests.Models.Model
-    , game : Game.Models.GameModel
-    , os : OS.Models.Model
-    , apps : Apps.Models.AppModel
-    , landing : Landing.Models.LandModel
-    , websocket : Driver.Websocket.Models.Model
-    , config : Config
-    }
+-- type alias CoreModel =
+--     { route : Route
+--     , requests : Requests.Models.Model
+--     , game : Game.Models.GameModel
+--     , os : OS.Models.Model
+--     , apps : Apps.Models.AppModel
+--     , landing : Landing.Models.LandModel
+--     , websocket : Driver.Websocket.Models.Model
+--     , config : Config
+--     }
 
 
-type alias Config =
-    { apiHttpUrl : String
-    , apiWsUrl : String
-    , version : String
-    }
+-- type alias Config =
+--     { apiHttpUrl : String
+--     , apiWsUrl : String
+--     , version : String
+--     }
+type alias CoreModel = String
 
 
 type alias Flags =
@@ -49,20 +50,21 @@ initialModel :
     -> String
     -> CoreModel
 initialModel route seedInt apiHttpUrl apiWsUrl version =
-    { route = route
-    , requests = Requests.Models.initialModel seedInt
-    , game = Game.Models.initialModel
-    , os = OS.Models.initialModel
-    , apps = Apps.Models.initialModel
-    , landing = Landing.Models.initialModel
-    , websocket = Driver.Websocket.Models.initialModel apiWsUrl
-    , config = generateConfig apiHttpUrl apiWsUrl version
-    }
+    ""
+--     { route = route
+--     , requests = Requests.Models.initialModel seedInt
+--     , game = Game.Models.initialModel
+--     , os = OS.Models.initialModel
+--     , apps = Apps.Models.initialModel
+--     , landing = Landing.Models.initialModel
+--     , websocket = Driver.Websocket.Models.initialModel apiWsUrl
+--     , config = generateConfig apiHttpUrl apiWsUrl version
+--     }
 
 
-generateConfig : String -> String -> String -> Config
-generateConfig apiHttpUrl apiWsUrl version =
-    Config
-        apiHttpUrl
-        apiWsUrl
-        version
+-- generateConfig : String -> String -> String -> Config
+-- generateConfig apiHttpUrl apiWsUrl version =
+--     Config
+--         apiHttpUrl
+--         apiWsUrl
+--         version

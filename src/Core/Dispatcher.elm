@@ -1,38 +1,40 @@
-module Core.Dispatcher
-    exposing
-        ( callWebsocket
-        , callAccount
-        , callNetwork
-        , callServer
-        , callFilesystem
-        , callMeta
-        , callWM
-        , callDock
-        , callExplorer
-        , callLogViewer
-        , callInstance
-        )
+module Core.Dispatcher exposing (..)
 
-import Core.Messages exposing (CoreMsg(MsgGame, MsgOS, MsgApp, MsgWebsocket))
-import Game.Messages exposing (GameMsg(..))
-import OS.Messages exposing (OSMsg(..))
-import Apps.Messages exposing (AppMsg(..))
-import Driver.Websocket.Messages as Websocket
-import Game.Meta.Messages as Meta
-import Game.Account.Messages as Account
-import Game.Network.Messages as Network
-import Game.Servers.Messages as Server
-import Game.Servers.Filesystem.Messages as Filesystem
-import OS.WindowManager.Messages as WM
-import OS.Dock.Messages as Dock
-import Apps.Explorer.Messages as Explorer
-import Game.Servers.Models exposing (ServerID)
-import Apps.LogViewer.Messages as LogViewer
-import OS.WindowManager.Windows exposing (GameWindow(..))
+type alias Example = Bool
+--     exposing
+--         ( callWebsocket
+--         , callAccount
+--         , callNetwork
+--         , callServer
+--         , callFilesystem
+--         , callMeta
+--         , callWM
+--         , callDock
+--         , callExplorer
+--         , callLogViewer
+--         , callInstance
+--         )
+
+-- import Core.Messages exposing (CoreMsg(MsgGame, MsgOS, MsgApp, MsgWebsocket))
+-- import Game.Messages exposing (GameMsg(..))
+-- import OS.Messages exposing (OSMsg(..))
+-- import Apps.Messages exposing (AppMsg(..))
+-- import Driver.Websocket.Messages as Websocket
+-- import Game.Meta.Messages as Meta
+-- import Game.Account.Messages as Account
+-- import Game.Network.Messages as Network
+-- import Game.Servers.Messages as Server
+-- import Game.Servers.Filesystem.Messages as Filesystem
+-- import OS.WindowManager.Messages as WM
+-- import OS.Dock.Messages as Dock
+-- import Apps.Explorer.Messages as Explorer
+-- import Game.Servers.Models exposing (ServerID)
+-- import Apps.LogViewer.Messages as LogViewer
+-- import OS.WindowManager.Windows exposing (GameWindow(..))
 
 
 -- Would love to do something like below, but I can't =(
---
+
 -- callGame =
 --     { account = MsgGame (MsgAccount)
 --     , network = MsgGame (MsgNetwork)
@@ -41,71 +43,71 @@ import OS.WindowManager.Windows exposing (GameWindow(..))
 --     }
 
 
-callGame : GameMsg -> CoreMsg
-callGame =
-    MsgGame
+-- callGame : GameMsg -> CoreMsg
+-- callGame =
+--     MsgGame
 
 
-callOS : OSMsg -> CoreMsg
-callOS =
-    MsgOS
+-- callOS : OSMsg -> CoreMsg
+-- callOS =
+--     MsgOS
 
 
-callApps : AppMsg -> CoreMsg
-callApps =
-    MsgApp
+-- callApps : AppMsg -> CoreMsg
+-- callApps =
+--     MsgApp
 
 
-callWebsocket : Websocket.Msg -> CoreMsg
-callWebsocket msg =
-    MsgWebsocket msg
+-- callWebsocket : Websocket.Msg -> CoreMsg
+-- callWebsocket msg =
+--     MsgWebsocket msg
 
 
-callAccount : Account.AccountMsg -> CoreMsg
-callAccount msg =
-    callGame (MsgAccount msg)
+-- callAccount : Account.AccountMsg -> CoreMsg
+-- callAccount msg =
+--     callGame (MsgAccount msg)
 
 
-callNetwork : Network.NetworkMsg -> CoreMsg
-callNetwork msg =
-    callGame (MsgNetwork msg)
+-- callNetwork : Network.NetworkMsg -> CoreMsg
+-- callNetwork msg =
+--     callGame (MsgNetwork msg)
 
 
-callServer : Server.ServerMsg -> CoreMsg
-callServer msg =
-    callGame (MsgServers msg)
+-- callServer : Server.ServerMsg -> CoreMsg
+-- callServer msg =
+--     callGame (MsgServers msg)
 
 
-callFilesystem : ServerID -> Filesystem.FilesystemMsg -> CoreMsg
-callFilesystem serverID msg =
-    callServer (Server.MsgFilesystem serverID msg)
+-- callFilesystem : ServerID -> Filesystem.FilesystemMsg -> CoreMsg
+-- callFilesystem serverID msg =
+--     callServer (Server.MsgFilesystem serverID msg)
 
 
-callMeta : Meta.MetaMsg -> CoreMsg
-callMeta msg =
-    callGame (MsgMeta msg)
+-- callMeta : Meta.MetaMsg -> CoreMsg
+-- callMeta msg =
+--     callGame (MsgMeta msg)
 
 
-callWM : WM.Msg -> CoreMsg
-callWM msg =
-    callOS (MsgWM msg)
+-- callWM : WM.Msg -> CoreMsg
+-- callWM msg =
+--     callOS (MsgWM msg)
 
 
-callDock : Dock.Msg -> CoreMsg
-callDock msg =
-    callOS (MsgDock msg)
+-- callDock : Dock.Msg -> CoreMsg
+-- callDock msg =
+--     callOS (MsgDock msg)
 
 
-callExplorer : Explorer.Msg -> CoreMsg
-callExplorer msg =
-    callApps (MsgExplorer msg)
+-- callExplorer : Explorer.Msg -> CoreMsg
+-- callExplorer msg =
+--     callApps (MsgExplorer msg)
 
 
-callLogViewer : LogViewer.Msg -> CoreMsg
-callLogViewer msg =
-    callApps (MsgLogViewer msg)
+-- callLogViewer : LogViewer.Msg -> CoreMsg
+-- callLogViewer msg =
+--     callApps (MsgLogViewer msg)
 
 
-callInstance : AppMsg -> CoreMsg
-callInstance msg =
-    callApps msg
+-- callInstance : AppMsg -> CoreMsg
+-- callInstance msg =
+--     callApps msg
