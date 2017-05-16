@@ -49,7 +49,7 @@ prepare:
 
 build: prepare
 	cat static/index.html > build/index.html
-	$(nodebin)/elm-css src/Core/Stylesheets.elm -o static/css
+	$(nodebin)/elm-css src/Stylesheets.elm -o static/css
 
 build-css: prepare
 	awk '/\<\/body/ \
@@ -58,7 +58,7 @@ build-css: prepare
 	    \<\/script\> \
 	  "}1' \
 	  static/index.html > build/index.html
-	$(nodebin)/elm-css src/Core/Stylesheets.elm -o static/css
+	$(nodebin)/elm-css src/Stylesheets.elm -o static/css
 
 release: build
 	npm run build
