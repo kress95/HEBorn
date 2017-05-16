@@ -3,9 +3,9 @@ module Main exposing (main)
 import Driver.Http as Http
 import Driver.Websocket as Ws
 import Utils.Core as Utils
-import UrlParser exposing (Parser, parseHash, oneOf, map, top, s)
 import Html exposing (Html, text)
 import Navigation exposing (Location, programWithFlags)
+import UrlParser exposing (Parser, parseHash, oneOf, map, top, s)
 
 
 type Placeholder
@@ -120,7 +120,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Utils.subscriptions model
-        [ .websocket >> Ws.subscriptions >> Sub.map WsMsg
+        [ ( .websocket >> Ws.subscriptions, WsMsg )
         ]
 
 

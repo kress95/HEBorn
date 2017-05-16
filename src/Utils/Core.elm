@@ -6,6 +6,6 @@ update wrapper fun ( model, msg ) =
     ( fun model, Cmd.map wrapper msg )
 
 
-subscriptions : a -> List (a -> Sub msg) -> Sub msg
+subscriptions : b -> List ( b -> Sub a, a -> msg ) -> Sub msg
 subscriptions model =
-    List.map (\fun -> fun model) >> Sub.batch
+    List.map (\( fun, msg ) -> model |> fun |> Sub.map msg) >> Sub.batch
