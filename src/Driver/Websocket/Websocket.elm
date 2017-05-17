@@ -8,8 +8,14 @@ import Requests.Models exposing (RequestID)
 import Core.Messages exposing (CoreMsg(MsgWebsocket))
 
 
-send : String -> String -> RequestID -> Json.Encode.Value -> Cmd CoreMsg
-send channel topic request_id payload =
+send :
+    String
+    -> String
+    -> String
+    -> RequestID
+    -> Json.Encode.Value
+    -> Cmd CoreMsg
+send url channel topic request_id payload =
     let
         message =
             Push.init channel topic
@@ -19,4 +25,4 @@ send channel topic request_id payload =
     in
         Cmd.map
             MsgWebsocket
-            (Phoenix.push "wss://api.hackerexperience.com/websocket" message)
+            (Phoenix.push url message)

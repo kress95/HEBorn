@@ -8,7 +8,7 @@ import Game.Models exposing (GameModel)
 import Game.Messages exposing (GameMsg)
 import Game.Account.Messages exposing (AccountMsg(..))
 import Game.Account.Models exposing (setToken, getToken, AccountModel)
-import Game.Account.Requests exposing (requestLogout)
+import Game.Account.Requests exposing (requestLogout, requestServerIndex)
 
 
 update : AccountMsg -> AccountModel -> GameModel -> ( AccountModel, Cmd GameMsg, List CoreMsg )
@@ -32,8 +32,20 @@ update msg model game =
             in
                 ( { model_ | id = Just account_id }, Cmd.none, coreCmd )
 
-        JoinedAccount _ ->
-            ( model, Cmd.none, [] )
+        JoinedAccount id ->
+            ( model, requestServerIndex id, [] )
+
+        ServerIndex list ->
+            let
+                serverID =
+                    list
+                        |> List.head
+                        |> Maybe.withDefault ""
+
+                coreCmd =
+                    [ callWebsocket (JoinChannel ("server:" ++ serverID)) ]
+            in
+                ( model, Cmd.none, coreCmd )
 
         Logout ->
             let

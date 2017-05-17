@@ -136,8 +136,18 @@ makeRequest core requestData component =
 
                         channelAddress =
                             getChannelAddress channel context
+
+                        f =
+                            Debug.log (toString message) ""
+
+                        g =
+                            Debug.log (toString channel) ""
+
+                        h =
+                            Debug.log (toString channelAddress) ""
                     in
                         Driver.Websocket.Websocket.send
+                            core.config.apiWsUrl
                             channelAddress
                             message
                             request_id
@@ -150,6 +160,9 @@ makeRequest core requestData component =
 
                         body =
                             httpPayloadToString payload_
+
+                        h =
+                            Debug.log (toString path) ""
                     in
                         Driver.Http.Http.send
                             core.config.apiHttpUrl

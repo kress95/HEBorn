@@ -33,6 +33,7 @@ module Requests.Models
         , ResponseForLogout(..)
         , ResponseForEventCool(..)
         , ResponseEventCoolPayload
+        , ResponseForServerIndex
         )
 
 import Dict
@@ -55,6 +56,7 @@ type Request
     | RequestSignUp
     | RequestLogin
     | RequestLogout
+    | RequestServerIndex
     | RequestInvalid
     | NewRequest NewRequestData
 
@@ -154,6 +156,7 @@ type Response
     | ResponseLogin ResponseForLogin
     | ResponseLogout ResponseForLogout
     | ResponseEventCool ResponseForEventCool
+    | ResponseServerIndex ResponseForServerIndex
     | ResponseEmpty
     | ResponseInvalid
 
@@ -228,6 +231,10 @@ type ResponseForLogout
     | ResponseLogoutInvalid
 
 
+type alias ResponseForServerIndex =
+    List String
+
+
 
 {- Responses for Events -}
 
@@ -295,6 +302,7 @@ type RequestTopic
     = TopicAccountLogin
     | TopicAccountCreate
     | TopicAccountLogout
+    | TopicAccountServerIndex
 
 
 getTopicDriver : RequestTopic -> RequestDriver
