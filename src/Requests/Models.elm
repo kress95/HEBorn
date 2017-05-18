@@ -57,6 +57,7 @@ type Request
     | RequestLogin
     | RequestLogout
     | RequestServerIndex
+    | RequestLogIndex
     | RequestInvalid
     | NewRequest NewRequestData
 
@@ -156,7 +157,10 @@ type Response
     | ResponseLogin ResponseForLogin
     | ResponseLogout ResponseForLogout
     | ResponseEventCool ResponseForEventCool
-    | ResponseServerIndex ResponseForServerIndex
+    | ResponseServersIndex ResponseForServerIndex
+    | ResponseServersIndexInvalid
+    | ResponseServersLogIndex ResponseForServerLogIndex
+    | ResponseServersLogIndexInvalid
     | ResponseEmpty
     | ResponseInvalid
 
@@ -232,7 +236,11 @@ type ResponseForLogout
 
 
 type alias ResponseForServerIndex =
-    List String
+    { entries : List String }
+
+
+type alias ResponseForServerLogIndex =
+    { entries : List { logID : String, message : String, timestamp : String } }
 
 
 
@@ -303,6 +311,7 @@ type RequestTopic
     | TopicAccountCreate
     | TopicAccountLogout
     | TopicAccountServerIndex
+    | TopicServersLogIndex
 
 
 getTopicDriver : RequestTopic -> RequestDriver
