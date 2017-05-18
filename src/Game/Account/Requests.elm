@@ -1,6 +1,5 @@
 module Game.Account.Requests exposing (..)
 
-import Dict
 import Json.Decode exposing (Decoder, string, decodeValue, dict, list)
 import Json.Decode.Pipeline exposing (decode, required, optional)
 import Requests.Models
@@ -16,7 +15,11 @@ import Requests.Models
         , TopicContext
         , ResponseDecoder
         , ResponseCode(..)
-        , Response(ResponseLogout, ResponseServerIndex, ResponseInvalid)
+        , Response
+            ( ResponseLogout
+            , ResponseServersIndex
+            , ResponseServersIndexInvalid
+            )
         , ResponseForLogout(..)
         )
 import Requests.Update exposing (queueRequest)
@@ -80,10 +83,6 @@ requestServerIndex accountID =
         )
 
 
-type alias ServerIndex =
-    { entries : List String }
-
-
 decodeServerIndex : Json.Decode.Value -> ResponseCode -> Response
 decodeServerIndex rawMsg code =
     let
@@ -91,28 +90,29 @@ decodeServerIndex rawMsg code =
             decode (\a -> { entries = a })
                 |> required "entries" (list string)
     in
-        rawMsg
-            |> decodeValue decoder
-            |> Result.andThen
-                (\{ entries } ->
-                    if List.length entries > 0 then
-                        Ok entries
-                    else
-                        Err ""
-                )
-            |> Result.andThen (ResponseServerIndex >> Ok)
-            |> Result.withDefault ResponseInvalid
+        case code of
+            _ ->
+                rawMsg
+                    |> decodeValue decoder
+                    |> Result.andThen (ResponseServersIndex >> Ok)
+                    |> Result.withDefault ResponseServersIndexInvalid
 
 
 requestServerIndexHandler : ResponseType
 requestServerIndexHandler response model =
     case response of
-        ResponseServerIndex response ->
+        ResponseServersIndex msg ->
             let
-                cmd =
-                    [ callAccount (Account.ServerIndex response) ]
+                { entries } =
+                    msg
+
+                cmds =
+                    if List.length entries > 0 then
+                        [ callAccount (Account.ServerIndex entries) ]
+                    else
+                        []
             in
-                ( model, Cmd.none, cmd )
+                ( model, Cmd.none, cmds )
 
         _ ->
             ( model, Cmd.none, [] )

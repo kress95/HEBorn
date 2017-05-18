@@ -190,6 +190,9 @@ getTopicMsg topic =
         TopicAccountServerIndex ->
             "server.index"
 
+        TopicServersLogIndex ->
+            "server.index"
+
 
 getTopicChannel : RequestTopic -> Channel
 getTopicChannel topic =
@@ -205,6 +208,9 @@ getTopicChannel topic =
 
         TopicAccountServerIndex ->
             ChannelAccount
+
+        TopicServersLogIndex ->
+            ChannelServer
 
 
 getChannelAddress : Channel -> TopicContext -> String
