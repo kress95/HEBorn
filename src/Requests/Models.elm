@@ -34,6 +34,8 @@ module Requests.Models
         , ResponseForEventCool(..)
         , ResponseEventCoolPayload
         , ResponseForServerIndex
+        , ResponseProcessIndex
+        , ResponseForProcessIndex
         )
 
 import Dict
@@ -58,6 +60,7 @@ type Request
     | RequestLogout
     | RequestServerIndex
     | RequestLogIndex
+    | RequestProcessIndex
     | RequestInvalid
     | NewRequest NewRequestData
 
@@ -161,6 +164,8 @@ type Response
     | ResponseServersIndexInvalid
     | ResponseServersLogIndex ResponseForServerLogIndex
     | ResponseServersLogIndexInvalid
+    | ResponseServersProcessIndex ResponseForProcessIndex
+    | ResponseServersProcessIndexInvalid
     | ResponseEmpty
     | ResponseInvalid
 
@@ -241,6 +246,14 @@ type alias ResponseForServerIndex =
 
 type alias ResponseForServerLogIndex =
     { entries : List { logID : String, message : String, timestamp : String } }
+
+
+type alias ResponseProcessIndex =
+    {}
+
+
+type alias ResponseForProcessIndex =
+    {}
 
 
 
