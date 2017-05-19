@@ -241,7 +241,7 @@ type ResponseForLogout
 
 
 type alias ResponseForServerIndex =
-    { entries : List String }
+    List String
 
 
 type alias ResponseForServerLogIndex =

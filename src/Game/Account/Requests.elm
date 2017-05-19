@@ -34,6 +34,15 @@ import Core.Dispatcher exposing (..)
 import Game.Account.Messages as Account
 
 
+type alias ServerItem =
+    { serverID : String
+    , serverType : String
+    , password : String
+    , hardware : Maybe String
+    , ipList : List String
+    }
+
+
 requestLogout : TopicContext -> Token -> Cmd GameMsg
 requestLogout accountId token =
     queueRequest
@@ -87,13 +96,17 @@ decodeServerIndex : Json.Decode.Value -> ResponseCode -> Response
 decodeServerIndex rawMsg code =
     let
         decoder =
-            decode (\a -> { entries = a })
-                |> required "entries" (list string)
+            decode ServerItem
+                |> required "server_id" string
+                |> required "server_type" string
+                |> required "password" string
+                |> optional "hardware" string
+                |> required "ips" (list string)
     in
         case code of
             _ ->
                 rawMsg
-                    |> decodeValue decoder
+                    |> decodeValue (list decoder)
                     |> Result.andThen (ResponseServersIndex >> Ok)
                     |> Result.withDefault ResponseServersIndexInvalid
 

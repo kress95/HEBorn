@@ -10,3 +10,4 @@ type ServerMsg
     = MsgFilesystem ServerID FilesystemMsg
     | MsgLog ServerID LogMsg
     | MsgProcess ServerID ProcessMsg
+    | JoinedServer ServerID

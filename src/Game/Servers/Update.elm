@@ -66,3 +66,10 @@ update msg model game =
 
                 NoServer ->
                     ( model, Cmd.none, [] )
+
+        JoinedServer serverID ->
+            let
+                coreCmd =
+                    []
+            in
+                ( model, Cmd.none, coreCmd )
