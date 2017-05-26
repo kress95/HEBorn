@@ -4,7 +4,7 @@ import Core.Models exposing (CoreModel)
 import OS.Models exposing (Model)
 import OS.Messages exposing (OSMsg(MsgWM, ContextMenuMsg))
 import OS.Menu.Subscriptions as OSMenu
-import OS.WindowManager.Subscriptions as WindowManager
+import OS.SessionManager.WindowManager.Subscriptions as WindowManager
 
 
 subscriptions : Model -> CoreModel -> Sub OSMsg

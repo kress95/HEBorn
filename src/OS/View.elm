@@ -7,7 +7,7 @@ import Router.Router exposing (Route(..))
 import Core.Models exposing (CoreModel)
 import Core.Messages exposing (CoreMsg(..))
 import OS.Style as Css
-import OS.WindowManager.View
+import OS.SessionManager.WindowManager.View
 import OS.Header.View
 import OS.Dock.View
 import OS.Menu.View exposing (menuView, menuEmpty)
@@ -48,7 +48,7 @@ viewHeader model =
 
 viewMain : CoreModel -> Html CoreMsg
 viewMain model =
-    main_ [] (OS.WindowManager.View.renderWindows model)
+    main_ [] (OS.SessionManager.WindowManager.View.renderWindows model)
 
 
 viewFooter : CoreModel -> Html CoreMsg

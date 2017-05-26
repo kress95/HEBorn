@@ -8,9 +8,9 @@ import Utils exposing (andThenWithDefault)
 import Core.Messages exposing (CoreMsg(..))
 import Core.Models exposing (CoreModel)
 import OS.Messages exposing (OSMsg(..))
-import OS.WindowManager.Messages exposing (Msg(..))
-import OS.WindowManager.Models exposing (getWindow, WindowID)
-import OS.WindowManager.View exposing (windowTitle)
+import OS.SessionManager.WindowManager.Messages exposing (Msg(..))
+import OS.SessionManager.WindowManager.Models exposing (getWindow, WindowID)
+import OS.SessionManager.WindowManager.View exposing (windowTitle)
 import OS.Dock.Style as Css
 import Apps.Models as Apps
 import OS.Dock.Models

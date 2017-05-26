@@ -4,7 +4,7 @@ import Core.Models exposing (CoreModel)
 import Core.Messages exposing (CoreMsg)
 import OS.Messages exposing (OSMsg(..))
 import OS.Models exposing (Model)
-import OS.WindowManager.Update
+import OS.SessionManager.WindowManager.Update
 import OS.Dock.Update
 import OS.Menu.Messages as MsgMenu
 import OS.Menu.Update
@@ -17,7 +17,7 @@ update msg model core =
         MsgWM subMsg ->
             let
                 ( wm_, cmd, coreMsg ) =
-                    OS.WindowManager.Update.update subMsg core model.wm
+                    OS.SessionManager.WindowManager.Update.update subMsg core model.wm
             in
                 ( { model | wm = wm_ }, cmd, coreMsg )
 

@@ -8,7 +8,7 @@ module OS.Dock.Models
         )
 
 import Dict
-import OS.WindowManager.Models exposing (Windows, WindowID, WindowState(..), filterAppWindows)
+import OS.SessionManager.WindowManager.Models exposing (Windows, WindowID, WindowState(..), filterAppWindows)
 import Apps.Models as Apps
 
 

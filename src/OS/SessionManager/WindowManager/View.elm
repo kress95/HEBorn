@@ -1,4 +1,4 @@
-module OS.WindowManager.View exposing (renderWindows, windowTitle)
+module OS.SessionManager.WindowManager.View exposing (renderWindows, windowTitle)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, id, style)
@@ -11,7 +11,7 @@ import Core.Messages exposing (CoreMsg(..))
 import Core.Models exposing (CoreModel)
 import Core.Dispatcher exposing (callWM)
 import OS.Messages exposing (OSMsg(..))
-import OS.WindowManager.Models
+import OS.SessionManager.WindowManager.Models
     exposing
         ( Window
         , WindowID
@@ -19,9 +19,9 @@ import OS.WindowManager.Models
         , filterOpenedWindows
         , getAppModel
         )
-import OS.WindowManager.Context as Context
-import OS.WindowManager.Messages exposing (Msg(..))
-import OS.WindowManager.Style as Css
+import OS.SessionManager.WindowManager.Context as Context
+import OS.SessionManager.WindowManager.Messages exposing (Msg(..))
+import OS.SessionManager.WindowManager.Style as Css
 import Apps.Models as Apps
 import Apps.View as Apps
 

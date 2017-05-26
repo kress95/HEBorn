@@ -1,10 +1,10 @@
-module OS.WindowManager.Subscriptions exposing (subscriptions)
+module OS.SessionManager.WindowManager.Subscriptions exposing (subscriptions)
 
 import Draggable
 import Dict
 import Core.Models exposing (CoreModel)
-import OS.WindowManager.Messages exposing (Msg(..))
-import OS.WindowManager.Models exposing (..)
+import OS.SessionManager.WindowManager.Messages exposing (Msg(..))
+import OS.SessionManager.WindowManager.Models exposing (..)
 import Apps.Subscriptions as Apps
 
 
@@ -24,8 +24,8 @@ appSubcriptions core model =
         |> List.map
             (\( windowID, window ) ->
                 window
-                |> getAppModel
-                |> Apps.subscriptions core.game
-                |> Sub.map (WindowMsg windowID)
+                    |> getAppModel
+                    |> Apps.subscriptions core.game
+                    |> Sub.map (WindowMsg windowID)
             )
         |> Sub.batch

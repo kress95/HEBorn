@@ -1,4 +1,4 @@
-module OS.WindowManager.Update exposing (..)
+module OS.SessionManager.WindowManager.Update exposing (..)
 
 import Draggable
 import Draggable.Events exposing (onDragBy, onDragStart)
@@ -9,7 +9,7 @@ import Core.Models exposing (CoreModel)
 import Apps.Update as Apps
 import Apps.Messages as Apps
 import OS.Messages exposing (OSMsg(MsgWM))
-import OS.WindowManager.Models
+import OS.SessionManager.WindowManager.Models
     exposing
         ( Model
         , WindowID
@@ -31,7 +31,7 @@ import OS.WindowManager.Models
         , startDragging
         , stopDragging
         )
-import OS.WindowManager.Messages exposing (Msg(..))
+import OS.SessionManager.WindowManager.Messages exposing (Msg(..))
 import OS.Dock.Messages as DockMsg
 
 
@@ -142,6 +142,9 @@ update msg core model =
                         |> Cmd.map MsgWM
             in
                 ( model_, cmd_, msgs )
+
+        AppMsg _ ->
+            ( model, Cmd.none, [] )
 
 
 
