@@ -10,7 +10,7 @@ import Core.Messages exposing (CoreMsg(..), eventBinds, getRequestMsg)
 import Core.Models exposing (CoreModel)
 import Core.Components exposing (Component(..))
 import OS.Messages
-import OS.Update
+import OS.Update as OS
 import Game.Update
 import Game.Messages
 import Apps.Messages
@@ -43,12 +43,15 @@ update msg model =
         MsgOS (OS.Messages.Request (NewRequest requestData)) ->
             makeRequest model requestData ComponentOS
 
-        MsgOS subMsg ->
+        MsgOS msg ->
             let
-                ( os_, cmd, coreMsg ) =
-                    OS.Update.update subMsg model.os model
+                ( os, cmd, coreMsg ) =
+                    OS.update msg model.game model.os
+                
+                model_ =
+                    { model | os = os }
             in
-                ( { model | os = os_ }, Cmd.map MsgOS cmd )
+                (model_, Cmd.map MsgOS cmd )
                     |> Update.addCmd (batchMsgs coreMsg)
 
         -- Landing

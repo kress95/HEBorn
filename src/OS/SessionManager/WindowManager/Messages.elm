@@ -1,20 +1,12 @@
-module OS.WindowManager.Messages exposing (..)
+module OS.SessionManager.WindowManager.Messages exposing (..)
 
 import Draggable
-import OS.WindowManager.Models exposing (WindowID, Position)
-import Apps.Models as Apps
+import OS.SessionManager.WindowManager.Models exposing (WindowID)
 import Apps.Messages as Apps
 
 
-type
-    Msg
-    -- SPECIFIC APP
-    = OpenOrRestore Apps.App
-    | Open Apps.App
-    | MinimizeAll Apps.App
-    | CloseAll Apps.App
-    | WindowMsg WindowID Apps.AppMsg
-      -- SPECIFIC WINDOW
+type Msg
+    = WindowMsg WindowID Apps.AppMsg
     | Close WindowID
     | ToggleMaximize WindowID
     | Minimize WindowID
