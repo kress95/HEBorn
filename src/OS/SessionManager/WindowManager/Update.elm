@@ -3,12 +3,10 @@ module OS.SessionManager.WindowManager.Update exposing (..)
 import Draggable
 import Draggable.Events exposing (onDragBy, onDragStart)
 import Game.Models exposing (GameModel)
-import Core.Messages exposing (CoreMsg(NoOp))
-import Core.Dispatcher exposing (callDock)
+import Core.Messages exposing (CoreMsg)
 import Core.Models exposing (CoreModel)
 import Apps.Update as Apps
 import Apps.Messages as Apps
-import OS.Messages exposing (OSMsg(MsgWM))
 import OS.SessionManager.WindowManager.Models
     exposing
         ( Model
@@ -32,116 +30,118 @@ import OS.SessionManager.WindowManager.Models
         , stopDragging
         )
 import OS.SessionManager.WindowManager.Messages exposing (Msg(..))
-import OS.Dock.Messages as DockMsg
 
 
-update : Msg -> CoreModel -> Model -> ( Model, Cmd OSMsg, List CoreMsg )
+-- TODO: refactor this to receive just messages pertaining to decorations
+-- NOTES: Dock refreshing is not so needed nowdays, as the dock lost its model
+
 update msg core model =
-    case msg of
-        Open app ->
-            model
-                |> openWindow app
-                |> wrapEmpty
-                |> refreshDock
+    (model, Cmd.none, [])
+    -- case msg of
+    --     Open app ->
+    --         model
+    --             |> openWindow app
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        OpenOrRestore app ->
-            model
-                |> openOrRestoreWindow app
-                |> wrapEmpty
-                |> refreshDock
+    --     OpenOrRestore app ->
+    --         model
+    --             |> openOrRestoreWindow app
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        Close windowID ->
-            model
-                |> closeWindow windowID
-                |> unfocusWindow
-                |> wrapEmpty
-                |> refreshDock
+    --     Close windowID ->
+    --         model
+    --             |> closeWindow windowID
+    --             |> unfocusWindow
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        CloseAll app ->
-            model
-                |> closeAppWindows app
-                |> unfocusWindow
-                |> wrapEmpty
-                |> refreshDock
+    --     CloseAll app ->
+    --         model
+    --             |> closeAppWindows app
+    --             |> unfocusWindow
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        Restore windowID ->
-            model
-                |> restoreWindow windowID
-                |> focusWindow windowID
-                |> wrapEmpty
-                |> refreshDock
+    --     Restore windowID ->
+    --         model
+    --             |> restoreWindow windowID
+    --             |> focusWindow windowID
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        ToggleMaximize windowID ->
-            model
-                |> toggleWindowMaximization windowID
-                |> unfocusWindow
-                |> focusWindow windowID
-                |> wrapEmpty
+    --     ToggleMaximize windowID ->
+    --         model
+    --             |> toggleWindowMaximization windowID
+    --             |> unfocusWindow
+    --             |> focusWindow windowID
+    --             |> wrapEmpty
 
-        Minimize windowID ->
-            model
-                |> minimizeWindow windowID
-                |> unfocusWindow
-                |> wrapEmpty
-                |> refreshDock
+    --     Minimize windowID ->
+    --         model
+    --             |> minimizeWindow windowID
+    --             |> unfocusWindow
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        MinimizeAll app ->
-            model
-                |> minimizeAppWindows app
-                |> unfocusWindow
-                |> wrapEmpty
-                |> refreshDock
+    --     MinimizeAll app ->
+    --         model
+    --             |> minimizeAppWindows app
+    --             |> unfocusWindow
+    --             |> wrapEmpty
+    --             |> refreshDock
 
-        UpdateFocusTo maybeWindowID ->
-            case maybeWindowID of
-                Just windowID ->
-                    model
-                        |> focusWindow windowID
-                        |> wrapEmpty
+    --     UpdateFocusTo maybeWindowID ->
+    --         case maybeWindowID of
+    --             Just windowID ->
+    --                 model
+    --                     |> focusWindow windowID
+    --                     |> wrapEmpty
 
-                Nothing ->
-                    model
-                        |> unfocusWindow
-                        |> wrapEmpty
+    --             Nothing ->
+    --                 model
+    --                     |> unfocusWindow
+    --                     |> wrapEmpty
 
-        SwitchContext windowID ->
-            model
-                |> toggleWindowContext windowID
-                |> wrapEmpty
+    --     SwitchContext windowID ->
+    --         model
+    --             |> toggleWindowContext windowID
+    --             |> wrapEmpty
 
-        OnDragBy delta ->
-            model
-                |> updateWindowPosition delta
-                |> wrapEmpty
+    --     OnDragBy delta ->
+    --         model
+    --             |> updateWindowPosition delta
+    --             |> wrapEmpty
 
-        DragMsg dragMsg ->
-            let
-                ( model_, cmd ) =
-                    Draggable.update dragConfig dragMsg model
-            in
-                ( model_, Cmd.map MsgWM cmd, [] )
+    --     DragMsg dragMsg ->
+    --         let
+    --             ( model_, cmd ) =
+    --                 Draggable.update dragConfig dragMsg model
+    --         in
+    --             ( model_, Cmd.map MsgWM cmd, [] )
 
-        StartDragging windowID ->
-            model
-                |> startDragging windowID
-                |> wrapEmpty
+    --     StartDragging windowID ->
+    --         model
+    --             |> startDragging windowID
+    --             |> wrapEmpty
 
-        StopDragging ->
-            model
-                |> stopDragging
-                |> wrapEmpty
+    --     StopDragging ->
+    --         model
+    --             |> stopDragging
+    --             |> wrapEmpty
 
-        WindowMsg windowID msg ->
-            let
-                ( model_, cmd, msgs ) =
-                    updateApp core.game windowID msg model
+    --     WindowMsg windowID msg ->
+    --         let
+    --             ( model_, cmd, msgs ) =
+    --                 updateApp core.game windowID msg model
 
-                cmd_ =
-                    cmd
-                        |> Cmd.map (WindowMsg windowID)
-                        |> Cmd.map MsgWM
-            in
-                ( model_, cmd_, msgs )
+    --             cmd_ =
+    --                 cmd
+    --                     |> Cmd.map (WindowMsg windowID)
+    --                     |> Cmd.map MsgWM
+    --         in
+    --             ( model_, cmd_, msgs )
 
         AppMsg _ ->
             ( model, Cmd.none, [] )
@@ -173,14 +173,14 @@ updateApp game windowID msg model =
             ( model, Cmd.none, [] )
 
 
-wrapEmpty : Model -> ( Model, Cmd OSMsg, List CoreMsg )
-wrapEmpty model =
-    ( model, Cmd.none, [] )
+-- wrapEmpty : Model -> ( Model, Cmd OSMsg, List CoreMsg )
+-- wrapEmpty model =
+    -- ( model, Cmd.none, [] )
 
 
-refreshDock : ( Model, Cmd OSMsg, List CoreMsg ) -> ( Model, Cmd OSMsg, List CoreMsg )
-refreshDock ( { windows } as model, cmd, msgs ) =
-    ( model, cmd, callDock (DockMsg.WindowsChanges windows) :: msgs )
+-- refreshDock : ( Model, Cmd OSMsg, List CoreMsg ) -> ( Model, Cmd OSMsg, List CoreMsg )
+-- refreshDock ( { windows } as model, cmd, msgs ) =
+--     ( model, cmd, callDock (DockMsg.WindowsChanges windows) :: msgs )
 
 
 dragConfig : Draggable.Config WindowID Msg

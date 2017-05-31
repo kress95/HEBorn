@@ -113,10 +113,10 @@ initialWindows =
     Dict.empty
 
 
-initialModel : Model
-initialModel =
+initialModel : Seed -> Model
+initialModel seed =
     { windows = initialWindows
-    , seed = initialSeed 42
+    , seed = seed
     , drag = Draggable.init
     , dragging = Nothing
     , focus = Nothing

@@ -1,0 +1,13 @@
+module OS.SessionManager.Dock.Messages exposing (Msg(..))
+
+import Apps.Models exposing (App)
+import OS.SessionManager.WindowManager.Models exposing (WindowID)
+
+type Msg
+    = OpenApp App
+    | MinimizeApps App
+    | RestoreApps App
+    | CloseApps App
+    | MinimizeWindow WindowID
+    | RestoreWindow WindowID
+    | CloseWindow WindowID

@@ -25,7 +25,7 @@ menuView model =
         (menuViewCreator
             ContextMenuMsg
             model
-            model.context
+            model.menu
             MenuMsg
             menu
         )

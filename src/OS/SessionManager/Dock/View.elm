@@ -1,5 +1,8 @@
-module OS.Dock.View exposing (view)
+module OS.SessionManager.Dock.View exposing (view)
 
+import OS.SessionManager.Dock.Messages exposing (..)
+import OS.SessionManager.Models as SessionManager exposing (WindowRef)
+import Dict exposing (Dict)
 import Html exposing (Html, div, text, button, ul, li, hr)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (attribute)
@@ -8,21 +11,41 @@ import Utils exposing (andThenWithDefault)
 import Core.Messages exposing (CoreMsg(..))
 import Core.Models exposing (CoreModel)
 import OS.Messages exposing (OSMsg(..))
-import OS.SessionManager.WindowManager.Messages exposing (Msg(..))
-import OS.SessionManager.WindowManager.Models exposing (getWindow, WindowID)
-import OS.SessionManager.WindowManager.View exposing (windowTitle)
-import OS.Dock.Style as Css
+import OS.SessionManager.WindowManager.Messages as WindowManager
+import OS.SessionManager.WindowManager.Models as WindowManager
+-- import OS.SessionManager.WindowManager.View exposing (windowTitle)
+-- import OS.Dock.Style as Css
 import Apps.Models as Apps
-import OS.Dock.Models
-    exposing
-        ( Application
-        , getApplications
-        )
+import Game.Models exposing (GameModel)
 
 
 { id, class, classList } =
     Html.CssHelpers.withNamespace "dock"
 
+
+type alias Applications =
+    List ( Apps.App, List WindowRef )
+
+
+view : GameModel -> SessionManager.Model -> Html Msg
+view game model =
+    renderApplications game model
+
+
+renderApplications : GameModel -> SessionManager.Model -> Html Msg
+renderApplications game model =
+    div [] []
+
+
+getApplications : GameModel -> SessionManager.Model -> Applications
+getApplications game model =
+    -- This function should create an app list from the current
+    -- server "list of apps" and also from session windows
+    [ ( Apps.LogViewerApp, [ ( "", "" ) ] ) ]
+
+
+
+{--
 
 view : CoreModel -> Html CoreMsg
 view model =
@@ -137,3 +160,4 @@ renderApplication model application =
                     []
                )
         )
+--}
