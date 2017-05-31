@@ -31,7 +31,7 @@ view model =
         ]
         [ viewHeader model.game model.os
         , viewMain model.game model.os
-        , viewFooter model
+        , displayVersion model.config.version
         , menuView model.os
         ]
 
@@ -48,13 +48,6 @@ viewMain game model =
         |> SessionManager.view game
         |> Html.map SessionManagerMsg
         |> Html.map MsgOS
-
-
-viewFooter : CoreModel -> Html CoreMsg
-viewFooter model =
-    footer []
-        [ displayVersion model.config.version
-        ]
 
 
 displayVersion : String -> Html CoreMsg

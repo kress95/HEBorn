@@ -5,10 +5,7 @@ import Core.Style as Core
 import OS.Style as OS
 import OS.SessionManager.WindowManager.Style as WindowManager
 import OS.SessionManager.Dock.Style as Dock
-
-
--- import Apps.Explorer.Style
-
+import Apps.Explorer.Style
 import Apps.LogViewer.Style
 import Apps.Browser.Style
 import Apps.TaskManager.Style
@@ -26,8 +23,7 @@ fileStructure =
                 , OS.css
                 , WindowManager.css
                 , Dock.css
-
-                -- , Apps.Explorer.Style.css
+                , Apps.Explorer.Style.css
                 , Apps.LogViewer.Style.css
                 , Apps.Browser.Style.css
                 , Apps.TaskManager.Style.css

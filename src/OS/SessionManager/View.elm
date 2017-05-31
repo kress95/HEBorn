@@ -37,8 +37,9 @@ wm game model =
     in
         div [] html
 
-windowRefReducer
-    : GameModel
+
+windowRefReducer :
+    GameModel
     -> Model
     -> WindowRef
     -> List (Html Msg)
@@ -47,8 +48,8 @@ windowRefReducer game model ( wmID, id ) xs =
     case getWindowManager wmID model of
         Just wm ->
             wm
-                |> WindowManager.renderWindow id game
-                |> Html.map (WindowManagerMsg wmID)
+                |> WindowManager.view id game
+                |> Html.map WindowManagerMsg
                 |> flip (::) xs
 
         Nothing ->

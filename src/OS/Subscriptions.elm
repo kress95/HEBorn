@@ -11,7 +11,7 @@ import OS.SessionManager.Subscriptions as SessionManager
 
 {-| TODO: change signature to GameModel -> Model -> Sub Msg
 -}
-subscriptions : GameModel ->  Model ->Sub OSMsg
+subscriptions : GameModel -> Model -> Sub OSMsg
 subscriptions game model =
     let
         menuSub =

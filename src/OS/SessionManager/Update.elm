@@ -20,13 +20,14 @@ update msg game model =
             model
                 |> windowManager msg game
                 |> defaultNone model
-        
+
         DockMsg msg ->
-            -- dock update is just a delegate
-            ( Dock.update msg model, Cmd.none, [])
+            ( Dock.update msg model, Cmd.none, [] )
+
 
 
 -- internals
+
 
 windowManager :
     WindowManager.Msg
@@ -60,4 +61,3 @@ map :
     -> ( Model, Cmd Msg, List CoreMsg )
 map mapModel mapMsg ( model, msg, cmds ) =
     ( mapModel model, Cmd.map mapMsg msg, cmds )
-

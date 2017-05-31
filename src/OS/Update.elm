@@ -7,13 +7,17 @@ import Core.Messages exposing (CoreMsg)
 import OS.Menu.Messages as Menu
 import OS.Menu.Update as Menu
 import OS.Menu.Actions as MenuActions
+import OS.SessionManager.Update as SessionManager
+import OS.SessionManager.Messages as SessionManager
 
 
-update : OSMsg -> GameModel-> Model -> ( Model, Cmd OSMsg, List CoreMsg )
+update : OSMsg -> GameModel -> Model -> ( Model, Cmd OSMsg, List CoreMsg )
 update msg game model =
     case msg of
         SessionManagerMsg msg ->
-            ( model, Cmd.none, [] )
+            model
+                |> sessionManager msg game
+                |> map (\m -> { model | session = m }) SessionManagerMsg
 
         ContextMenuMsg (Menu.MenuClick action) ->
             MenuActions.actionHandler action model game
@@ -36,3 +40,20 @@ update msg game model =
 
         Response _ _ ->
             ( model, Cmd.none, [] )
+
+
+
+-- internals
+
+
+sessionManager msg game model =
+    SessionManager.update msg game model.session
+
+
+map :
+    (model -> Model)
+    -> (msg -> OSMsg)
+    -> ( model, Cmd msg, List CoreMsg )
+    -> ( Model, Cmd OSMsg, List CoreMsg )
+map mapModel mapMsg ( model, msg, cmds ) =
+    ( mapModel model, Cmd.map mapMsg msg, cmds )

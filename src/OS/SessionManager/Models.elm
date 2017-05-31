@@ -53,12 +53,9 @@ type alias Model =
 
 initialModel : GameModel -> Model
 initialModel game =
+    -- TODO: fetch this from game
     empty
-
-
-
--- TODO: remove me, change my signature to accept the server id instead
--- |> insert "example-server"
+        |> insert "dummy"
 
 
 insert : ServerID -> Model -> Model
@@ -182,6 +179,7 @@ setWindow ( session, id ) window ({ sessions } as model) =
 
 
 -- TODO: evaluate if this is needed
+
 
 windows : Model -> List ( ServerID, WindowID )
 windows ({ active } as model) =

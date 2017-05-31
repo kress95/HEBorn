@@ -47,11 +47,11 @@ update msg model =
             let
                 ( os, cmd, coreMsg ) =
                     OS.update msg model.game model.os
-                
+
                 model_ =
                     { model | os = os }
             in
-                (model_, Cmd.map MsgOS cmd )
+                ( model_, Cmd.map MsgOS cmd )
                     |> Update.addCmd (batchMsgs coreMsg)
 
         -- Landing

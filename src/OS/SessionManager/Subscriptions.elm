@@ -13,13 +13,10 @@ import Game.Models exposing (GameModel)
 subscriptions : GameModel -> Model -> Sub Msg
 subscriptions game model =
     let
-        wmID =
-            unsafeGetActive model
-
         windowManagerSub =
             model
                 |> current
-                |> Maybe.map (windowManager wmID game)
+                |> Maybe.map (windowManager game)
                 |> defaultNone
     in
         Sub.batch [ windowManagerSub ]
@@ -29,11 +26,11 @@ subscriptions game model =
 -- internals
 
 
-windowManager : ServerID -> GameModel -> WindowManager.Model -> Sub Msg
-windowManager id game model =
+windowManager : GameModel -> WindowManager.Model -> Sub Msg
+windowManager game model =
     model
         |> WindowManager.subscriptions game
-        |> Sub.map (WindowManagerMsg id)
+        |> Sub.map WindowManagerMsg
 
 
 defaultNone : Maybe (Sub Msg) -> Sub Msg
