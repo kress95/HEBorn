@@ -2,8 +2,10 @@ module Driver.Http.Http exposing (..)
 
 import Http
 import Driver.Http.Models exposing (decodeMsg)
-import Requests.Models exposing (RequestID)
 import Core.Messages exposing (CoreMsg)
+
+type alias RequestID = String
+
 
 
 send : String -> String -> RequestID -> String -> Cmd CoreMsg

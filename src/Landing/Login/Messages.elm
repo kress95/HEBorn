@@ -1,7 +1,7 @@
 module Landing.Login.Messages exposing (..)
 
-import Events.Models
-import Requests.Models
+-- import Events.Models
+-- import Requests.Models
 
 
 type Msg
@@ -10,6 +10,6 @@ type Msg
     | ValidateUsername
     | SetPassword String
     | ValidatePassword
-    | Event Events.Models.Event
-    | Request Requests.Models.Request
-    | Response Requests.Models.Request Requests.Models.Response
+    -- | Event Events.Models.Event
+    -- | Request Requests.Models.Request
+    -- | Response Requests.Models.Request Requests.Models.Response

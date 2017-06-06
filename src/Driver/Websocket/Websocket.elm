@@ -4,8 +4,9 @@ import Json.Encode
 import Phoenix
 import Phoenix.Push as Push
 import Driver.Websocket.Messages exposing (Msg(NewReply))
-import Requests.Models exposing (RequestID)
 import Core.Messages exposing (CoreMsg(MsgWebsocket))
+
+type alias RequestID = String
 
 
 send : String -> String -> RequestID -> Json.Encode.Value -> Cmd CoreMsg

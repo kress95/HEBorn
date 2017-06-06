@@ -2,11 +2,11 @@ module Core.Update exposing (update)
 
 import Update.Extra as Update
 import Utils
-import Requests.Models exposing (Request(RequestInvalid, NewRequest), getResponseCode)
-import Requests.Update exposing (getRequestData, makeRequest, removeRequestId)
-import Events.Models exposing (Event(EventUnknown))
+-- import Requests.Models exposing (Request(RequestInvalid, NewRequest), getResponseCode)
+-- import Requests.Update exposing (getRequestData, makeRequest, removeRequestId)
+-- import Events.Models exposing (Event(EventUnknown))
 import Router.Router exposing (parseLocation)
-import Core.Messages exposing (CoreMsg(..), eventBinds, getRequestMsg)
+import Core.Messages exposing (CoreMsg(..))
 import Core.Models exposing (CoreModel)
 import Core.Components exposing (Component(..))
 import OS.Messages
@@ -15,7 +15,7 @@ import Game.Update
 import Game.Messages
 import Landing.Messages
 import Landing.Update
-import Driver.Websocket.Update
+-- import Driver.Websocket.Update
 
 
 logMsg : a -> a
@@ -27,8 +27,8 @@ update : CoreMsg -> CoreModel -> ( CoreModel, Cmd CoreMsg )
 update msg model =
     case (logMsg msg) of
         -- Game
-        MsgGame (Game.Messages.Request (NewRequest requestData)) ->
-            makeRequest model requestData ComponentGame
+        -- MsgGame (Game.Messages.Request t data) ->
+        --     makeRequest model t data
 
         MsgGame subMsg ->
             let
@@ -39,8 +39,8 @@ update msg model =
                     |> Update.addCmd (batchMsgs coreMsg)
 
         -- OS
-        MsgOS (OS.Messages.Request (NewRequest requestData)) ->
-            makeRequest model requestData ComponentOS
+        -- MsgOS (OS.Messages.Request (NewRequest requestData)) ->
+        --     makeRequest model requestData ComponentOS
 
         MsgOS msg ->
             let
@@ -54,8 +54,8 @@ update msg model =
                     |> Update.addCmd (batchMsgs coreMsg)
 
         -- Landing
-        MsgLand (Landing.Messages.Request (NewRequest requestData) component) ->
-            makeRequest model requestData component
+        -- MsgLand (Landing.Messages.Request (NewRequest requestData) component) ->
+        --     makeRequest model requestData component
 
         MsgLand subMsg ->
             let
@@ -66,13 +66,13 @@ update msg model =
                     |> Update.addCmd (batchMsgs coreMsg)
 
         -- Channel
-        MsgWebsocket subMsg ->
-            let
-                ( websocket_, cmd, coreMsg ) =
-                    Driver.Websocket.Update.update subMsg model.websocket model
-            in
-                ( { model | websocket = websocket_ }, Cmd.map MsgWebsocket cmd )
-                    |> Update.addCmd (batchMsgs coreMsg)
+        -- MsgWebsocket subMsg ->
+        --     let
+        --         ( websocket_, cmd, coreMsg ) =
+        --             Driver.Websocket.Update.update subMsg model.websocket model
+        --     in
+        --         ( { model | websocket = websocket_ }, Cmd.map MsgWebsocket cmd )
+        --             |> Update.addCmd (batchMsgs coreMsg)
 
         -- Router
         OnLocationChange location ->
@@ -89,32 +89,32 @@ update msg model =
            to all components, and it's up to each component to decide what
            to do with it.
         -}
-        DispatchEvent EventUnknown ->
-            Debug.log "received event is unknown"
-                ( model, Cmd.none )
+        -- DispatchEvent EventUnknown ->
+        --     Debug.log "received event is unknown"
+        --         ( model, Cmd.none )
 
-        DispatchEvent event ->
-            Debug.log "eventoo"
-                model
-                ! []
+        -- DispatchEvent event ->
+        --     Debug.log "eventoo"
+        --         model
+        --         ! []
 
         -- |> Update.andThen update (MsgGame (eventBinds.game event))
         -- |> Update.andThen update (MsgSignUp (eventBinds.signUp event))
         -- |> Update.andThen update (MsgLogin (eventBinds.login event))
         -- Responses
-        NewResponse ( requestId, code, body ) ->
-            let
-                requestData =
-                    getRequestData model.requests requestId
+        -- NewResponse ( requestId, code, body ) ->
+        --     let
+        --         requestData =
+        --             getRequestData model.requests requestId
 
-                requests_ =
-                    removeRequestId model.requests requestId
+        --         requests_ =
+        --             removeRequestId model.requests requestId
 
-                model_ =
-                    { model | requests = requests_ }
-            in
-                update (DispatchResponse requestData ( code, body ))
-                    model_
+        --         model_ =
+        --             { model | requests = requests_ }
+        --     in
+        --         update (DispatchResponse requestData ( code, body ))
+        --             model_
 
         {-
            DispatchResponse is triggered when the client sends a message to
@@ -124,23 +124,23 @@ update msg model =
            request. Notice how this is totally different from DispatchEvent,
            which will broadcast the message to ALL components.
         -}
-        DispatchResponse ( _, RequestInvalid, _ ) _ ->
-            Debug.log "received reply never was requested"
-                ( model, Cmd.none )
+        -- DispatchResponse ( _, RequestInvalid, _ ) _ ->
+        --     Debug.log "received reply never was requested"
+        --         ( model, Cmd.none )
 
-        DispatchResponse ( component, request, decoder ) ( code, body ) ->
-            let
-                response =
-                    decoder body code
+        -- DispatchResponse ( component, request, decoder ) ( code, body ) ->
+        --     let
+        --         response =
+        --             decoder body code
 
-                requestMsg =
-                    getRequestMsg component request response
-            in
-                update requestMsg model
+        --         requestMsg =
+        --             getRequestMsg component request response
+        --     in
+        --         update requestMsg model
 
         -- Misc
         {- Perform no operation -}
-        NoOp ->
+        _ ->
             ( model, Cmd.none )
 
 

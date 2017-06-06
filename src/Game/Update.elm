@@ -3,8 +3,7 @@ module Game.Update exposing (..)
 import Core.Messages exposing (CoreMsg)
 import Game.Models exposing (GameModel)
 import Game.Messages exposing (GameMsg(..))
-import Game.Requests exposing (responseHandler)
-import Game.Events exposing (eventHandler)
+-- import Game.Events exposing (eventHandler)
 import Game.Account.Update
 import Game.Servers.Update
 import Game.Network.Update
@@ -42,22 +41,26 @@ update msg model =
             in
                 ( { model | meta = meta_ }, cmd, coreMsg )
 
-        Event event ->
-            let
-                ( model_, cmd, coreMsg ) =
-                    eventHandler model event
-            in
-                ( model_, cmd, coreMsg )
+        -- Event event ->
+        --     let
+        --         ( model_, cmd, coreMsg ) =
+        --             eventHandler model event
+        --     in
+        --         ( model_, cmd, coreMsg )
 
-        Request _ ->
+        Request _ _ ->
             ( model, Cmd.none, [] )
 
-        Response request data ->
-            let
-                ( model_, cmd, coreMsg ) =
-                    responseHandler request data model
-            in
-                ( model_, cmd, coreMsg )
-
-        NoOp ->
+        Response _ _ ->
             ( model, Cmd.none, [] )
+
+        _ ->
+            ( model, Cmd.none, [] )
+
+
+
+-- let
+--     ( model_, cmd, coreMsg ) =
+--         responseHandler request data model
+-- in
+--     ( model_, cmd, coreMsg )

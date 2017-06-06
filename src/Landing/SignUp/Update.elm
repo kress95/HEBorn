@@ -4,26 +4,26 @@ import Core.Messages exposing (CoreMsg)
 import Core.Models exposing (CoreModel)
 import Landing.SignUp.Models exposing (Model, FormError)
 import Landing.SignUp.Messages exposing (Msg(..))
-import Landing.SignUp.Requests
-    exposing
-        ( responseHandler
-        , requestSignUp
-          -- , requestUsernameExists
-        )
+-- import Landing.SignUp.Requests
+--     exposing
+--         ( responseHandler
+--         , requestSignUp
+--           -- , requestUsernameExists
+--         )
 
 
 update : Msg -> Model -> CoreModel -> ( Model, Cmd Msg, List CoreMsg )
 update msg model core =
     case msg of
-        SubmitForm ->
-            let
-                formErrors =
-                    getErrors model
+        -- SubmitForm ->
+        --     let
+        --         formErrors =
+        --             getErrors model
 
-                cmd =
-                    requestSignUp model.email model.username model.password
-            in
-                ( model, cmd, [] )
+        --         cmd =
+        --             requestSignUp model.email model.username model.password
+        --     in
+        --         ( model, cmd, [] )
 
         SetUsername username ->
             ( { model | username = username, usernameTaken = False }, Cmd.none, [] )
@@ -73,16 +73,16 @@ update msg model core =
             in
                 ( { model | formErrors = newFormErrors }, Cmd.none, [] )
 
-        Event event ->
-            case event of
-                _ ->
-                    ( model, Cmd.none, [] )
+        -- Event event ->
+        --     case event of
+        --         _ ->
+        --             ( model, Cmd.none, [] )
 
-        Request _ ->
+        _ ->
             ( model, Cmd.none, [] )
 
-        Response request data ->
-            responseHandler request data model core
+        -- Response request data ->
+        --     responseHandler request data model core
 
 
 getErrorsUsername : Model -> String

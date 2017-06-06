@@ -1,7 +1,10 @@
 module Driver.Websocket.Messages exposing (Msg(..))
 
 import Json.Decode
-import Requests.Models exposing (RequestID)
+
+
+type alias RequestID =
+    String
 
 
 type Msg

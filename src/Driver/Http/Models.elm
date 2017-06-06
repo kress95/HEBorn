@@ -4,17 +4,17 @@ import Http
 import Json.Encode
 import Json.Decode exposing (Decoder, string, decodeString, int)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
-import Requests.Models
-    exposing
-        ( Response(ResponseEmpty)
-        , RequestPayload
-        , RequestTopic(..)
-        , RequestID
-        , encodeData
-        , getResponseCode
-        , invalidRequestId
-        , ResponseCode(..)
-        )
+-- import Requests.Models
+--     exposing
+--         ( Response(ResponseEmpty)
+--         , RequestPayload
+--         , RequestTopic(..)
+--         , RequestID
+--         , encodeData
+--         , getResponseCode
+--         , invalidRequestId
+--         , ResponseCode(..)
+--         )
 import Core.Messages exposing (CoreMsg(NewResponse))
 
 

@@ -5,8 +5,8 @@ module Core.Models
         , initialModel
         )
 
-import Driver.Websocket.Models
-import Requests.Models
+-- import Driver.Websocket.Models
+import Request.Models as Request
 import Router.Router exposing (Route)
 import Game.Models
 import OS.Models
@@ -15,11 +15,10 @@ import Landing.Models
 
 type alias CoreModel =
     { route : Route
-    , requests : Requests.Models.Model
+    , request : Requests.Model
     , game : Game.Models.GameModel
     , os : OS.Models.Model
     , landing : Landing.Models.LandModel
-    , websocket : Driver.Websocket.Models.Model
     , config : Config
     }
 
@@ -52,11 +51,11 @@ initialModel route seedInt apiHttpUrl apiWsUrl version =
             Game.Models.initialModel
     in
         { route = route
-        , requests = Requests.Models.initialModel seedInt
+        -- , requests = Requests.Models.initialModel seedInt
         , game = game
         , os = OS.Models.initialModel game
         , landing = Landing.Models.initialModel
-        , websocket = Driver.Websocket.Models.initialModel apiWsUrl
+        -- , websocket = Driver.Websocket.Models.initialModel apiWsUrl
         , config = generateConfig apiHttpUrl apiWsUrl version
         }
 
