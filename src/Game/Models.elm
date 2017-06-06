@@ -2,7 +2,6 @@ module Game.Models
     exposing
         ( GameModel
         , initialModel
-        , ResponseType
         )
 
 import Requests.Models exposing (Response)
@@ -12,12 +11,6 @@ import Game.Account.Models exposing (..)
 import Game.Servers.Models exposing (..)
 import Game.Network.Models exposing (..)
 import Game.Meta.Models exposing (..)
-
-
-type alias ResponseType =
-    Response
-    -> GameModel
-    -> ( GameModel, Cmd GameMsg, List CoreMsg )
 
 
 type alias GameModel =

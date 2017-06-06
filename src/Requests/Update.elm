@@ -40,7 +40,7 @@ import Requests.Models
         , storeRequest
         , getTopicDriver
         )
-import Core.Components exposing (Component(ComponentInvalid))
+import Core.Components exposing (Component(ComponentInvawlid))
 import Core.Models exposing (CoreModel)
 import Core.Messages exposing (CoreMsg)
 

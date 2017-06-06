@@ -1,7 +1,9 @@
 module Landing.Login.Messages exposing (..)
 
+import Json.Decode exposing (Value)
+import Landing.Requests exposing (Requests)
+import Requests.Code exposing (RequestCode)
 import Events.Models
-import Requests.Models
 
 
 type Msg
@@ -10,6 +12,4 @@ type Msg
     | ValidateUsername
     | SetPassword String
     | ValidatePassword
-    | Event Events.Models.Event
-    | Request Requests.Models.Request
-    | Response Requests.Models.Request Requests.Models.Response
+    | Request Requests RequestCode Value

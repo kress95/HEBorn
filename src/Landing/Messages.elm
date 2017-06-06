@@ -11,8 +11,8 @@ type LandMsg
     = MsgSignUp Landing.SignUp.Messages.Msg
     | MsgLogin Landing.Login.Messages.Msg
     | Event Events.Models.Event
-    | Request Requests.Models.Request Component
-    | Response Requests.Models.Request Requests.Models.Response
+    -- | Request Requests.Models.Request Component
+    -- | Response Requests.Models.Request Requests.Models.Response
     | NoOp
 
 

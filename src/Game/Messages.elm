@@ -6,7 +6,8 @@ import Game.Account.Messages
 import Game.Servers.Messages
 import Game.Network.Messages
 import Game.Meta.Messages
-
+import Json.Decode exposing (Value)
+import Game.Requests
 
 type GameMsg
     = MsgAccount Game.Account.Messages.AccountMsg
@@ -14,6 +15,5 @@ type GameMsg
     | MsgNetwork Game.Network.Messages.NetworkMsg
     | MsgMeta Game.Meta.Messages.MetaMsg
     | Event Events.Models.Event
-    | Request Requests.Models.Request
-    | Response Requests.Models.Request Requests.Models.Response
+    | Request Game.Requests.RequestType Value
     | NoOp

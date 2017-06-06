@@ -1,25 +1,7 @@
-module Game.Requests exposing (responseHandler)
+module Game.Requests exposing (handler)
 
-import Requests.Models
-    exposing
-        ( Request
-            ( NewRequest
-            , RequestLogout
-            )
-        , Response
-        )
-import Game.Models exposing (ResponseType)
+import Game.Account.Requests as Account
 import Game.Account.Requests exposing (requestLogoutHandler)
 
-
--- Top-level response handler
-
-
-responseHandler : Request -> ResponseType
-responseHandler request data model =
-    case request of
-        RequestLogout ->
-            requestLogoutHandler data model
-
-        _ ->
-            ( model, Cmd.none, [] )
+type Request
+    = AccountRequest Account.Request
