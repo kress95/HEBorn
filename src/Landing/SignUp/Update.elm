@@ -89,8 +89,23 @@ response response model core =
         SignUpResponse (SignUp.OkResponse _ _ _) ->
             ( model, Cmd.none, [] )
 
+        SignUpResponse (SignUp.ErrorResponse errors) ->
+            let
+                a =
+                    Debug.log "wat" errors
+            in
+                ( model, Cmd.none, [] )
+
         _ ->
             ( model, Cmd.none, [] )
+
+
+getServerErrors : SignUp.Errors -> FormError
+getServerErrors response =
+    { usernameErrors = (errorJoiner "Username " response.username)
+    , passwordErrors = (errorJoiner "Password " response.password)
+    , emailErrors = (errorJoiner "Email " response.email)
+    }
 
 
 getErrorsUsername : Model -> String
@@ -160,3 +175,48 @@ hasErrors model =
 
             _ ->
                 True
+
+
+errorJoiner : String -> List String -> String
+errorJoiner init list =
+    if (List.isEmpty list) then
+        ""
+    else
+        let
+            result =
+                indexedJoin
+                    (\index ->
+                        if index == 0 then
+                            " and "
+                        else
+                            ", "
+                    )
+                    init
+                    list
+        in
+            result ++ "."
+
+
+indexedJoin :
+    (Int -> appendable)
+    -> appendable
+    -> List appendable
+    -> appendable
+indexedJoin func init list =
+    -- this could be added to Utils
+    let
+        length =
+            List.length list
+
+        ( result, _ ) =
+            List.foldl
+                (\next ( joined, count ) ->
+                    if count == length then
+                        ( joined ++ next, count - 1 )
+                    else
+                        ( joined ++ (func count) ++ next, count - 1 )
+                )
+                ( init, length )
+                list
+    in
+        result

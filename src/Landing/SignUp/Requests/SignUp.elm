@@ -1,11 +1,12 @@
 module Landing.SignUp.Requests.SignUp
     exposing
         ( Response(..)
+        , Errors
         , request
         , receive
         )
 
-import Json.Decode as Decode exposing (Value, decodeString)
+import Json.Decode as Decode exposing (Decoder, Value, decodeString)
 import Json.Decode.Pipeline exposing (decode, required, optional)
 import Json.Encode as Encode
 import Core.Config exposing (Config)
@@ -17,7 +18,15 @@ import Requests.Types exposing (Code(..))
 
 type Response
     = OkResponse String String String
-    | ErrorResponse
+    | ErrorResponse Errors
+    | NoOp
+
+
+type alias Errors =
+    { email : List String
+    , username : List String
+    , password : List String
+    }
 
 
 request : String -> String -> String -> Config -> Cmd Msg
@@ -32,16 +41,23 @@ receive : Code -> String -> Response
 receive code json =
     case code of
         OkCode ->
-            Requests.report (decodeString decoder json)
+            Requests.report (decodeString decoderOk json)
+
+        BadRequestCode ->
+            json
+                |> decodeString decoderError
+                |> Result.map ErrorResponse
+                |> Requests.report
 
         _ ->
-            ErrorResponse
+            NoOp
 
 
 
 -- internals
 
 
+encoder : String -> String -> String -> Encode.Value
 encoder email username password =
     Encode.object
         [ ( "email", Encode.string email )
@@ -50,8 +66,17 @@ encoder email username password =
         ]
 
 
-decoder =
+decoderOk : Decoder Response
+decoderOk =
     decode OkResponse
-        |> required "username" Decode.string
         |> required "email" Decode.string
+        |> required "username" Decode.string
         |> required "account_id" Decode.string
+
+
+decoderError : Decoder Errors
+decoderError =
+    decode Errors
+        |> required "email" (Decode.list Decode.string)
+        |> required "username" (Decode.list Decode.string)
+        |> required "password" (Decode.list Decode.string)
