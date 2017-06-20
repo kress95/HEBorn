@@ -9,7 +9,8 @@ import Json.Decode
     exposing
         -- this request contains no payload, so no problems with importing this
         ( Decoder
-        , decodeString
+        , Value
+        , decodeValue
         , succeed
         , fail
         , andThen
@@ -48,15 +49,15 @@ type alias Log =
     }
 
 
-request : Config -> Cmd Msg
-request =
+request : String -> Config -> Cmd Msg
+request id =
     Requests.request ServerLogIndexTopic
         (LogIndexRequest >> Request)
-        Nothing
+        (Just id)
         Encode.null
 
 
-receive : Code -> String -> Response
+receive : Code -> Value -> Response
 receive code json =
     case code of
         OkCode ->
@@ -74,9 +75,9 @@ receive code json =
 -- internals
 
 
-decoder : String -> Result String Logs
+decoder : Value -> Result String Logs
 decoder json =
-    case decodeString root json of
+    case decodeValue root json of
         Ok root ->
             Ok root.logs
 

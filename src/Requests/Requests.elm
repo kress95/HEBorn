@@ -22,7 +22,6 @@ report result =
         Err _ ->
             Debug.crash "Failed to decode response from server"
 
-
 request :
     Topic
     -> (ResponseType -> msg)
@@ -91,10 +90,10 @@ genericHttp : (ResponseType -> msg) -> Result Http.Error String -> msg
 genericHttp msg result =
     case result of
         Ok data ->
-            msg ( OkCode, data )
+            msg ( OkCode, toValue data )
 
         Err (Http.BadStatus response) ->
-            msg ( getCode response.status.code, response.body )
+            msg ( getCode response.status.code, toValue response.body )
 
         _ ->
             Debug.crash "Http Driver failure"
@@ -108,12 +107,22 @@ genericWs msg value =
             decode WebsocketResponse
                 |> required "data" Decode.value
 
+        a =
+            Debug.log "wat" value
+
         result =
             Decode.decodeValue decoder value
     in
         case result of
             Ok response ->
-                msg ( OkCode, toString response.data )
+                msg ( OkCode, response.data )
 
-            Err _ ->
-                msg ( UnknownErrorCode, "" )
+            Err response ->
+                msg ( UnknownErrorCode, toValue response )
+
+
+toValue : String -> Decode.Value
+toValue str =
+    str
+        |> Decode.decodeString Decode.value
+        |> Result.withDefault Encode.null

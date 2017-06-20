@@ -9,12 +9,12 @@ module Requests.Types
         , emptyPayload
         )
 
-import Json.Decode
+import Json.Decode exposing (Value)
 import Json.Encode as Encode
 
 
 type alias ResponseType =
-    ( Code, String )
+    ( Code, Value )
 
 
 type alias WebsocketResponse =

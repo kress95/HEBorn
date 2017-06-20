@@ -65,6 +65,8 @@ response response model core =
                         (Ws.JoinChannel AccountChannel (Just id))
                     , MsgWebsocket
                         (Ws.JoinChannel RequestsChannel Nothing)
+                    , MsgWebsocket
+                        (Ws.JoinChannel ServerChannel (Just "10::A8B0:207F:883E:B49F:A4BC"))
                     ]
             in
                 ( model_, Cmd.none, msgs )

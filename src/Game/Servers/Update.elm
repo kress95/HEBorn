@@ -1,7 +1,10 @@
 module Game.Servers.Update exposing (..)
 
 import Core.Messages exposing (CoreMsg)
-import Game.Messages exposing (GameMsg(..))
+import Driver.Websocket.Reports as Websocket
+import Driver.Websocket.Channels as Websocket
+import Events.Events as Events
+import Game.Messages exposing (GameMsg)
 import Game.Models exposing (GameModel)
 import Game.Servers.Filesystem.Messages as Filesystem
 import Game.Servers.Filesystem.Update as Filesystem
@@ -12,6 +15,7 @@ import Game.Servers.Models exposing (..)
 import Game.Servers.Processes.Messages as Processes
 import Game.Servers.Processes.Update as Processes
 import Game.Servers.Requests exposing (..)
+import Game.Servers.Requests.LogIndex as LogIndex
 
 
 update : Msg -> Servers -> GameModel -> ( Servers, Cmd GameMsg, List CoreMsg )
@@ -28,10 +32,9 @@ update msg model game =
 
         Request data ->
             response (receive data) model game
-
-        _ ->
-            ( model, Cmd.none, [] )
-
+        
+        Event data ->
+            event data model game
 
 
 -- internals
@@ -120,4 +123,23 @@ process id msg model game =
                 ( model_, cmd, msgs )
 
         NoServer ->
+            ( model, Cmd.none, [] )
+
+
+event :
+    Events.Response
+    -> Servers
+    -> GameModel
+    -> ( Servers, Cmd GameMsg, List CoreMsg )
+event ev model game =
+    case ev of
+        Events.Report (Websocket.Joined Websocket.ServerChannel) ->
+            let
+                cmd =
+                    Cmd.map Game.Messages.MsgServers
+                        (LogIndex.request "10::A8B0:207F:883E:B49F:A4BC" game.meta.config)
+            in
+                ( model, cmd, [] )
+
+        _ ->
             ( model, Cmd.none, [] )

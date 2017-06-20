@@ -22,7 +22,8 @@ import Json.Decode
     exposing
         -- this request contains no payload, so no problems with importing this
         ( Decoder
-        , decodeString
+        , Value
+        , decodeValue
         , succeed
         , fail
         , andThen
@@ -116,7 +117,7 @@ request account =
         emptyPayload
 
 
-receive : Code -> String -> Response
+receive : Code -> Value -> Response
 receive code json =
     case code of
         OkCode ->
@@ -134,9 +135,9 @@ receive code json =
 -- internals
 
 
-decoder : String -> Result String Servers
+decoder : Value -> Result String Servers
 decoder json =
-    case decodeString root json of
+    case decodeValue root json of
         Ok root ->
             Ok root.servers
 

@@ -23,7 +23,8 @@ import Json.Decode
     exposing
         -- this request contains no payload, so no problems with importing this
         ( Decoder
-        , decodeString
+        , Value
+        , decodeValue
         , succeed
         , fail
         , andThen
@@ -139,15 +140,15 @@ type DecryptorModule
     | ProcessDecryptor
 
 
-request : Config -> Cmd Msg
-request =
+request : String -> Config -> Cmd Msg
+request id =
     Requests.request ServerFileIndexTopic
         (FileIndexRequest >> Request)
-        Nothing
+        (Just id)
         emptyPayload
 
 
-receive : Code -> String -> Response
+receive : Code -> Value -> Response
 receive code json =
     case code of
         OkCode ->
@@ -165,9 +166,9 @@ receive code json =
 -- internals
 
 
-decoder : String -> Result String Index
+decoder : Value -> Result String Index
 decoder json =
-    decodeString index json
+    decodeValue index json
 
 
 index : Decoder Index

@@ -5,7 +5,7 @@ module Game.Account.Requests.Logout
         , receive
         )
 
-import Json.Encode as Encode
+import Json.Encode as Encode exposing (Value)
 import Core.Config exposing (Config)
 import Game.Account.Messages exposing (..)
 import Requests.Requests as Requests
@@ -30,6 +30,6 @@ request token =
             payload
 
 
-receive : Code -> String -> Response
+receive : Code -> Value -> Response
 receive _ _ =
     OkResponse
