@@ -1,33 +1,45 @@
 module Landing.Update exposing (update)
 
 import Core.Models as Core
+import Core.Dispatch as Dispatch exposing (Dispatch)
 import Landing.Messages exposing (..)
 import Landing.Models exposing (Model)
-import Landing.SignUp.Update
-import Landing.Login.Update
-import Core.Dispatch as Dispatch exposing (Dispatch)
+import Landing.SignUp.Update as SignUp
+import Landing.Login.Update as Login
 
 
 update :
     Msg
+    -> Core.HomeModel
     -> Model
-    -> Core.Model
     -> ( Model, Cmd Msg, Dispatch )
-update msg model core =
+update msg core model =
     case msg of
-        SignUpMsg subMsg ->
+        SignUpMsg msg ->
             let
-                ( signUp_, cmd, coreMsg ) =
-                    Landing.SignUp.Update.update subMsg model.signUp core
-            in
-                ( { model | signUp = signUp_ }, Cmd.map SignUpMsg cmd, coreMsg )
+                ( signUp, cmd, dispatch ) =
+                    SignUp.update msg model.signUp core
 
-        LoginMsg subMsg ->
-            let
-                ( login_, cmd, coreMsg ) =
-                    Landing.Login.Update.update subMsg model.login core
+                model_ =
+                    { model | signUp = signUp }
+
+                cmd_ =
+                    Cmd.map SignUpMsg cmd
             in
-                ( { model | login = login_ }, Cmd.map LoginMsg cmd, coreMsg )
+                ( model_, cmd_, dispatch )
+
+        LoginMsg msg ->
+            let
+                ( login, cmd, dispatch ) =
+                    Login.update msg model.login core
+
+                model_ =
+                    { model | login = login }
+
+                cmd_ =
+                    Cmd.map LoginMsg cmd
+            in
+                ( model_, cmd_, dispatch )
 
         _ ->
             ( model, Cmd.none, Dispatch.none )

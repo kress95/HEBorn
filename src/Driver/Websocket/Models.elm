@@ -1,7 +1,8 @@
 module Driver.Websocket.Models exposing (Model, initialModel, eventsFromChannel)
 
-import Driver.Websocket.Messages exposing (Msg(..))
-import Driver.Websocket.Channels exposing (Channel(..))
+import Driver.Websocket.Channels exposing (..)
+import Driver.Websocket.Messages exposing (..)
+import Driver.Websocket.Reports exposing (..)
 import Events.Events as Events exposing (Event(..))
 import Events.Account as AccountEvents
 import Phoenix.Socket as Socket
@@ -25,9 +26,13 @@ type alias Model =
     }
 
 
-initialSocket : String -> Socket.Socket Msg
-initialSocket apiWsUrl =
-    Socket.init apiWsUrl
+initialSocket : String -> String -> Socket.Socket Msg
+initialSocket apiWsUrl token =
+    apiWsUrl
+        |> Socket.init
+        |> Socket.withParams [ ( "token", token ) ]
+        |> Socket.onOpen (Connected token |> Events.Report |> Broadcast)
+        |> Socket.onClose (\_ -> Disconnected |> Events.Report |> Broadcast)
 
 
 initialChannels : List (Channel.Channel Msg)
@@ -41,9 +46,9 @@ initialEvents =
     }
 
 
-initialModel : String -> Model
-initialModel apiWsUrl =
-    { socket = initialSocket apiWsUrl
+initialModel : String -> String -> Model
+initialModel apiWsUrl token =
+    { socket = initialSocket apiWsUrl token
     , channels = initialChannels
     , defer = True
     , events = initialEvents

@@ -8,23 +8,12 @@ import Driver.Websocket.Messages exposing (..)
 import Driver.Websocket.Channels exposing (..)
 import Driver.Websocket.Reports exposing (..)
 import Events.Events as Events
-import Core.Models as Core
 import Core.Dispatch as Dispatch exposing (Dispatch)
 
 
-update : Msg -> Model -> Core.Model -> ( Model, Cmd Msg, Dispatch )
-update msg model core =
+update : Msg -> Model -> ( Model, Cmd Msg, Dispatch )
+update msg model =
     case msg of
-        UpdateSocket token ->
-            let
-                socket =
-                    Socket.withParams [ ( "token", token ) ] model.socket
-
-                model_ =
-                    { model | socket = socket }
-            in
-                ( model_, Cmd.none, Dispatch.none )
-
         JoinChannel channel topic ->
             if model.defer then
                 defer channel topic model
