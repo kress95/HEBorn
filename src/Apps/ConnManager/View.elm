@@ -34,7 +34,7 @@ tunnelView gateway ( id, tunnel ) =
         , text gateway
         , br [] []
         , text "Endpoint: "
-        , text <| Tuple.second id
+        , text <| (id |> Tuple.second |> Tuple.second)
         , br [] []
         , text "Connections: "
         , tunnel
@@ -76,18 +76,20 @@ view data ({ app } as model) =
                     UpdateTextFilter
                 ]
 
-        ip =
+        nip =
             data
                 |> Game.getServer
-                |> Servers.getIP
+                |> Servers.getNIPs
 
         mainEntries =
-            data
-                |> Game.getServer
-                |> Servers.getTunnels
-                |> Dict.toList
-                |> List.map (tunnelView ip)
-                |> verticalList
+            text ""
+
+        -- data
+        -- |> Game.getServer
+        -- |> Servers.getTunnels
+        -- |> Dict.toList
+        -- |> List.map (tunnelView ip)
+        -- |> verticalList
     in
         verticalSticked
             (Just [ filterHeaderLayout ])
