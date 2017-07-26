@@ -24,16 +24,7 @@ view data model =
             Html.map (always NotFoundMsg) NotFound.view
 
         HomeModel ->
-            Html.map
-                (\msg ->
-                    case msg of
-                        Home.BrowserGoAddress url ->
-                            BrowserGoAddress url
-
-                        Home.BrowserTabAddress url ->
-                            BrowserTabAddress url
-                )
-                Home.view
+            Html.map mapAddressChange Home.view
 
         BlankModel ->
             Html.map (always BlankMsg) Blank.view
@@ -61,3 +52,13 @@ view data model =
 
         _ ->
             Html.map (always UnknownMsg) Blank.view
+
+
+mapAddressChange : Home.Msg -> Msg
+mapAddressChange msg =
+    case msg of
+        Home.BrowserGoAddress url ->
+            BrowserGoAddress url
+
+        Home.BrowserTabAddress url ->
+            BrowserTabAddress url
