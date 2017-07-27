@@ -20,8 +20,8 @@ view =
                 [ onClick <| BrowserTabAddress "profile.dmy" ]
                 [ text "My profile" ]
             , li
-                [ onClick <| BrowserGoAddress "directory.dmy" ]
-                [ text "Directory" ]
+                [ onClick <| BrowserGoAddress "whois.dmy" ]
+                [ text "Whois" ]
             , li
                 [ onClick <| BrowserGoAddress "headquarters.dmy" ]
                 [ text "Mission Center" ]
