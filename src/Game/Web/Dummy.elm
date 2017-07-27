@@ -3,17 +3,20 @@ module Game.Web.Dummy exposing (..)
 import Game.Web.Types exposing (..)
 
 
-dummyTunnel : List String -> Type
-dummyTunnel req =
+dummy : List String -> Type
+dummy req =
     case req of
-        "profile" :: _ ->
-            Profile
-
-        "directory" :: _ ->
+        "baixaki" :: "directory" :: _ ->
             Directory
 
         "baixaki" :: _ ->
             DownloadCenter
+
+        "profile" :: _ ->
+            Profile
+
+        "whois" :: _ ->
+            Whois
 
         "meuisp" :: _ ->
             ISP
@@ -26,6 +29,14 @@ dummyTunnel req =
 
         "headquarters" :: _ ->
             MissionCenter
+
+        -- TODO: remove google dummies, they are just a simulation of
+        -- vpc website
+        "google" :: "panel" :: _ ->
+            HackPanel
+
+        "google" :: _ ->
+            Default
 
         _ ->
             Unknown

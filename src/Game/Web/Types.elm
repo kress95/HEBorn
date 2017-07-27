@@ -16,6 +16,8 @@ type Type
     | Custom
     | Default
     | Profile
+    | Whois
+    | HackPanel
     | Directory
     | DownloadCenter
     | ISP
@@ -33,6 +35,8 @@ type Meta
     | CustomMeta CustomMetadata
     | DefaultMeta DefaultMetadata
     | ProfileMeta ProfileMetadata
+    | WhoisMeta WhoisMetadata
+    | HackPanelMeta HackPanelMetadata
     | DirectoryMeta DirectoryMetadata
     | DownloadCenterMeta DownloadCenterMetadata
     | ISPMeta ISPMetadata
@@ -58,6 +62,14 @@ type alias DefaultMetadata =
 
 
 type alias ProfileMetadata =
+    {}
+
+
+type alias WhoisMetadata =
+    {}
+
+
+type alias HackPanelMetadata =
     {}
 
 

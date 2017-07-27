@@ -11,7 +11,7 @@ module Game.Web.Models
 
 import Dict exposing (Dict)
 import Game.Web.Types exposing (..)
-import Game.Web.Dummy exposing (dummyTunnel)
+import Game.Web.Dummy exposing (dummy)
 
 
 type alias Model =
@@ -82,7 +82,7 @@ get str model =
                 -- Top Level Domains go here
                 "dmy" :: domain ->
                     { url = str
-                    , type_ = dummyTunnel <| domain ++ req
+                    , type_ = dummy <| (domain ++ req)
                     , meta = Nothing
                     }
 
