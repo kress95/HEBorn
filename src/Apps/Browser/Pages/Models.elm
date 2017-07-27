@@ -10,6 +10,7 @@ import Game.Web.Types as Web
 import Apps.Browser.Pages.NotFound.Models as PageNotFound
 import Apps.Browser.Pages.Default.Models as PageDefault
 import Apps.Browser.Pages.Profile.Models as PageProfile
+import Apps.Browser.Pages.Whois.Models as PageWhois
 import Apps.Browser.Pages.Directory.Models as PageDirectory
 import Apps.Browser.Pages.MissionCenter.Models as PageMissionCenter
 import Apps.Browser.Pages.DownloadCenter.Models as PageDownloadCenter
@@ -26,6 +27,7 @@ type Model
     | CustomModel
     | DefaultModel PageDefault.Model
     | ProfileModel
+    | WhoisModel
     | DirectoryModel
     | DownloadCenterModel
     | ISPModel
@@ -45,27 +47,31 @@ type alias Meta =
 initialModel : Web.Site -> Model
 initialModel ({ type_, meta } as site) =
     case ( type_, meta ) of
+        ( Web.Unknown, _ ) ->
+            UnknownModel
+
         ( Web.Blank, _ ) ->
             BlankModel
 
         ( Web.Home, _ ) ->
             HomeModel
 
-        ( Web.Unknown, _ ) ->
-            UnknownModel
-
         ( Web.NotFound, _ ) ->
             site
                 |> PageNotFound.initialModel
                 |> NotFoundModel
 
-        ( Web.Default, Just (Web.DefaultMeta meta) ) ->
+        -- TODO: only match pages with metadata
+        ( Web.Default, _ ) ->
             site
                 |> PageDefault.initialModel
                 |> DefaultModel
 
         ( Web.Profile, _ ) ->
             ProfileModel
+
+        ( Web.Whois, _ ) ->
+            WhoisModel
 
         ( Web.Directory, _ ) ->
             DirectoryModel
@@ -101,8 +107,14 @@ getTitle model =
         HomeModel ->
             "Home"
 
+        BlankModel ->
+            "New Tab"
+
         ProfileModel ->
             PageProfile.getTitle
+
+        WhoisModel ->
+            PageWhois.getTitle
 
         DirectoryModel ->
             PageDirectory.getTitle
@@ -122,8 +134,11 @@ getTitle model =
         NewsModel ->
             PageNews.getTitle
 
+        DefaultModel model ->
+            PageDefault.getTitle model
+
         _ ->
-            "New Tab"
+            "Unknown Page"
 
 
 getSite : Model -> ( Web.Type, Maybe Web.Meta )
@@ -140,6 +155,9 @@ getSite model =
 
         ProfileModel ->
             PageProfile.getSite
+
+        WhoisModel ->
+            PageWhois.getSite
 
         DirectoryModel ->
             PageDirectory.getSite
@@ -158,6 +176,12 @@ getSite model =
 
         NewsModel ->
             PageNews.getSite
+
+        DefaultModel model ->
+            PageDefault.getSite model
+
+        CustomModel ->
+            ( Web.Custom, Nothing )
 
         _ ->
             ( Web.Unknown, Nothing )
