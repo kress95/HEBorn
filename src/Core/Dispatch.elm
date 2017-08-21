@@ -14,6 +14,9 @@ module Core.Dispatch
         , account
         , servers
         , web
+        , missionsFromApps
+        , missionsFromHeader
+        , missionsFromDock
         , server
         , filesystem
         , processes
@@ -37,6 +40,10 @@ import Game.Servers.Logs.Models as Logs
 import Game.Servers.Tunnels.Messages as Tunnels
 import Game.Servers.Shared as Servers
 import Utils.Cmd as CmdUtils
+import Apps.Messages as Apps
+import Game.Missions.Messages as Missions
+import OS.Header.Messages as Header
+import OS.SessionManager.Dock.Messages as Dock
 
 
 -- opaque type to hide the dispatch magic
@@ -164,6 +171,21 @@ websocket msg =
 game : Game.Msg -> Dispatch
 game msg =
     core <| GameMsg msg
+
+
+missionsFromApps : Apps.Msg -> Dispatch
+missionsFromApps msg =
+    game <| Game.MissionsMsg (Missions.AppsMsg msg)
+
+
+missionsFromHeader : Header.Msg -> Dispatch
+missionsFromHeader msg =
+    game <| Game.MissionsMsg (Missions.HeaderMsg msg)
+
+
+missionsFromDock : Dock.Msg -> Dispatch
+missionsFromDock msg =
+    game <| Game.MissionsMsg (Missions.DockMsg msg)
 
 
 account : Account.Msg -> Dispatch

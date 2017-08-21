@@ -1,5 +1,6 @@
 module OS.Update exposing (update)
 
+import Utils.Update as Update
 import OS.Header.Messages as Header
 import OS.Header.Models as Header
 import OS.Header.Update as Header
@@ -68,6 +69,7 @@ header :
     -> ( Header.Model, Cmd Header.Msg, Dispatch )
 header game msg model =
     Header.update game msg model.header
+        |> Update.addDispatch (Dispatch.missionsFromHeader msg)
 
 
 map :

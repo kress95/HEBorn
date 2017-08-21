@@ -14,6 +14,8 @@ import Game.Servers.Messages as Servers
 import Game.Servers.Update as Servers
 import Game.Web.Messages as Web
 import Game.Web.Update as Web
+import Game.Missions.Messages as Missions
+import Game.Missions.Update as Missions
 import Game.Messages exposing (..)
 import Game.Models exposing (..)
 import Game.Requests exposing (..)
@@ -38,6 +40,9 @@ update msg model =
 
         WebMsg msg ->
             onWeb msg model
+
+        MissionsMsg msg ->
+            onMissions msg model
 
         Event data ->
             onEvent data model
@@ -96,6 +101,18 @@ onServers msg game =
         , set = (\servers game -> { game | servers = servers })
         , toMsg = ServersMsg
         , update = (Servers.update game)
+        }
+        msg
+        game
+
+
+onMissions : Missions.Msg -> Model -> UpdateResponse
+onMissions msg game =
+    Update.child
+        { get = .missions
+        , set = (\missions game -> { game | missions = missions })
+        , toMsg = MissionsMsg
+        , update = (Missions.update game)
         }
         msg
         game

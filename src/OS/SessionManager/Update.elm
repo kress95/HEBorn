@@ -1,5 +1,6 @@
 module OS.SessionManager.Update exposing (update)
 
+import Utils.Update as Update
 import OS.SessionManager.Models exposing (..)
 import OS.SessionManager.Messages exposing (..)
 import OS.SessionManager.Helpers exposing (..)
@@ -30,6 +31,7 @@ update data msg model =
 
             DockMsg msg ->
                 Dock.update data msg model_
+                    |> Update.addDispatch (Dispatch.missionsFromDock msg)
 
 
 

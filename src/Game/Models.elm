@@ -23,6 +23,7 @@ import Game.Servers.Shared as Servers
 import Game.Meta.Types as Meta
 import Game.Meta.Models as Meta
 import Game.Web.Models as Web
+import Game.Missions.Models as Missions
 import Core.Config exposing (Config)
 
 
@@ -31,6 +32,7 @@ type alias Model =
     , servers : Servers.Model
     , meta : Meta.Model
     , web : Web.Model
+    , missions : Missions.Model
     , config : Config
     }
 
@@ -46,6 +48,7 @@ initialModel id username token config =
     , servers = Servers.initialModel
     , meta = Meta.initialModel
     , web = Web.initialModel
+    , missions = Missions.initialModel
     , config = config
     }
 
