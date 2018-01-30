@@ -1,7 +1,7 @@
 module Apps.FloatingHeads.Config exposing (..)
 
 import Html exposing (Attribute)
-import Apps.Apps as Apps
+import Apps.Params as AppParams exposing (AppParams)
 import Game.Meta.Types.Context exposing (Context)
 import Game.Storyline.Emails.Models as Emails
 import Game.Storyline.Emails.Contents as Emails
@@ -18,7 +18,7 @@ type alias Config msg =
     , username : String
     , onReplyEmail : String -> Emails.Content -> msg
     , onCloseApp : msg
-    , onOpenApp : Maybe Context -> Apps.AppParams -> msg
+    , onOpenApp : Maybe Context -> AppParams -> msg
     }
 
 
@@ -27,6 +27,6 @@ contentConfig config =
     { username = config.username
     , onOpenBrowser =
         Browser.OpenAtUrl
-            >> Apps.BrowserParams
+            >> AppParams.Browser
             >> config.onOpenApp Nothing
     }

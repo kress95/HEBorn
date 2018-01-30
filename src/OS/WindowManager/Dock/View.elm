@@ -1,4 +1,4 @@
-module OS.SessionManager.Dock.View exposing (view)
+module OS.WindowManager.Dock.View exposing (view)
 
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -7,13 +7,11 @@ import Html.Attributes exposing (title, attribute)
 import Utils.Html.Attributes exposing (..)
 import Html.CssHelpers
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
-import Apps.Models as Apps
 import OS.Resources as OsRes
-import OS.SessionManager.Models exposing (..)
-import OS.SessionManager.Dock.Config exposing (..)
-import OS.SessionManager.Dock.Messages exposing (..)
-import OS.SessionManager.Dock.Resources as Res
-import OS.SessionManager.WindowManager.Models as WM
+import Apps.Models as Apps
+import OS.WindowManager.Models exposing (..)
+import OS.WindowManager.Dock.Config exposing (..)
+import OS.WindowManager.Dock.Resources as Res
 
 
 -- this module still needs a refactor to make its code more maintainable

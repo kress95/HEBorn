@@ -7,6 +7,7 @@ import Game.Account.Finances.Models as Finances
 import Game.Account.Notifications.Shared as AccountNotifications
 import Game.BackFlix.Models as BackFlix
 import Game.Inventory.Models as Inventory
+import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Components.Motherboard as Motherboard exposing (Motherboard)
 import Game.Meta.Types.Context exposing (Context)
 import Game.Meta.Types.Network as Network exposing (NIP)
@@ -19,7 +20,7 @@ import Game.Servers.Logs.Models as Logs
 import Game.Servers.Processes.Models as Processes
 import Game.Storyline.Models as Storyline
 import Game.Storyline.Emails.Contents as Emails
-import Apps.Apps as Apps
+import Apps.Params exposing (AppParams)
 import Apps.Messages exposing (..)
 import Apps.Bug.Config as Bug
 import Apps.Email.Config as Email
@@ -52,8 +53,8 @@ type alias Config msg =
     , backFlix : BackFlix.BackFlix
     , batchMsg : List msg -> msg
     , draggable : Attribute msg
-    , onNewApp : Maybe Context -> Maybe Apps.AppParams -> Apps.App -> msg
-    , onOpenApp : Maybe Context -> Apps.AppParams -> msg
+    , onNewApp : Maybe Context -> Maybe AppParams -> DesktopApp -> msg
+    , onOpenApp : Maybe Context -> AppParams -> msg
     , onNewPublicDownload : NIP -> StorageId -> Filesystem.FileEntry -> msg
     , onBankAccountLogin : Finances.BankLoginRequest -> Requester -> msg
     , onBankAccountTransfer : Finances.BankTransferRequest -> Requester -> msg

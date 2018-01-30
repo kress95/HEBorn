@@ -13,7 +13,7 @@ import OS.Resources as Res
 import OS.DynamicStyle as DynamicStyle
 import OS.Header.View as Header
 import OS.Header.Models as Header
-import OS.SessionManager.View as SessionManager
+import OS.WindowManager.View as WindowManager
 import OS.Toasts.View as Toasts
 import OS.Console.View as Console
 
@@ -86,12 +86,17 @@ viewHeader config header =
 
 viewMain : Config msg -> Model -> Html msg
 viewMain config model =
-    let
-        config_ =
-            smConfig config
-    in
-        model.session
-            |> SessionManager.view config_
+    --WindowManager.view ()
+    div [] []
+
+
+
+--let
+--    config_ =
+--        smConfig config
+--in
+--    model.session
+--        |> SessionManager.view config_
 
 
 displayVersion : String -> Html msg

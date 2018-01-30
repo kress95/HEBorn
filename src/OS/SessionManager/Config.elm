@@ -22,7 +22,7 @@ import Game.Storyline.Emails.Contents as Emails
 import OS.SessionManager.WindowManager.Config as WindowManager
 import OS.SessionManager.Dock.Config as Dock
 import OS.SessionManager.Messages exposing (..)
-import Apps.Apps as Apps
+import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 
 
 type alias Config msg =
@@ -63,7 +63,7 @@ type alias Config msg =
     , onWebLogin : NIP -> Network.IP -> String -> Requester -> msg
     , onFetchUrl : CId -> Network.ID -> Network.IP -> Requester -> msg
     , onReplyEmail : String -> Emails.Content -> msg
-    , onActionDone : Apps.App -> Context -> msg
+    , onActionDone : DesktopApp -> Context -> msg
     , onWebLogout : CId -> msg
     }
 

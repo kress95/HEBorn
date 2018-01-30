@@ -1,7 +1,6 @@
 module OS.Config exposing (..)
 
 import Time exposing (Time)
-import Apps.Apps as Apps
 import Core.Flags exposing (Flags)
 import Game.Account.Models as Account
 import Game.Account.Bounces.Shared as Bounces
@@ -9,6 +8,7 @@ import Game.Account.Finances.Models as Finances
 import Game.Account.Notifications.Shared as AccountNotifications
 import Game.BackFlix.Models as BackFlix
 import Game.Inventory.Models as Inventory
+import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Components.Motherboard as Motherboard exposing (Motherboard)
 import Game.Meta.Types.Context exposing (..)
 import Game.Meta.Types.Network as Network exposing (NIP)
@@ -24,7 +24,7 @@ import Game.Storyline.Emails.Contents as Emails
 import OS.Messages exposing (..)
 import OS.Console.Config as Console
 import OS.Header.Config as Header
-import OS.SessionManager.Config as SessionManager
+import OS.WindowManager.Config as WindowManager
 import OS.Toasts.Config as Toasts
 
 
@@ -73,29 +73,15 @@ type alias Config msg =
     , onWebLogin : NIP -> Network.IP -> String -> Requester -> msg
     , onFetchUrl : CId -> Network.ID -> Network.IP -> Requester -> msg
     , onReplyEmail : String -> Emails.Content -> msg
-    , onActionDone : Apps.App -> Context -> msg
+    , onActionDone : DesktopApp -> Context -> msg
     , onWebLogout : CId -> msg
     }
 
 
-smConfig : Config msg -> SessionManager.Config msg
-smConfig config =
-    { toMsg = SessionManagerMsg >> config.toMsg
+windowManagerConfig : Config msg -> WindowManager.Config msg
+windowManagerConfig config =
+    { toMsg = WindowManagerMsg >> config.toMsg
     , batchMsg = config.batchMsg
-    , lastTick = config.lastTick
-    , story = config.story
-    , isCampaign = config.isCampaign
-    , servers = config.servers
-    , account = config.account
-    , activeServer = config.activeServer
-    , activeContext = config.activeContext
-    , activeGateway = config.activeGateway
-    , inventory = config.inventory
-    , backFlix = config.backFlix
-    , endpointCId =
-        config.activeServer
-            |> Tuple.second
-            |> Servers.getEndpointCId
     , onSetBounce = config.onSetBounce
     , onNewPublicDownload = config.onNewPublicDownload
     , onBankAccountLogin = config.onBankAccountLogin
@@ -122,6 +108,20 @@ smConfig config =
     , onReplyEmail = config.onReplyEmail
     , onActionDone = config.onActionDone
     , onWebLogout = config.onWebLogout
+    , lastTick = config.lastTick
+    , story = config.story
+    , isCampaign = config.isCampaign
+    , servers = config.servers
+    , account = config.account
+    , activeServer = config.activeServer
+    , activeContext = config.activeContext
+    , activeGateway = config.activeGateway
+    , inventory = config.inventory
+    , backFlix = config.backFlix
+    , endpointCId =
+        config.activeServer
+            |> Tuple.second
+            |> Servers.getEndpointCId
     }
 
 

@@ -9,6 +9,7 @@ module Apps.Models
         , windowInitSize
         )
 
+import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Apps.LogViewer.Models as LogViewer
 import Apps.TaskManager.Models as TaskManager
 import Apps.Browser.Models as Browser
@@ -27,7 +28,6 @@ import Apps.Bug.Models as Bug
 import Apps.Calculator.Models as Calculator
 import Apps.BackFlix.Models as BackFlix
 import Apps.FloatingHeads.Models as FloatingHeads
-import Apps.Apps exposing (..)
 
 
 type AppModel
@@ -56,177 +56,177 @@ type Contexts
     | ContextlessApp
 
 
-contexts : App -> Contexts
+contexts : DesktopApp -> Contexts
 contexts app =
     case app of
-        LogViewerApp ->
+        DesktopApp.LogViewer ->
             ContextualApp
 
-        TaskManagerApp ->
+        DesktopApp.TaskManager ->
             ContextualApp
 
-        BrowserApp ->
+        DesktopApp.Browser ->
             ContextualApp
 
-        ExplorerApp ->
+        DesktopApp.Explorer ->
             ContextualApp
 
-        DatabaseApp ->
+        DesktopApp.Database ->
             ContextlessApp
 
-        ConnManagerApp ->
+        DesktopApp.ConnManager ->
             ContextlessApp
 
-        BounceManagerApp ->
+        DesktopApp.BounceManager ->
             ContextlessApp
 
-        FinanceApp ->
+        DesktopApp.Finance ->
             ContextlessApp
 
-        MusicApp ->
+        DesktopApp.Hebamp ->
             ContextlessApp
 
-        CtrlPanelApp ->
+        DesktopApp.CtrlPanel ->
             ContextlessApp
 
-        ServersGearsApp ->
+        DesktopApp.ServersGears ->
             ContextlessApp
 
-        LocationPickerApp ->
+        DesktopApp.LocationPicker ->
             ContextlessApp
 
-        LanViewerApp ->
+        DesktopApp.LanViewer ->
             ContextualApp
 
-        EmailApp ->
+        DesktopApp.Email ->
             ContextlessApp
 
-        BugApp ->
+        DesktopApp.Bug ->
             ContextualApp
 
-        CalculatorApp ->
+        DesktopApp.Calculator ->
             ContextlessApp
 
-        BackFlixApp ->
+        DesktopApp.BackFlix ->
             ContextlessApp
 
-        FloatingHeadsApp ->
+        DesktopApp.FloatingHeads ->
             ContextlessApp
 
 
-name : App -> String
+name : DesktopApp -> String
 name app =
     case app of
-        LogViewerApp ->
+        DesktopApp.LogViewer ->
             LogViewer.name
 
-        TaskManagerApp ->
+        DesktopApp.TaskManager ->
             TaskManager.name
 
-        BrowserApp ->
+        DesktopApp.Browser ->
             Browser.name
 
-        ExplorerApp ->
+        DesktopApp.Explorer ->
             Explorer.name
 
-        DatabaseApp ->
+        DesktopApp.Database ->
             Database.name
 
-        ConnManagerApp ->
+        DesktopApp.ConnManager ->
             ConnManager.name
 
-        BounceManagerApp ->
+        DesktopApp.BounceManager ->
             BounceManager.name
 
-        FinanceApp ->
+        DesktopApp.Finance ->
             Finance.name
 
-        MusicApp ->
+        DesktopApp.Hebamp ->
             Hebamp.name
 
-        CtrlPanelApp ->
+        DesktopApp.CtrlPanel ->
             CtrlPanel.name
 
-        ServersGearsApp ->
+        DesktopApp.ServersGears ->
             ServersGears.name
 
-        LocationPickerApp ->
+        DesktopApp.LocationPicker ->
             LocationPicker.name
 
-        LanViewerApp ->
+        DesktopApp.LanViewer ->
             LanViewer.name
 
-        EmailApp ->
+        DesktopApp.Email ->
             Email.name
 
-        BugApp ->
+        DesktopApp.Bug ->
             Bug.name
 
-        CalculatorApp ->
+        DesktopApp.Calculator ->
             Calculator.name
 
-        BackFlixApp ->
+        DesktopApp.BackFlix ->
             BackFlix.name
 
-        FloatingHeadsApp ->
+        DesktopApp.FloatingHeads ->
             FloatingHeads.name
 
 
-icon : App -> String
+icon : DesktopApp -> String
 icon app =
     case app of
-        LogViewerApp ->
+        DesktopApp.LogViewer ->
             LogViewer.icon
 
-        TaskManagerApp ->
+        DesktopApp.TaskManager ->
             TaskManager.icon
 
-        BrowserApp ->
+        DesktopApp.Browser ->
             Browser.icon
 
-        ExplorerApp ->
+        DesktopApp.Explorer ->
             Explorer.icon
 
-        DatabaseApp ->
+        DesktopApp.Database ->
             Database.icon
 
-        ConnManagerApp ->
+        DesktopApp.ConnManager ->
             ConnManager.icon
 
-        BounceManagerApp ->
+        DesktopApp.BounceManager ->
             BounceManager.icon
 
-        FinanceApp ->
+        DesktopApp.Finance ->
             Finance.icon
 
-        MusicApp ->
+        DesktopApp.Hebamp ->
             Hebamp.icon
 
-        CtrlPanelApp ->
+        DesktopApp.CtrlPanel ->
             CtrlPanel.icon
 
-        ServersGearsApp ->
+        DesktopApp.ServersGears ->
             ServersGears.icon
 
-        LocationPickerApp ->
+        DesktopApp.LocationPicker ->
             LocationPicker.icon
 
-        LanViewerApp ->
+        DesktopApp.LanViewer ->
             LanViewer.icon
 
-        EmailApp ->
+        DesktopApp.Email ->
             Email.icon
 
-        BugApp ->
+        DesktopApp.Bug ->
             Bug.icon
 
-        CalculatorApp ->
+        DesktopApp.Calculator ->
             Calculator.icon
 
-        BackFlixApp ->
+        DesktopApp.BackFlix ->
             BackFlix.icon
 
-        FloatingHeadsApp ->
+        DesktopApp.FloatingHeads ->
             FloatingHeads.icon
 
 
@@ -288,19 +288,19 @@ title model =
             FloatingHeads.title model
 
 
-windowInitSize : App -> ( Float, Float )
+windowInitSize : DesktopApp -> ( Float, Float )
 windowInitSize app =
     case app of
-        EmailApp ->
+        DesktopApp.Email ->
             Email.windowInitSize
 
-        BrowserApp ->
+        DesktopApp.Browser ->
             Browser.windowInitSize
 
-        CalculatorApp ->
+        DesktopApp.Calculator ->
             Calculator.windowInitSize
 
-        BackFlixApp ->
+        DesktopApp.BackFlix ->
             BackFlix.windowInitSize
 
         _ ->

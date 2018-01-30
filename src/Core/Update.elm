@@ -16,8 +16,7 @@ import Setup.Messages as Setup
 import Setup.Update as Setup
 import OS.Messages as OS
 import OS.Update as OS
-import OS.SessionManager.WindowManager.Messages as WM
-import OS.SessionManager.Messages as SM
+import OS.WindowManager.Messages as WindowManager
 import Apps.Messages as Apps
 import Apps.TaskManager.Messages as TaskManager
 import Core.Config exposing (..)
@@ -369,13 +368,16 @@ received msg =
         GameMsg (Game.MetaMsg (Meta.Tick _)) ->
             msg
 
-        OSMsg (OS.SessionManagerMsg (SM.WindowManagerMsg _ (WM.OnDragBy _))) ->
+        OSMsg (OS.WindowManagerMsg (WindowManager.StartDrag _)) ->
             msg
 
-        OSMsg (OS.SessionManagerMsg (SM.WindowManagerMsg _ (WM.DragMsg _))) ->
+        OSMsg (OS.WindowManagerMsg (WindowManager.Dragging _)) ->
             msg
 
-        OSMsg (OS.SessionManagerMsg (SM.WindowManagerMsg _ (WM.AppMsg _ _ (Apps.TaskManagerMsg (TaskManager.Tick _))))) ->
+        OSMsg (OS.WindowManagerMsg WindowManager.StopDrag) ->
+            msg
+
+        OSMsg (OS.WindowManagerMsg (WindowManager.TaskManagerMsg _ (TaskManager.Tick _))) ->
             msg
 
         _ ->

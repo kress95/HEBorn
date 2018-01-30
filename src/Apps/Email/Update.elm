@@ -5,7 +5,6 @@ import Apps.Email.Config exposing (..)
 import Apps.Email.Models exposing (..)
 import Apps.Email.Messages as Email exposing (Msg(..))
 import Apps.FloatingHeads.Models as FloatingHeads
-import Apps.Apps as Apps
 
 
 type alias UpdateResponse msg =

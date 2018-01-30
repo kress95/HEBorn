@@ -2,6 +2,8 @@ module Apps.Browser.Config exposing (..)
 
 import Utils.Core exposing (..)
 import Game.Account.Finances.Models exposing (BankLoginRequest, BankTransferRequest)
+import Apps.Params as AppParams exposing (AppParams)
+import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Context exposing (Context(..))
 import Game.Meta.Types.Network as Network exposing (NIP)
 import Game.Meta.Types.Requester exposing (Requester)
@@ -9,7 +11,6 @@ import Game.Servers.Models as Servers
 import Game.Servers.Shared as Servers exposing (CId)
 import Game.Servers.Filesystem.Shared as Filesystem
 import Game.Servers.Processes.Requests.Download as Download
-import Apps.Apps as Apps
 import Apps.Browser.Messages exposing (..)
 import Apps.Browser.Menu.Config as Menu
 import Apps.Browser.Pages.Bank.Config as Bank
@@ -24,8 +25,8 @@ type alias Config msg =
     , endpoints : List CId
     , activeServer : Servers.Server
     , activeGateway : Servers.Server
-    , onNewApp : Maybe Context -> Maybe Apps.AppParams -> Apps.App -> msg
-    , onOpenApp : Maybe Context -> Apps.AppParams -> msg
+    , onNewApp : Maybe Context -> Maybe AppParams -> DesktopApp -> msg
+    , onOpenApp : Maybe Context -> AppParams -> msg
     , onNewPublicDownload : NIP -> Download.StorageId -> Filesystem.FileEntry -> msg
     , onBankAccountLogin : BankLoginRequest -> Requester -> msg
     , onBankAccountTransfer : BankTransferRequest -> Requester -> msg

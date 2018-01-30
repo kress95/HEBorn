@@ -43,8 +43,11 @@ import Game.Storyline.Missions.Messages as Missions
 import Game.Web.Messages as Web
 import OS.Config as OS
 import OS.Messages as OS
-import OS.SessionManager.Messages as SessionManager
-import OS.SessionManager.Types as SessionManager
+
+
+--import OS.SessionManager.Messages as SessionManager
+--import OS.SessionManager.Types as SessionManager
+
 import OS.Toasts.Messages as Toast
 import Apps.Messages as Apps
 import Apps.Browser.Messages as Browser
@@ -95,14 +98,15 @@ eventsConfig =
     { forAccount =
         { onServerPasswordAcquired =
             \data ->
-                BatchMsg
-                    [ database <| Database.HandlePasswordAcquired data
-                    , data
-                        |> Browser.HandlePasswordAcquired
-                        |> Apps.BrowserMsg
-                        |> List.singleton
-                        |> apps
-                    ]
+                BatchMsg []
+
+        --[ database <| Database.HandlePasswordAcquired data
+        --, data
+        --    |> Browser.HandlePasswordAcquired
+        --    |> Apps.BrowserMsg
+        --    |> List.singleton
+        --    |> apps
+        --]
         , onStoryStepProceeded =
             Missions.HandleStepProceeded >> missions
         , onStoryEmailSent =
@@ -176,14 +180,17 @@ gameConfig =
     -- web
     , onDNS =
         \response { sessionId, windowId, context, tabId } ->
-            Browser.HandleFetched response
-                |> Browser.SomeTabMsg tabId
-                |> browser ( sessionId, windowId ) context
+            BatchMsg []
+
+    --Browser.HandleFetched response
+    --    |> Browser.SomeTabMsg tabId
+    --    |> browser ( sessionId, windowId ) context
     , onJoinFailed =
         \{ sessionId, windowId, context, tabId } ->
-            Browser.HandleLoginFailed
-                |> Browser.SomeTabMsg tabId
-                |> browser ( sessionId, windowId ) context
+            --Browser.HandleLoginFailed
+            --    |> Browser.SomeTabMsg tabId
+            --    |> browser ( sessionId, windowId ) context
+            BatchMsg []
 
     -- servers
     , onNewGateway =
@@ -208,24 +215,28 @@ gameConfig =
     -- account.finances
     , onBALoginSuccess =
         \data { sessionId, windowId, context, tabId } ->
-            Browser.HandleBankLogin data
-                |> Browser.SomeTabMsg tabId
-                |> browser ( sessionId, windowId ) context
+            --Browser.HandleBankLogin data
+            --    |> Browser.SomeTabMsg tabId
+            --    |> browser ( sessionId, windowId ) context
+            BatchMsg []
     , onBALoginFailed =
         \{ sessionId, windowId, context, tabId } ->
-            Browser.HandleBankLoginError
-                |> Browser.SomeTabMsg tabId
-                |> browser ( sessionId, windowId ) context
+            --Browser.HandleBankLoginError
+            --    |> Browser.SomeTabMsg tabId
+            --    |> browser ( sessionId, windowId ) context
+            BatchMsg []
     , onBATransferSuccess =
         \{ sessionId, windowId, context, tabId } ->
-            Browser.HandleBankTransfer
-                |> Browser.SomeTabMsg tabId
-                |> browser ( sessionId, windowId ) context
+            --Browser.HandleBankTransfer
+            --    |> Browser.SomeTabMsg tabId
+            --    |> browser ( sessionId, windowId ) context
+            BatchMsg []
     , onBATransferFailed =
         \{ sessionId, windowId, context, tabId } ->
-            Browser.HandleBankTransferError
-                |> Browser.SomeTabMsg tabId
-                |> browser ( sessionId, windowId ) context
+            --Browser.HandleBankTransferError
+            --    |> Browser.SomeTabMsg tabId
+            --    |> browser ( sessionId, windowId ) context
+            BatchMsg []
     }
 
 
@@ -343,10 +354,12 @@ osConfig game (( sCId, _ ) as srv) ctx (( gCId, _ ) as gtw) =
         Emails.HandleReply >>> emails
     , onActionDone =
         \app context ->
-            context
-                |> MissionsActions.GoApp app
-                |> Missions.HandleActionDone
-                |> missions
+            BatchMsg []
+
+    --context
+    --    |> MissionsActions.GoApp app
+    --    |> Missions.HandleActionDone
+    --    |> missions
     , onWebLogout =
         \cid -> Servers.HandleLogout |> server cid
     }
@@ -451,9 +464,10 @@ finances =
     Account.FinancesMsg >> account
 
 
-sessionManager : SessionManager.Msg -> Msg
-sessionManager =
-    OS.SessionManagerMsg >> os
+
+--sessionManager : SessionManager.Msg -> Msg
+--sessionManager =
+--    OS.SessionManagerMsg >> os
 
 
 os : OS.Msg -> Msg
@@ -466,24 +480,21 @@ toast =
     OS.ToastsMsg >> os
 
 
-apps : List Apps.Msg -> Msg
-apps =
-    SessionManager.EveryAppMsg >> sessionManager
 
-
-browser :
-    SessionManager.WindowRef
-    -> Context
-    -> Browser.Msg
-    -> Msg
-browser windowRef context =
-    Apps.BrowserMsg >> app windowRef context
-
-
-app :
-    SessionManager.WindowRef
-    -> Context
-    -> Apps.Msg
-    -> Msg
-app windowRef context =
-    SessionManager.AppMsg windowRef context >> sessionManager
+--apps : List Apps.Msg -> Msg
+--apps =
+--    SessionManager.EveryAppMsg >> sessionManager
+--browser :
+--    SessionManager.WindowRef
+--    -> Context
+--    -> Browser.Msg
+--    -> Msg
+--browser windowRef context =
+--    Apps.BrowserMsg >> app windowRef context
+--app :
+--    SessionManager.WindowRef
+--    -> Context
+--    -> Apps.Msg
+--    -> Msg
+--app windowRef context =
+--    SessionManager.AppMsg windowRef context >> sessionManager
