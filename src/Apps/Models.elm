@@ -2,6 +2,7 @@ module Apps.Models
     exposing
         ( AppModel(..)
         , Contexts(..)
+        , toDesktopApp
         , contexts
         , name
         , title
@@ -54,6 +55,64 @@ type AppModel
 type Contexts
     = ContextualApp
     | ContextlessApp
+
+
+toDesktopApp : AppModel -> DesktopApp
+toDesktopApp model =
+    case model of
+        LogViewerModel _ ->
+            DesktopApp.LogViewer
+
+        TaskManagerModel _ ->
+            DesktopApp.TaskManager
+
+        BrowserModel _ ->
+            DesktopApp.Browser
+
+        ExplorerModel _ ->
+            DesktopApp.Explorer
+
+        DatabaseModel _ ->
+            DesktopApp.Database
+
+        ConnManagerModel _ ->
+            DesktopApp.ConnManager
+
+        BounceManagerModel _ ->
+            DesktopApp.BounceManager
+
+        FinanceModel _ ->
+            DesktopApp.Finance
+
+        MusicModel _ ->
+            DesktopApp.Hebamp
+
+        CtrlPanelModel _ ->
+            DesktopApp.CtrlPanel
+
+        ServersGearsModel _ ->
+            DesktopApp.ServersGears
+
+        LocationPickerModel _ ->
+            DesktopApp.LocationPicker
+
+        LanViewerModel _ ->
+            DesktopApp.LanViewer
+
+        EmailModel _ ->
+            DesktopApp.Email
+
+        BugModel _ ->
+            DesktopApp.Bug
+
+        CalculatorModel _ ->
+            DesktopApp.Calculator
+
+        BackFlixModel _ ->
+            DesktopApp.BackFlix
+
+        FloatingHeadsModel _ ->
+            DesktopApp.FloatingHeads
 
 
 contexts : DesktopApp -> Contexts

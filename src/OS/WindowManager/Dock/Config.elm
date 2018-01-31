@@ -7,7 +7,8 @@ import OS.WindowManager.Shared exposing (WindowId)
 
 
 type alias Config msg =
-    { onClickIcon : DesktopApp -> msg
+    { onNewApp : DesktopApp -> msg
+    , onClickIcon : DesktopApp -> msg
     , onMinimizeAll : DesktopApp -> msg
     , onCloseAll : DesktopApp -> msg
     , onMinimizeWindow : WindowId -> msg

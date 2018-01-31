@@ -70,7 +70,8 @@ type alias Config msg =
 
 dockConfig : Config msg -> Dock.Config msg
 dockConfig config =
-    { onClickIcon = ClickIcon >> config.toMsg
+    { onNewApp = \app -> config.toMsg <| NewApp app Nothing Nothing
+    , onClickIcon = ClickIcon >> config.toMsg
     , onMinimizeAll = MinimizeAll >> config.toMsg
     , onCloseAll = CloseAll >> config.toMsg
     , onMinimizeWindow = Minimize >> config.toMsg

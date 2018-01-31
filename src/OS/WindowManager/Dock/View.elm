@@ -2,19 +2,62 @@ module OS.WindowManager.Dock.View exposing (view)
 
 import Dict exposing (Dict)
 import Html exposing (..)
-import Html.Events exposing (onClick)
 import Html.Attributes exposing (title, attribute)
-import Utils.Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import Html.CssHelpers
+import Utils.Html.Attributes exposing (..)
+import Utils.Maybe as Maybe
+import Apps.Models as Apps
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import OS.Resources as OsRes
-import Apps.Models as Apps
 import OS.WindowManager.Models exposing (..)
+import OS.WindowManager.Shared exposing (..)
 import OS.WindowManager.Dock.Config exposing (..)
 import OS.WindowManager.Dock.Resources as Res
 
 
--- this module still needs a refactor to make its code more maintainable
+-- we're taking liberties concerning leaking implementation
+-- details here to keep the codebase simple
+
+
+type alias AppName =
+    String
+
+
+type alias WindowTitle =
+    String
+
+
+type alias WindowGroups =
+    ( WindowGroup, WindowGroup )
+
+
+type alias WindowGroup =
+    Dict AppName (List ( WindowId, Window ))
+
+
+view : Config msg -> Model -> Session -> Html msg
+view config model session =
+    let
+        groups =
+            group model session
+
+        icons =
+            config.accountDock
+                |> List.foldl (viewIcons config model groups) []
+                |> List.reverse
+                |> div [ class [ Res.Main ] ]
+
+        dock =
+            div [ class [ Res.Container ] ]
+                [ div [ class [ Res.Main ] ] [ icons ] ]
+    in
+        div [ osClass [ OsRes.Dock ] ]
+            [ dock ]
+
+
+
+-- internals
 
 
 { id, class, classList } =
@@ -26,130 +69,177 @@ osClass =
     .class <| Html.CssHelpers.withNamespace OsRes.prefix
 
 
-view : Config msg -> Model -> Html msg
-view config model =
-    div [ osClass [ OsRes.Dock ] ]
-        [ dock config model ]
-
-
-
--- internals
-
-
-dock : Config msg -> Model -> Html msg
-dock config model =
+viewIcons :
+    Config msg
+    -> Model
+    -> WindowGroups
+    -> DesktopApp
+    -> List (Html msg)
+    -> List (Html msg)
+viewIcons config model groupedWindows app list =
     let
-        id =
-            config.sessionId
+        icon =
+            viewIcon config app
 
-        wm =
-            Maybe.withDefault (WM.initialModel id) (get id model)
-
-        dock =
-            config.accountDock
+        isNotEmpty =
+            hasAppOpened app groupedWindows
 
         content =
-            icons config dock wm
+            if isNotEmpty then
+                [ icon, options config model app groupedWindows ]
+            else
+                [ icon ]
+
+        result =
+            div
+                [ class [ Res.Item ]
+                , appAttr app
+                , boolAttr Res.appHasInstanceAttrTag isNotEmpty
+                ]
+                content
     in
-        div [ class [ Res.Container ] ]
-            [ div [ class [ Res.Main ] ] [ content ] ]
+        result :: list
 
 
-icons : Config msg -> List DesktopApp -> WM.Model -> Html msg
-icons config apps wm =
-    let
-        group =
-            WM.group wm
-
-        reducer app acc =
-            let
-                isNotEmpty =
-                    hasAppOpened app group
-
-                item =
-                    icon config app group wm
-
-                content =
-                    if isNotEmpty then
-                        let
-                            menu =
-                                options config app group
-                        in
-                            [ item, menu ]
-                    else
-                        [ item ]
-
-                result =
-                    div
-                        [ class [ Res.Item ]
-                        , appAttr app
-                        , boolAttr Res.appHasInstanceAttrTag isNotEmpty
-                        ]
-                        content
-            in
-                result :: acc
-
-        content =
-            apps
-                |> List.foldl reducer []
-                |> List.reverse
-    in
-        div [ class [ Res.Main ] ] content
-
-
-icon : Config msg -> DesktopApp -> WM.GroupedWindows -> WM.Model -> Html msg
-icon config app group wm =
+viewIcon : Config msg -> DesktopApp -> Html msg
+viewIcon config app =
     div
         [ class [ Res.ItemIco ]
-        , onClick (config.toMsg <| AppButton app)
+        , onClick (config.onClickIcon app)
         , attribute Res.appIconAttrTag (Apps.icon app)
         , title (Apps.name app)
         ]
         []
 
 
-options : Config msg -> DesktopApp -> WM.GroupedWindows -> Html msg
-options config app { visible, hidden } =
+options : Config msg -> Model -> DesktopApp -> WindowGroups -> Html msg
+options config model app ( visible, hidden ) =
     let
         appName =
             Apps.name app
 
-        separator =
-            hr [] []
-
-        defaultToEmptyList =
-            Maybe.withDefault []
-
         visible_ =
             visible
                 |> Dict.get appName
-                |> defaultToEmptyList
-                |> windowList (FocusWindow >> config.toMsg) "OPEN WINDOWS"
+                |> Maybe.withDefault []
+                |> windowList config.onRestoreWindow model "OPEN WINDOWS"
 
         hidden_ =
             hidden
                 |> Dict.get appName
-                |> defaultToEmptyList
-                |> windowList (RestoreWindow >> config.toMsg) "HIDDEN LINUXES"
+                |> Maybe.withDefault []
+                |> windowList config.onRestoreWindow model "HIDDEN LINUXES"
 
         batchActions =
-            [ subMenuAction "New window" (config.toMsg <| OpenApp app)
-            , subMenuAction "Minimize all" (config.toMsg <| MinimizeApps app)
-            , subMenuAction "Close all" (config.toMsg <| CloseApps app)
+            [ subMenuAction "New window" (config.onNewApp app)
+            , subMenuAction "Minimize all" (config.onMinimizeAll app)
+            , subMenuAction "Close all" (config.onCloseAll app)
             ]
 
         menu_ =
             batchActions
                 |> (++) hidden_
-                |> (::) separator
+                |> (::) (hr [] [])
                 |> (++) visible_
     in
         div [ class [ Res.AppContext ] ]
             [ ul [] menu_ ]
 
 
-hasAppOpened : DesktopApp -> WM.GroupedWindows -> Bool
-hasAppOpened app { hidden, visible } =
+subMenuAction : String -> msg -> Html msg
+subMenuAction label event =
+    li
+        [ class [ Res.ClickableWindow ], onClick event ]
+        [ text label ]
+
+
+windowList :
+    (WindowId -> msg)
+    -> Model
+    -> String
+    -> List ( WindowId, Window )
+    -> List (Html msg)
+windowList onClick model label list =
+    let
+        titleAndId ( windowId, window ) =
+            case getWindowTitle model window of
+                Just appModel ->
+                    appModel ++ windowId
+
+                Nothing ->
+                    windowId
+    in
+        list
+            |> List.sortBy titleAndId
+            |> List.indexedMap (listItem onClick model)
+            |> (::) (hr [] [])
+            |> (::) (li [] [ text label ])
+
+
+listItem : (WindowId -> msg) -> Model -> Int -> ( String, Window ) -> Html msg
+listItem event model index ( windowId, window ) =
+    li
+        [ class [ Res.ClickableWindow ]
+        , idAttr (toString index)
+        , onClick (event windowId)
+        ]
+        [ (windowLabel model index window) ]
+
+
+windowLabel : Model -> Int -> Window -> Html msg
+windowLabel model index window =
+    case getWindowTitle model window of
+        Just title ->
+            text (toString index ++ " : " ++ title)
+
+        Nothing ->
+            text "Untitled window."
+
+
+
+-- helpers
+
+
+getWindowTitle : Model -> Window -> Maybe WindowTitle
+getWindowTitle model window =
+    model
+        |> getApp (getActiveAppId window)
+        |> Maybe.map (getModel >> Apps.title)
+
+
+group : Model -> Session -> WindowGroups
+group model { visible, hidden } =
+    let
+        reducer windowId dict =
+            let
+                maybeWindow =
+                    getWindow windowId model
+
+                maybeAppName =
+                    maybeWindow
+                        |> Maybe.map getActiveAppId
+                        |> Maybe.andThen (flip getApp model)
+                        |> Maybe.map
+                            (getModel >> Apps.toDesktopApp >> Apps.name)
+            in
+                case Maybe.uncurry maybeWindow maybeAppName of
+                    Just ( window, appName ) ->
+                        dict
+                            |> Dict.get appName
+                            |> Maybe.withDefault []
+                            |> (::) ( windowId, window )
+                            |> flip (Dict.insert appName) dict
+
+                    Nothing ->
+                        dict
+    in
+        ( List.foldl reducer Dict.empty visible
+        , List.foldl reducer Dict.empty hidden
+        )
+
+
+hasAppOpened : DesktopApp -> WindowGroups -> Bool
+hasAppOpened app ( hidden, visible ) =
     let
         name =
             Apps.name app
@@ -168,55 +258,5 @@ hasAppOpened app { hidden, visible } =
                 |> Dict.get name
                 |> Maybe.map notEmpty
                 |> Maybe.withDefault False
-
-        result =
-            hidden_ || visible_
     in
-        result
-
-
-subMenuAction : String -> msg -> Html msg
-subMenuAction label event =
-    li
-        [ class [ Res.ClickableWindow ], onClick event ]
-        [ text label ]
-
-
-windowList :
-    (String -> msg)
-    -> String
-    -> List ( String, WM.Window )
-    -> List (Html msg)
-windowList event label list =
-    let
-        titleAndID ( id, window ) =
-            (WM.title window) ++ id
-    in
-        list
-            |> List.sortBy titleAndID
-            |> List.indexedMap (listItem event)
-            |> (::) (hr [] [])
-            |> (::) (li [] [ text label ])
-
-
-listItem : (String -> msg) -> Int -> ( String, WM.Window ) -> Html msg
-listItem event index ( id, window ) =
-    li
-        [ class [ Res.ClickableWindow ]
-        , idAttr (toString index)
-        , onClick (event id)
-        ]
-        [ (windowLabel index window) ]
-
-
-windowLabel : Int -> WM.Window -> Html msg
-windowLabel index window =
-    let
-        andThen =
-            flip (++)
-    in
-        index
-            |> toString
-            |> andThen ": "
-            |> andThen (WM.title window)
-            |> text
+        hidden_ || visible_
