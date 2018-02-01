@@ -26,15 +26,16 @@ import OS.WindowManager.Shared exposing (..)
 type Msg
     = NewApp DesktopApp (Maybe Context) (Maybe AppParams)
     | OpenApp Context AppParams
-    | PinWindow WindowId
-    | UnpinWindow WindowId
-    | CloseWindow WindowId
       -- window handling
+    | Close WindowId
     | Minimize WindowId
     | ToggleVisibility WindowId
     | ToggleMaximize WindowId
+    | ToggleContext WindowId
     | SelectContext Context WindowId
     | UpdateFocus (Maybe WindowId)
+    | Pin WindowId
+    | Unpin WindowId
       -- drag messages
     | StartDrag WindowId
     | Dragging Draggable.Delta

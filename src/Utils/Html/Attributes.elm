@@ -52,9 +52,9 @@ idAttr =
     attribute idAttrTag
 
 
-appAttr : DesktopApp -> Attribute msg
+appAttr : String -> Attribute msg
 appAttr =
-    Apps.name >> attribute appAttrTag
+    attribute appAttrTag
 
 
 activeContextAttr : Context -> Attribute msg

@@ -6,16 +6,16 @@ import Html.Lazy exposing (lazy)
 import Html.CssHelpers
 import Utils.Html.Attributes exposing (activeContextAttr)
 import Core.Flags as Flags
-import OS.Config exposing (..)
-import OS.Models exposing (Model)
-import OS.Messages exposing (Msg(..))
-import OS.Resources as Res
-import OS.DynamicStyle as DynamicStyle
 import OS.Header.View as Header
 import OS.Header.Models as Header
 import OS.WindowManager.View as WindowManager
 import OS.Toasts.View as Toasts
 import OS.Console.View as Console
+import OS.DynamicStyle as DynamicStyle
+import OS.Resources as Res
+import OS.Config exposing (..)
+import OS.Models exposing (..)
+import OS.Messages exposing (..)
 
 
 { id, class, classList } =
@@ -86,17 +86,7 @@ viewHeader config header =
 
 viewMain : Config msg -> Model -> Html msg
 viewMain config model =
-    --WindowManager.view ()
-    div [] []
-
-
-
---let
---    config_ =
---        smConfig config
---in
---    model.session
---        |> SessionManager.view config_
+    WindowManager.view (windowManagerConfig config) (getWindowManager model)
 
 
 displayVersion : String -> Html msg

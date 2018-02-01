@@ -8,6 +8,7 @@ import Utils.Maybe as Maybe
 import Apps.Models as Apps
 import Game.Meta.Types.Apps.Desktop as Desktop
 import Game.Meta.Types.Context exposing (Context(..))
+import Game.Servers.Shared exposing (CId)
 import OS.WindowManager.Shared exposing (..)
 
 
@@ -32,7 +33,7 @@ type alias Apps =
 
 type alias App =
     { windowId : WindowId
-    , context : Context
+    , serverCId : CId
     , model : Apps.AppModel
     }
 
@@ -276,6 +277,16 @@ setModel appModel app =
     { app | model = appModel }
 
 
+getWindowId : App -> WindowId
+getWindowId =
+    .windowId
+
+
+getServerCId : App -> CId
+getServerCId =
+    .serverCId
+
+
 
 -- window helpers
 
@@ -324,6 +335,19 @@ setContext context window =
 
         Double _ appId maybeAppId ->
             { window | instance = Double context appId maybeAppId }
+
+
+hasMultipleContext : Window -> Bool
+hasMultipleContext window =
+    case window.instance of
+        Single _ _ ->
+            False
+
+        Double _ _ Nothing ->
+            False
+
+        Double _ _ _ ->
+            True
 
 
 isMaximized : Window -> Bool
@@ -482,6 +506,7 @@ stopDragging model =
 
 
 
+-- misc
 ---- internals
 
 

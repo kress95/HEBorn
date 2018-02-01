@@ -93,7 +93,7 @@ viewIcons config model groupedWindows app list =
         result =
             div
                 [ class [ Res.Item ]
-                , appAttr app
+                , appAttr <| Apps.name app
                 , boolAttr Res.appHasInstanceAttrTag isNotEmpty
                 ]
                 content

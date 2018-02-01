@@ -76,7 +76,7 @@ dockConfig config =
     , onCloseAll = CloseAll >> config.toMsg
     , onMinimizeWindow = Minimize >> config.toMsg
     , onRestoreWindow = Just >> UpdateFocus >> config.toMsg
-    , onCloseWindow = CloseWindow >> config.toMsg
+    , onCloseWindow = Close >> config.toMsg
     , accountDock = Account.getDock config.account
     , endpointCId = config.endpointCId
     }

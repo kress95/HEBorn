@@ -23,16 +23,10 @@ update config msg model =
         OpenApp context params ->
             React.update model
 
-        PinWindow wId ->
-            withSession config model <| pin wId >> React.update
-
-        UnpinWindow wId ->
-            withSession config model <| unpin wId >> React.update
-
-        CloseWindow wId ->
+        -- window handling
+        Close wId ->
             React.update <| close wId model
 
-        -- window handling
         Minimize wId ->
             withSession config model <| minimize wId >> React.update
 
@@ -42,11 +36,20 @@ update config msg model =
         ToggleMaximize wId ->
             withWindow wId model <| toggleMaximize >> React.update
 
+        ToggleContext wId ->
+            withWindow wId model <| toggleContext >> React.update
+
         SelectContext context wId ->
             withWindow wId model <| setContext context >> React.update
 
         UpdateFocus maybeWId ->
             withSession config model <| updateFocus maybeWId >> React.update
+
+        Pin wId ->
+            withSession config model <| pin wId >> React.update
+
+        Unpin wId ->
+            withSession config model <| unpin wId >> React.update
 
         -- drag messages
         StartDrag wId ->
