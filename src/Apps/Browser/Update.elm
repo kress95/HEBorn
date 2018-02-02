@@ -289,7 +289,8 @@ processTabMsg config tabId msg tab model =
 
         NewApp params ->
             ( tab
-            , React.msg <| config.onNewApp Nothing Nothing params
+            , React.none
+              --, React.msg <| config.onNewApp Nothing params
             )
 
         SelectEndpoint ->

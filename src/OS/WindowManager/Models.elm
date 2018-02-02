@@ -506,7 +506,6 @@ stopDragging model =
 
 
 
--- misc
 ---- internals
 
 

@@ -377,7 +377,7 @@ received msg =
         OSMsg (OS.WindowManagerMsg WindowManager.StopDrag) ->
             msg
 
-        OSMsg (OS.WindowManagerMsg (WindowManager.TaskManagerMsg _ (TaskManager.Tick _))) ->
+        OSMsg (OS.WindowManagerMsg (WindowManager.AppMsg _ (WindowManager.TaskManagerMsg (TaskManager.Tick _)))) ->
             msg
 
         _ ->

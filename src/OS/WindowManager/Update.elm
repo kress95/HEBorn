@@ -2,7 +2,27 @@ module OS.WindowManager.Update exposing (update)
 
 import Draggable
 import Draggable.Events as Draggable
+import Utils.Maybe as Maybe
 import Utils.React as React exposing (React)
+import Apps.Models as Apps
+import Apps.BackFlix.Update as BackFlix
+import Apps.BounceManager.Update as BounceManager
+import Apps.Browser.Update as Browser
+import Apps.Bug.Update as Bug
+import Apps.Calculator.Update as Calculator
+import Apps.ConnManager.Update as ConnManager
+import Apps.DBAdmin.Update as DBAdmin
+import Apps.Email.Update as Email
+import Apps.Explorer.Update as Explorer
+import Apps.Finance.Update as Finance
+import Apps.FloatingHeads.Update as FloatingHeads
+import Apps.Hebamp.Update as Hebamp
+import Apps.LocationPicker.Update as LocationPicker
+import Apps.LogViewer.Update as LogViewer
+import Apps.ServersGears.Update as ServersGears
+import Apps.TaskManager.Update as TaskManager
+import Game.Servers.Models as Servers exposing (Server)
+import Game.Servers.Shared as Servers exposing (CId(..))
 import OS.WindowManager.Config exposing (..)
 import OS.WindowManager.Helpers exposing (..)
 import OS.WindowManager.Messages exposing (..)
@@ -75,53 +95,8 @@ update config msg model =
             React.update model
 
         -- app messages
-        BackFlixMsg appId msg ->
-            React.update model
-
-        BounceManagerMsg appId msg ->
-            React.update model
-
-        BrowserMsg appId msg ->
-            React.update model
-
-        BugMsg appId msg ->
-            React.update model
-
-        CalculatorMsg appId msg ->
-            React.update model
-
-        ConnManagerMsg appId msg ->
-            React.update model
-
-        DBAdminMsg appId msg ->
-            React.update model
-
-        EmailMsg appId msg ->
-            React.update model
-
-        ExplorerMsg appId msg ->
-            React.update model
-
-        FinanceMsg appId msg ->
-            React.update model
-
-        FloatingHeadsMsg appId msg ->
-            React.update model
-
-        HebampMsg appId msg ->
-            React.update model
-
-        LocationPickerMsg appId msg ->
-            React.update model
-
-        LogViewerMsg appId msg ->
-            React.update model
-
-        ServersGearsMsg appId msg ->
-            React.update model
-
-        TaskManagerMsg appId msg ->
-            React.update model
+        AppMsg appId appMsg ->
+            updateApp config appId appMsg model
 
 
 withSession :
@@ -181,5 +156,243 @@ onDragging x y model =
             React.update model
 
 
+updateApp : Config msg -> AppId -> AppMsg -> Model -> UpdateResponse msg
+updateApp config appId appMsg model =
+    let
+        maybeApp =
+            getApp appId model
 
---updateApp : Config msg ->
+        maybeWindowId =
+            Maybe.map getWindowId maybeApp
+
+        maybeWindow =
+            Maybe.andThen (flip getWindow model) maybeWindowId
+
+        maybeActiveServer =
+            Maybe.andThen (getAppActiveServer config) maybeApp
+
+        maybeActiveGateway =
+            Maybe.andThen (getWindowGateway config model) maybeWindow
+
+        uncurried =
+            case Maybe.uncurry maybeActiveServer maybeActiveGateway of
+                Just ( active, gateway ) ->
+                    case maybeApp of
+                        Just app ->
+                            Just ( app, active, gateway )
+
+                        Nothing ->
+                            Nothing
+
+                Nothing ->
+                    Nothing
+    in
+        case uncurried of
+            Just ( app, active, gateway ) ->
+                let
+                    ( appModel, react ) =
+                        updateAppDelegate config
+                            active
+                            gateway
+                            appMsg
+                            appId
+                            app
+                in
+                    ( insertApp appId (setModel appModel app) model
+                    , react
+                    )
+
+            Nothing ->
+                React.update model
+
+
+updateAppDelegate :
+    Config msg
+    -> ( CId, Server )
+    -> ( CId, Server )
+    -> AppMsg
+    -> AppId
+    -> App
+    -> ( Apps.AppModel, React msg )
+updateAppDelegate config ( cid, server ) ( gCid, gServer ) appMsg appId app =
+    -- HACK : Elm's Tuple Pattern Matching is slow
+    -- https://groups.google.com/forum/#!topic/elm-dev/QGmwWH6V8-c
+    case appMsg of
+        BackFlixMsg msg ->
+            case getModel app of
+                Apps.BackFlixModel appModel ->
+                    appModel
+                        |> BackFlix.update (backFlixConfig appId config) msg
+                        |> Tuple.mapFirst Apps.BackFlixModel
+
+                model ->
+                    React.update model
+
+        BounceManagerMsg msg ->
+            case getModel app of
+                Apps.BounceManagerModel appModel ->
+                    appModel
+                        |> BounceManager.update
+                            (bounceManagerConfig appId config)
+                            msg
+                        |> Tuple.mapFirst Apps.BounceManagerModel
+
+                model ->
+                    React.update model
+
+        BrowserMsg msg ->
+            case getModel app of
+                Apps.BrowserModel appModel ->
+                    appModel
+                        |> Browser.update (browserConfig appId server config)
+                            msg
+                        |> Tuple.mapFirst Apps.BrowserModel
+
+                model ->
+                    React.update model
+
+        BugMsg msg ->
+            case getModel app of
+                Apps.BugModel appModel ->
+                    appModel
+                        |> Bug.update (bugConfig appId config) msg
+                        |> Tuple.mapFirst Apps.BugModel
+
+                model ->
+                    React.update model
+
+        CalculatorMsg msg ->
+            case getModel app of
+                Apps.CalculatorModel appModel ->
+                    appModel
+                        |> Calculator.update (calculatorConfig appId config)
+                            msg
+                        |> Tuple.mapFirst Apps.CalculatorModel
+
+                model ->
+                    React.update model
+
+        ConnManagerMsg msg ->
+            case getModel app of
+                Apps.ConnManagerModel appModel ->
+                    appModel
+                        |> ConnManager.update (connManagerConfig appId config)
+                            msg
+                        |> Tuple.mapFirst Apps.ConnManagerModel
+
+                model ->
+                    React.update model
+
+        DBAdminMsg msg ->
+            case getModel app of
+                Apps.DatabaseModel appModel ->
+                    appModel
+                        |> DBAdmin.update (dbAdminConfig appId config) msg
+                        |> Tuple.mapFirst Apps.DatabaseModel
+
+                model ->
+                    React.update model
+
+        EmailMsg msg ->
+            case getModel app of
+                Apps.EmailModel appModel ->
+                    appModel
+                        |> Email.update (emailConfig appId config) msg
+                        |> Tuple.mapFirst Apps.EmailModel
+
+                model ->
+                    React.update model
+
+        ExplorerMsg msg ->
+            case getModel app of
+                Apps.ExplorerModel appModel ->
+                    appModel
+                        |> Explorer.update
+                            (explorerConfig appId cid server config)
+                            msg
+                        |> Tuple.mapFirst Apps.ExplorerModel
+
+                model ->
+                    React.update model
+
+        FinanceMsg msg ->
+            case getModel app of
+                Apps.FinanceModel appModel ->
+                    appModel
+                        |> Finance.update (financeConfig appId config) msg
+                        |> Tuple.mapFirst Apps.FinanceModel
+
+                model ->
+                    React.update model
+
+        FloatingHeadsMsg msg ->
+            case getModel app of
+                Apps.FloatingHeadsModel appModel ->
+                    appModel
+                        |> FloatingHeads.update
+                            (floatingHeadsConfig (getWindowId app) appId config)
+                            msg
+                        |> Tuple.mapFirst Apps.FloatingHeadsModel
+
+                model ->
+                    React.update model
+
+        HebampMsg msg ->
+            case getModel app of
+                Apps.MusicModel appModel ->
+                    appModel
+                        |> Hebamp.update
+                            (hebampConfig (getWindowId app) appId config)
+                            msg
+                        |> Tuple.mapFirst Apps.MusicModel
+
+                model ->
+                    React.update model
+
+        LocationPickerMsg msg ->
+            case getModel app of
+                Apps.LocationPickerModel appModel ->
+                    appModel
+                        |> LocationPicker.update
+                            (locationPickerConfig appId config)
+                            msg
+                        |> Tuple.mapFirst Apps.LocationPickerModel
+
+                model ->
+                    React.update model
+
+        LogViewerMsg msg ->
+            case getModel app of
+                Apps.LogViewerModel appModel ->
+                    appModel
+                        |> LogViewer.update
+                            (logViewerConfig appId cid server config)
+                            msg
+                        |> Tuple.mapFirst Apps.LogViewerModel
+
+                model ->
+                    React.update model
+
+        ServersGearsMsg msg ->
+            case getModel app of
+                Apps.ServersGearsModel appModel ->
+                    appModel
+                        |> ServersGears.update
+                            (serversGearsConfig appId cid server config)
+                            msg
+                        |> Tuple.mapFirst Apps.ServersGearsModel
+
+                model ->
+                    React.update model
+
+        TaskManagerMsg msg ->
+            case getModel app of
+                Apps.TaskManagerModel appModel ->
+                    appModel
+                        |> TaskManager.update
+                            (taskManagerConfig appId cid server config)
+                            msg
+                        |> Tuple.mapFirst Apps.TaskManagerModel
+
+                model ->
+                    React.update model

@@ -45,7 +45,7 @@ view { onNewTabIn, onGoAddress, onOpenApp } =
                     |> List.singleton
                     |> Hebamp.OpenPlaylist
                     |> AppParams.Hebamp
-                    |> onOpenApp Nothing
+                    |> onOpenApp
                     |> onClick
                 ]
                 [ text "Blblbl" ]

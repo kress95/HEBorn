@@ -25,8 +25,8 @@ type alias Config msg =
     , endpoints : List CId
     , activeServer : Servers.Server
     , activeGateway : Servers.Server
-    , onNewApp : Maybe Context -> Maybe AppParams -> DesktopApp -> msg
-    , onOpenApp : Maybe Context -> AppParams -> msg
+    , onNewApp : DesktopApp -> Maybe Context -> Maybe AppParams -> msg
+    , onOpenApp : Context -> AppParams -> msg
     , onNewPublicDownload : NIP -> Download.StorageId -> Filesystem.FileEntry -> msg
     , onBankAccountLogin : BankLoginRequest -> Requester -> msg
     , onBankAccountTransfer : BankTransferRequest -> Requester -> msg
@@ -72,7 +72,7 @@ homeConfig : Config msg -> Home.Config msg
 homeConfig config =
     { onNewTabIn = NewTabIn >> config.toMsg
     , onGoAddress = GoAddress >> ActiveTabMsg >> config.toMsg
-    , onOpenApp = config.onOpenApp
+    , onOpenApp = config.onOpenApp Endpoint
     }
 
 

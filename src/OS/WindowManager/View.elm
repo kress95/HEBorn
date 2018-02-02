@@ -10,6 +10,7 @@ import Css exposing (left, top, asPairs, px, int, zIndex)
 import Draggable
 import Utils.Html.Attributes exposing (appAttr, boolAttr, activeContextAttr)
 import Utils.Html.Events exposing (onClickMe, onKeyDown)
+import Utils.Maybe as Maybe
 import Apps.Models as Apps
 import Apps.BackFlix.View as BackFlix
 import Apps.BounceManager.View as BounceManager
@@ -31,6 +32,8 @@ import Apps.LogViewer.View as LogViewer
 import Apps.ServersGears.View as ServersGears
 import Apps.TaskManager.View as TaskManager
 import Game.Meta.Types.Context as Context exposing (Context(..))
+import Game.Servers.Models as Servers exposing (Server)
+import Game.Servers.Shared as Servers exposing (CId(..))
 import OS.Resources as OsRes
 import OS.WindowManager.Dock.View as Dock
 import OS.WindowManager.Config exposing (..)
@@ -113,21 +116,20 @@ viewWindow config model window =
             Maybe.map getModel maybeApp
 
         needsDecoration =
-            -- WIP
-            case maybeAppModel of
-                Just appModel ->
-                    True
-
-                Nothing ->
-                    True
+            maybeAppModel
+                |> Maybe.map isDecorated
+                |> Maybe.withDefault True
     in
         case maybeApp of
             Just app ->
-                if needsDecoration then
-                    windowWrapper config model app window <|
-                        viewApp config appId app
-                else
-                    viewApp config appId app
+                let
+                    appView =
+                        viewApp config model appId app
+                in
+                    if needsDecoration then
+                        windowWrapper config model app window appView
+                    else
+                        appView
 
             Nothing ->
                 text ""
@@ -168,8 +170,7 @@ windowWrapper config model app window html =
             Apps.icon <| Apps.toDesktopApp appModel
 
         content =
-            --div [ class [ Res.WindowBody ] ] [ view ]
-            text ""
+            div [ class [ Res.WindowBody ] ] [ html ]
     in
         if hasDecorations then
             div attrs
@@ -312,90 +313,92 @@ decoratedAttr =
 -- integrate with apps
 
 
-viewApp : Config msg -> AppId -> App -> Html msg
-viewApp config appId app =
+viewApp : Config msg -> Model -> AppId -> App -> Html msg
+viewApp config model appId app =
     let
-        appModel =
-            getModel app
+        activeGateway =
+            model
+                |> getWindow (getWindowId app)
+                |> Maybe.andThen (getWindowGateway config model)
 
-        --server =
-        --    case getAppContext app of
-        --        Gateway ->
-        --            config.activeGateway
-        --        Endpoint ->
+        activeServer =
+            getAppActiveServer config app
     in
-        case appModel of
-            Apps.LogViewerModel appModel ->
-                --LogViewer.view (logViewerConfig appId config) appModel
+        case Maybe.uncurry activeServer activeGateway of
+            Just ( active, gateway ) ->
+                viewAppDelegate config active gateway appId app
+
+            Nothing ->
+                -- this shouldn't happen really
                 text ""
 
-            Apps.TaskManagerModel appModel ->
-                --TaskManager.view (taskManagerConfig appId config) appModel
-                text ""
 
-            Apps.BrowserModel appModel ->
-                --Browser.view (browserConfig appId config) appModel
-                text ""
+viewAppDelegate :
+    Config msg
+    -> ( CId, Server )
+    -> ( CId, Server )
+    -> AppId
+    -> App
+    -> Html msg
+viewAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
+    case getModel app of
+        Apps.BackFlixModel appModel ->
+            BackFlix.view (backFlixConfig appId config) appModel
 
-            Apps.ExplorerModel appModel ->
-                --Explorer.view (explorerConfig appId config) appModel
-                text ""
+        Apps.BounceManagerModel appModel ->
+            BounceManager.view (bounceManagerConfig appId config) appModel
 
-            Apps.DatabaseModel appModel ->
-                --Database.view (databaseConfig appId config) appModel
-                text ""
+        Apps.BrowserModel appModel ->
+            Browser.view (browserConfig appId server config) appModel
 
-            Apps.ConnManagerModel appModel ->
-                --ConnManager.view (connManagerConfig appId config) appModel
-                text ""
+        Apps.BugModel appModel ->
+            Bug.view (bugConfig appId config) appModel
 
-            Apps.BounceManagerModel appModel ->
-                --BounceManager.view (bounceManagerConfig appId config) appModel
-                text ""
+        Apps.CalculatorModel appModel ->
+            Calculator.view (calculatorConfig appId config) appModel
 
-            Apps.FinanceModel appModel ->
-                --Finance.view (financeConfig appId config) appModel
-                text ""
+        Apps.ConnManagerModel appModel ->
+            ConnManager.view (connManagerConfig appId config) appModel
 
-            Apps.MusicModel appModel ->
-                --Music.view (musicConfig appId config) appModel
-                text ""
+        Apps.CtrlPanelModel appModel ->
+            CtrlPanel.view ctrlPanelConfig appModel
 
-            Apps.CtrlPanelModel appModel ->
-                --CtrlPanel.view (ctrlPanelConfig appId config) appModel
-                text ""
+        Apps.DatabaseModel appModel ->
+            Database.view (dbAdminConfig appId config) appModel
 
-            Apps.ServersGearsModel appModel ->
-                --ServersGears.view (serversGearsConfig appId config) appModel
-                text ""
+        Apps.EmailModel appModel ->
+            Email.view (emailConfig appId config) appModel
 
-            Apps.LocationPickerModel appModel ->
-                --LocationPicker.view (locationPickerConfig appId config) appModel
-                text ""
+        Apps.ExplorerModel appModel ->
+            Explorer.view (explorerConfig appId cid server config) appModel
 
-            Apps.LanViewerModel appModel ->
-                --LanViewer.view (lanViewerConfig appId config) appModel
-                text ""
+        Apps.FinanceModel appModel ->
+            Finance.view (financeConfig appId config) appModel
 
-            Apps.EmailModel appModel ->
-                --Email.view (emailConfig appId config) appModel
-                text ""
+        Apps.FloatingHeadsModel appModel ->
+            FloatingHeads.view
+                (floatingHeadsConfig (getWindowId app) appId config)
+                appModel
 
-            Apps.BugModel appModel ->
-                --Bug.view  (bugConfig appId config) appModel
-                text ""
+        Apps.MusicModel appModel ->
+            Hebamp.view (hebampConfig (getWindowId app) appId config) appModel
 
-            Apps.CalculatorModel appModel ->
-                --Calculator.view (calculatorConfig appId config) appModel
-                text ""
+        Apps.LanViewerModel appModel ->
+            LanViewer.view lanViewerConfig appModel
 
-            Apps.BackFlixModel appModel ->
-                --BackFlix.view (backFlixConfig appId config) appModel
-                text ""
+        Apps.LocationPickerModel appModel ->
+            LocationPicker.view (locationPickerConfig appId config) appModel
 
-            Apps.FloatingHeadsModel appModel ->
-                --FloatingHeads.view (floatingHeadsConfig appId config) appModel
-                text ""
+        Apps.LogViewerModel appModel ->
+            LogViewer.view (logViewerConfig appId cid server config) appModel
+
+        Apps.ServersGearsModel appModel ->
+            ServersGears.view (serversGearsConfig appId cid server config)
+                appModel
+
+        Apps.TaskManagerModel appModel ->
+            TaskManager.view (taskManagerConfig appId cid server config)
+                appModel
 
 
 isDecorated : Apps.AppModel -> Bool
@@ -428,7 +431,7 @@ getKeyloggerMsg : Config msg -> AppId -> Apps.AppModel -> (Int -> msg)
 getKeyloggerMsg config appId app =
     case app of
         Apps.CalculatorModel _ ->
-            Calculator.KeyMsg >> CalculatorMsg appId >> config.toMsg
+            Calculator.KeyMsg >> CalculatorMsg >> AppMsg appId >> config.toMsg
 
         _ ->
             always <| config.batchMsg []

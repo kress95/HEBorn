@@ -7,9 +7,9 @@ import Apps.TaskManager.Messages exposing (Msg(..))
 import Apps.TaskManager.Menu.Subscriptions as Menu
 
 
-subscriptions : Config msg -> Model -> Sub Msg
+subscriptions : Config msg -> Model -> Sub msg
 subscriptions config model =
     Sub.batch
-        [ Sub.map MenuMsg (Menu.subscriptions model.menu)
-        , Time.every second Tick
+        [ Sub.map (MenuMsg >> config.toMsg) (Menu.subscriptions model.menu)
+        , Time.every second (Tick >> config.toMsg)
         ]

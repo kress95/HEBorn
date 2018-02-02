@@ -18,7 +18,7 @@ type alias Config msg =
     , username : String
     , onReplyEmail : String -> Emails.Content -> msg
     , onCloseApp : msg
-    , onOpenApp : Maybe Context -> AppParams -> msg
+    , onOpenApp : AppParams -> msg
     }
 
 
@@ -28,5 +28,5 @@ contentConfig config =
     , onOpenBrowser =
         Browser.OpenAtUrl
             >> AppParams.Browser
-            >> config.onOpenApp Nothing
+            >> config.onOpenApp
     }

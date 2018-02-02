@@ -6,6 +6,6 @@ import Apps.DBAdmin.Messages exposing (Msg(..))
 import Apps.DBAdmin.Menu.Subscriptions as Menu
 
 
-subscriptions : Config msg -> Model -> Sub Msg
+subscriptions : Config msg -> Model -> Sub msg
 subscriptions config model =
-    Sub.map MenuMsg (Menu.subscriptions model.menu)
+    Sub.map (MenuMsg >> config.toMsg) (Menu.subscriptions model.menu)

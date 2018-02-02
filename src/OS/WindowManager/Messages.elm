@@ -46,19 +46,23 @@ type Msg
     | MinimizeAll DesktopApp
     | CloseAll DesktopApp
       -- app messages
-    | BackFlixMsg AppId BackFlix.Msg
-    | BounceManagerMsg AppId BounceManager.Msg
-    | BrowserMsg AppId Browser.Msg
-    | BugMsg AppId Bug.Msg
-    | CalculatorMsg AppId Calculator.Msg
-    | ConnManagerMsg AppId ConnManager.Msg
-    | DBAdminMsg AppId DBAdmin.Msg
-    | EmailMsg AppId Email.Msg
-    | ExplorerMsg AppId Explorer.Msg
-    | FinanceMsg AppId Finance.Msg
-    | FloatingHeadsMsg AppId FloatingHeads.Msg
-    | HebampMsg AppId Hebamp.Msg
-    | LocationPickerMsg AppId LocationPicker.Msg
-    | LogViewerMsg AppId LogViewer.Msg
-    | ServersGearsMsg AppId ServersGears.Msg
-    | TaskManagerMsg AppId TaskManager.Msg
+    | AppMsg AppId AppMsg
+
+
+type AppMsg
+    = BackFlixMsg BackFlix.Msg
+    | BounceManagerMsg BounceManager.Msg
+    | BrowserMsg Browser.Msg
+    | BugMsg Bug.Msg
+    | CalculatorMsg Calculator.Msg
+    | ConnManagerMsg ConnManager.Msg
+    | DBAdminMsg DBAdmin.Msg
+    | EmailMsg Email.Msg
+    | ExplorerMsg Explorer.Msg
+    | FinanceMsg Finance.Msg
+    | FloatingHeadsMsg FloatingHeads.Msg
+    | HebampMsg Hebamp.Msg
+    | LocationPickerMsg LocationPicker.Msg
+    | LogViewerMsg LogViewer.Msg
+    | ServersGearsMsg ServersGears.Msg
+    | TaskManagerMsg TaskManager.Msg

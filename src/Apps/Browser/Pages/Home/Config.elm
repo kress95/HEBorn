@@ -7,5 +7,5 @@ import Apps.Params as AppParams exposing (AppParams)
 type alias Config msg =
     { onNewTabIn : String -> msg
     , onGoAddress : String -> msg
-    , onOpenApp : Maybe Context -> AppParams -> msg
+    , onOpenApp : AppParams -> msg
     }
