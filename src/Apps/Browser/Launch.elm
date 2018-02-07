@@ -3,7 +3,10 @@ module Apps.Browser.Launch exposing (..)
 import Utils.React as React exposing (React)
 import Game.Servers.Models as Servers
 import Game.Meta.Types.Network as Network
-import Apps.Reference exposing (..)
+
+
+--import OS.WindowManager.Shared as WindowManager
+
 import Apps.Browser.Config exposing (..)
 import Apps.Browser.Models exposing (..)
 

@@ -17,7 +17,6 @@ import Setup.Update as Setup
 import OS.Messages as OS
 import OS.Update as OS
 import OS.WindowManager.Messages as WindowManager
-import Apps.Messages as Apps
 import Apps.TaskManager.Messages as TaskManager
 import Core.Config exposing (..)
 import Core.Flags as Flags exposing (Flags)
