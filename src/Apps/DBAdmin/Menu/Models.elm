@@ -1,6 +1,6 @@
 module Apps.DBAdmin.Menu.Models exposing (..)
 
-import OS.SessionManager.WindowManager.MenuHandler.Models as MenuHandler
+import OS.WindowManager.MenuHandler.Models as MenuHandler
 import Game.Servers.Logs.Models exposing (ID)
 
 

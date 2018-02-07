@@ -5,7 +5,7 @@ import Css.Namespace exposing (namespace)
 import Css.Utils as Css exposing (withAttribute)
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Utils.Html.Attributes exposing (appAttrTag)
-import OS.SessionManager.Dock.Resources as Dock
+import OS.WindowManager.Dock.Resources as Dock
 import Apps.Models as Apps
 
 

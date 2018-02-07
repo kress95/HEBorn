@@ -1,6 +1,6 @@
 module Apps.TaskManager.Menu.Models exposing (..)
 
-import OS.SessionManager.WindowManager.MenuHandler.Models as MenuHandler
+import OS.WindowManager.MenuHandler.Models as MenuHandler
 import Game.Servers.Processes.Models as Processes
 
 

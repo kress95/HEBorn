@@ -9,7 +9,7 @@ module Apps.TaskManager.Menu.View
 
 import Html exposing (Html)
 import ContextMenu exposing (ContextMenu)
-import OS.SessionManager.WindowManager.MenuHandler.View
+import OS.WindowManager.MenuHandler.View
     exposing
         ( menuForCreator
         , menuViewCreator

@@ -1,12 +1,12 @@
 module Apps.Launch exposing (launch, launchEvent)
 
+import Game.Meta.Types.Apps.Desktop exposing (Reference)
 import Game.Meta.Types.Context exposing (Context)
 import Utils.React as React exposing (React)
 import Apps.Apps exposing (..)
 import Apps.Config exposing (..)
 import Apps.Messages exposing (..)
 import Apps.Models exposing (..)
-import Apps.Reference exposing (..)
 import Apps.LogViewer.Models as LogViewer
 import Apps.TaskManager.Models as TaskManager
 import Apps.Browser.Launch as Browser

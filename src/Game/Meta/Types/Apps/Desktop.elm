@@ -24,3 +24,11 @@ type DesktopApp
 
 type alias Reference =
     String
+
+
+type alias BrowserTab =
+    Int
+
+
+type alias Requester =
+    ( Reference, BrowserTab )

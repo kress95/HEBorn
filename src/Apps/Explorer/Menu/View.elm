@@ -13,7 +13,7 @@ module Apps.Explorer.Menu.View
 import Html exposing (Html)
 import ContextMenu exposing (ContextMenu)
 import Game.Servers.Filesystem.Shared as Filesystem
-import OS.SessionManager.WindowManager.MenuHandler.View
+import OS.WindowManager.MenuHandler.View
     exposing
         ( menuForCreator
         , menuViewCreator

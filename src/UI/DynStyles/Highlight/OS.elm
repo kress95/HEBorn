@@ -7,8 +7,8 @@ import Utils.Html.Attributes exposing (activeContextValue, appAttrTag)
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Context exposing (Context)
 import OS.Resources as OS
-import OS.SessionManager.Dock.Resources as Dock
-import OS.SessionManager.WindowManager.Resources as WM
+import OS.WindowManager.Dock.Resources as Dock
+import OS.WindowManager.Resources as WM
 import Apps.Models as Apps
 
 
