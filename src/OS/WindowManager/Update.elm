@@ -244,7 +244,7 @@ updateAppDelegate config ( cid, server ) ( gCid, gServer ) appMsg appId app =
             case getModel app of
                 Apps.BrowserModel appModel ->
                     appModel
-                        |> Browser.update (browserConfig appId server config)
+                        |> Browser.update (browserConfig appId cid server config)
                             msg
                         |> Tuple.mapFirst Apps.BrowserModel
 

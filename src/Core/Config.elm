@@ -43,13 +43,7 @@ import Game.Storyline.Missions.Messages as Missions
 import Game.Web.Messages as Web
 import OS.Config as OS
 import OS.Messages as OS
-
-
---import OS.SessionManager.Messages as SessionManager
---import OS.SessionManager.Types as SessionManager
-
 import OS.Toasts.Messages as Toast
-import Apps.Messages as Apps
 import Apps.Browser.Messages as Browser
 
 
@@ -179,14 +173,15 @@ gameConfig =
 
     -- web
     , onDNS =
-        \response { sessionId, windowId, context, tabId } ->
+        \response _ ->
             BatchMsg []
 
+    --{ sessionId, windowId, context, tabId }
     --Browser.HandleFetched response
     --    |> Browser.SomeTabMsg tabId
     --    |> browser ( sessionId, windowId ) context
     , onJoinFailed =
-        \{ sessionId, windowId, context, tabId } ->
+        \_ ->
             --Browser.HandleLoginFailed
             --    |> Browser.SomeTabMsg tabId
             --    |> browser ( sessionId, windowId ) context
@@ -214,25 +209,25 @@ gameConfig =
 
     -- account.finances
     , onBALoginSuccess =
-        \data { sessionId, windowId, context, tabId } ->
+        \data _ ->
             --Browser.HandleBankLogin data
             --    |> Browser.SomeTabMsg tabId
             --    |> browser ( sessionId, windowId ) context
             BatchMsg []
     , onBALoginFailed =
-        \{ sessionId, windowId, context, tabId } ->
+        \_ ->
             --Browser.HandleBankLoginError
             --    |> Browser.SomeTabMsg tabId
             --    |> browser ( sessionId, windowId ) context
             BatchMsg []
     , onBATransferSuccess =
-        \{ sessionId, windowId, context, tabId } ->
+        \_ ->
             --Browser.HandleBankTransfer
             --    |> Browser.SomeTabMsg tabId
             --    |> browser ( sessionId, windowId ) context
             BatchMsg []
     , onBATransferFailed =
-        \{ sessionId, windowId, context, tabId } ->
+        \_ ->
             --Browser.HandleBankTransferError
             --    |> Browser.SomeTabMsg tabId
             --    |> browser ( sessionId, windowId ) context
@@ -344,7 +339,7 @@ osConfig game (( sCId, _ ) as srv) ctx (( gCId, _ ) as gtw) =
     , onRemoveProcess =
         \cid -> Processes.HandleRemove >> processes cid
     , onWebLogin =
-        Web.Login >>>>> web
+        Web.Login >>>>>> web
     , onFetchUrl =
         \cid nId nIp r ->
             web <| Web.FetchUrl nIp nId cid r

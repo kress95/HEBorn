@@ -57,7 +57,8 @@ subsAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
     case getModel app of
         BrowserModel appModel ->
             appModel
-                |> Browser.subscriptions (browserConfig appId server config)
+                |> Browser.subscriptions
+                    (browserConfig appId cid server config)
                 |> Just
 
         DatabaseModel appModel ->

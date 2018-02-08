@@ -32,7 +32,7 @@ import Game.BackFlix.Models as BackFlix
 import Game.Inventory.Models as Inventory
 import Game.Meta.Types.Components.Motherboard as Motherboard exposing (Motherboard)
 import Game.Meta.Types.Context exposing (Context(..))
-import Game.Meta.Types.Requester exposing (Requester)
+import Game.Meta.Types.Apps.Desktop exposing (Requester)
 import Game.Meta.Types.Network as Network exposing (NIP)
 import Game.Servers.Models as Servers exposing (Server)
 import Game.Servers.Shared as Servers exposing (CId, StorageId)
@@ -71,7 +71,7 @@ type alias Config msg =
     , onRemoveProcess : CId -> Processes.ID -> msg
     , onSetContext : Context -> msg
     , onNewBruteforceProcess : CId -> Network.IP -> msg
-    , onWebLogin : NIP -> Network.IP -> String -> Requester -> msg
+    , onWebLogin : CId -> NIP -> Network.IP -> String -> Requester -> msg
     , onFetchUrl : CId -> Network.ID -> Network.IP -> Requester -> msg
     , onReplyEmail : String -> Emails.Content -> msg
     , onActionDone : DesktopApp -> Context -> msg
@@ -128,8 +128,8 @@ bounceManagerConfig appId config =
     }
 
 
-browserConfig : AppId -> Server -> Config msg -> Browser.Config msg
-browserConfig appId server config =
+browserConfig : AppId -> CId -> Server -> Config msg -> Browser.Config msg
+browserConfig appId cid server config =
     { toMsg = BrowserMsg >> AppMsg appId >> config.toMsg
     , batchMsg = config.batchMsg
     , activeServer = server
@@ -149,7 +149,7 @@ browserConfig appId server config =
         config.activeServer
             |> Tuple.first
             |> config.onNewBruteforceProcess
-    , onWebLogin = config.onWebLogin
+    , onWebLogin = config.onWebLogin cid
     , onFetchUrl =
         config.activeServer
             |> Tuple.first

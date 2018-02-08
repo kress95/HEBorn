@@ -6,7 +6,7 @@ import Apps.Params as AppParams exposing (AppParams)
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Context exposing (Context(..))
 import Game.Meta.Types.Network as Network exposing (NIP)
-import Game.Meta.Types.Requester exposing (Requester)
+import Game.Meta.Types.Apps.Desktop exposing (Requester)
 import Game.Servers.Models as Servers
 import Game.Servers.Shared as Servers exposing (CId)
 import Game.Servers.Filesystem.Shared as Filesystem

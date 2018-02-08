@@ -31,4 +31,6 @@ type alias BrowserTab =
 
 
 type alias Requester =
-    ( Reference, BrowserTab )
+    { reference : Reference
+    , browserTab : BrowserTab
+    }

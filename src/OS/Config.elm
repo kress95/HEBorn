@@ -12,7 +12,7 @@ import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Components.Motherboard as Motherboard exposing (Motherboard)
 import Game.Meta.Types.Context exposing (..)
 import Game.Meta.Types.Network as Network exposing (NIP)
-import Game.Meta.Types.Requester exposing (Requester)
+import Game.Meta.Types.Apps.Desktop exposing (Requester)
 import Game.Servers.Shared exposing (CId, StorageId)
 import Game.Servers.Models as Servers exposing (Server)
 import Game.Servers.Filesystem.Shared as Filesystem
@@ -70,7 +70,7 @@ type alias Config msg =
     , onResumeProcess : CId -> Processes.ID -> msg
     , onRemoveProcess : CId -> Processes.ID -> msg
     , onNewBruteforceProcess : CId -> Network.IP -> msg
-    , onWebLogin : NIP -> Network.IP -> String -> Requester -> msg
+    , onWebLogin : CId -> NIP -> Network.IP -> String -> Requester -> msg
     , onFetchUrl : CId -> Network.ID -> Network.IP -> Requester -> msg
     , onReplyEmail : String -> Emails.Content -> msg
     , onActionDone : DesktopApp -> Context -> msg

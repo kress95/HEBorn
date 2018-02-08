@@ -349,7 +349,7 @@ viewAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
             BounceManager.view (bounceManagerConfig appId config) appModel
 
         Apps.BrowserModel appModel ->
-            Browser.view (browserConfig appId server config) appModel
+            Browser.view (browserConfig appId cid server config) appModel
 
         Apps.BugModel appModel ->
             Bug.view (bugConfig appId config) appModel

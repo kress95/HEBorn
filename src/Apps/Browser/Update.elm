@@ -8,9 +8,9 @@ import Game.Servers.Models as Servers
 import Game.Servers.Shared exposing (StorageId)
 import Game.Servers.Filesystem.Shared as Filesystem
 import Game.Web.Types as Web
+import Game.Meta.Types.Apps.Desktop exposing (Reference, Requester)
 import Game.Meta.Types.Context exposing (Context(..))
 import Game.Meta.Types.Network as Network
-import Apps.Reference exposing (..)
 import Apps.Browser.Pages.Webserver.Update as Webserver
 import Apps.Browser.Pages.Bank.Messages as Bank
 import Apps.Browser.Pages.Bank.Update as Bank
@@ -166,12 +166,9 @@ onBankLogin :
     -> Reference
     -> Model
     -> UpdateResponse msg
-onBankLogin { onBankAccountLogin } request { sessionId, windowId, context } model =
-    { sessionId = sessionId
-    , windowId = windowId
-    , context = context
-    , tabId = model.nowTab
-    }
+onBankLogin { onBankAccountLogin } request reference model =
+    model.nowTab
+        |> Requester reference
         |> onBankAccountLogin request
         |> React.msg
         |> (,) model
@@ -183,12 +180,9 @@ onBankTransfer :
     -> Reference
     -> Model
     -> UpdateResponse msg
-onBankTransfer { onBankAccountTransfer } request { sessionId, windowId, context } model =
-    { sessionId = sessionId
-    , windowId = windowId
-    , context = context
-    , tabId = model.nowTab
-    }
+onBankTransfer { onBankAccountTransfer } request reference model =
+    model.nowTab
+        |> Requester reference
         |> onBankAccountTransfer request
         |> React.msg
         |> (,) model
@@ -380,7 +374,7 @@ onGoAddress :
     -> Int
     -> Tab
     -> TabUpdateResponse msg
-onGoAddress config url { sessionId, windowId, context } tabId tab =
+onGoAddress config url reference tabId tab =
     let
         networkId =
             config.activeServer
@@ -388,11 +382,7 @@ onGoAddress config url { sessionId, windowId, context } tabId tab =
                 |> Network.getId
 
         requester =
-            { sessionId = sessionId
-            , windowId = windowId
-            , context = context
-            , tabId = tabId
-            }
+            Requester reference tabId
 
         react =
             React.msg <| config.onFetchUrl networkId url requester
@@ -411,12 +401,9 @@ onLogin :
     -> Int
     -> Tab
     -> TabUpdateResponse msg
-onLogin config remoteNip password { sessionId, windowId, context } tabId tab =
-    { sessionId = sessionId
-    , windowId = windowId
-    , context = context
-    , tabId = tabId
-    }
+onLogin config remoteNip password reference tabId tab =
+    tabId
+        |> Requester reference
         |> config.onWebLogin
             (Servers.getActiveNIP config.activeGateway)
             (Network.getIp remoteNip)
