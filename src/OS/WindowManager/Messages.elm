@@ -47,6 +47,7 @@ type Msg
     | CloseAll DesktopApp
       -- app messages
     | AppMsg AppId AppMsg
+    | AppsMsg AppMsg
 
 
 type AppMsg

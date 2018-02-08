@@ -85,17 +85,21 @@ update config msg model =
 
         -- dock messages
         ClickIcon app ->
+            -- <| openOrRestore app (getSessionId config) model
             React.update model
 
         MinimizeAll app ->
-            React.update model
+            React.update <| minimizeAll app (getSessionId config) model
 
         CloseAll app ->
-            React.update model
+            React.update <| closeAll app (getSessionId config) model
 
         -- app messages
         AppMsg appId appMsg ->
             updateApp config appId appMsg model
+
+        AppsMsg appMsg ->
+            updateApps config appMsg model
 
 
 withSession :
@@ -395,3 +399,8 @@ updateAppDelegate config ( cid, server ) ( gCid, gServer ) appMsg appId app =
 
                 model ->
                     React.update model
+
+
+updateApps : Config msg -> AppMsg -> Model -> UpdateResponse msg
+updateApps config appMsg model =
+    React.update model

@@ -302,6 +302,45 @@ close windowId model =
         { model_ | sessions = sessions }
 
 
+minimizeAll : DesktopApp -> SessionId -> Model -> Model
+minimizeAll desktopApp sessionId model =
+    let
+        session =
+            getSession sessionId model
+
+        toMinimize =
+            List.filter (filterByWindowApp desktopApp model >> not)
+                session.visible
+
+        session_ =
+            List.foldl minimize session toMinimize
+    in
+        insertSession sessionId session_ model
+
+
+closeAll : DesktopApp -> SessionId -> Model -> Model
+closeAll desktopApp sessionId model =
+    let
+        session =
+            getSession sessionId model
+
+        filterer =
+            filterByWindowApp desktopApp model >> not
+
+        toCloseVisible =
+            List.filter filterer session.visible
+
+        toCloseHidden =
+            List.filter filterer session.hidden
+
+        foldlClose =
+            List.foldl close
+    in
+        toCloseVisible
+            |> foldlClose model
+            |> flip foldlClose toCloseHidden
+
+
 
 -- app helpers
 
@@ -671,3 +710,21 @@ getUuid model =
             Random.step Uuid.uuidGenerator model.seed
     in
         ( { model | seed = seed }, Uuid.toString uuid )
+
+
+filterByWindowApp : DesktopApp -> Model -> WindowId -> Bool
+filterByWindowApp desktopApp model windowId =
+    let
+        maybeAppModel =
+            model
+                |> getWindow windowId
+                |> Maybe.map getActiveAppId
+                |> Maybe.andThen (flip getApp model)
+                |> Maybe.map (getModel >> toDesktopApp)
+    in
+        case maybeAppModel of
+            Just desktopApp_ ->
+                desktopApp == desktopApp_
+
+            Nothing ->
+                False
