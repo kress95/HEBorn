@@ -5,8 +5,26 @@ import Draggable
 import Random.Pcg as Random
 import Uuid
 import Utils.Maybe as Maybe
-import Apps.Models as Apps
-import Game.Meta.Types.Apps.Desktop as Desktop
+import Apps.BackFlix.Models as BackFlix
+import Apps.BounceManager.Models as BounceManager
+import Apps.Browser.Models as Browser
+import Apps.Bug.Models as Bug
+import Apps.Calculator.Models as Calculator
+import Apps.Calculator.Messages as Calculator
+import Apps.ConnManager.Models as ConnManager
+import Apps.CtrlPanel.Models as CtrlPanel
+import Apps.DBAdmin.Models as Database
+import Apps.Email.Models as Email
+import Apps.Explorer.Models as Explorer
+import Apps.Finance.Models as Finance
+import Apps.FloatingHeads.Models as FloatingHeads
+import Apps.Hebamp.Models as Hebamp
+import Apps.LanViewer.Models as LanViewer
+import Apps.LocationPicker.Models as LocationPicker
+import Apps.LogViewer.Models as LogViewer
+import Apps.ServersGears.Models as ServersGears
+import Apps.TaskManager.Models as TaskManager
+import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Context exposing (Context(..))
 import Game.Servers.Shared exposing (CId)
 import OS.WindowManager.Shared exposing (..)
@@ -34,8 +52,29 @@ type alias Apps =
 type alias App =
     { windowId : WindowId
     , serverCId : CId
-    , model : Apps.AppModel
+    , model : AppModel
     }
+
+
+type AppModel
+    = LogViewerModel LogViewer.Model
+    | TaskManagerModel TaskManager.Model
+    | BrowserModel Browser.Model
+    | ExplorerModel Explorer.Model
+    | DatabaseModel Database.Model
+    | ConnManagerModel ConnManager.Model
+    | BounceManagerModel BounceManager.Model
+    | FinanceModel Finance.Model
+    | MusicModel Hebamp.Model
+    | CtrlPanelModel CtrlPanel.Model
+    | ServersGearsModel ServersGears.Model
+    | LocationPickerModel LocationPicker.Model
+    | LanViewerModel LanViewer.Model
+    | EmailModel Email.Model
+    | BugModel Bug.Model
+    | CalculatorModel Calculator.Model
+    | BackFlixModel BackFlix.Model
+    | FloatingHeadsModel FloatingHeads.Model
 
 
 
@@ -267,12 +306,12 @@ close windowId model =
 -- app helpers
 
 
-getModel : App -> Apps.AppModel
+getModel : App -> AppModel
 getModel =
     .model
 
 
-setModel : Apps.AppModel -> App -> App
+setModel : AppModel -> App -> App
 setModel appModel app =
     { app | model = appModel }
 
@@ -285,6 +324,122 @@ getWindowId =
 getServerCId : App -> CId
 getServerCId =
     .serverCId
+
+
+getTitle : AppModel -> String
+getTitle model =
+    case model of
+        LogViewerModel model ->
+            LogViewer.title model
+
+        TaskManagerModel model ->
+            TaskManager.title model
+
+        BrowserModel model ->
+            Browser.title model
+
+        ExplorerModel model ->
+            Explorer.title model
+
+        DatabaseModel model ->
+            Database.title model
+
+        ConnManagerModel model ->
+            ConnManager.title model
+
+        BounceManagerModel model ->
+            BounceManager.title model
+
+        FinanceModel model ->
+            Finance.title model
+
+        MusicModel model ->
+            Hebamp.title model
+
+        CtrlPanelModel model ->
+            CtrlPanel.title model
+
+        ServersGearsModel model ->
+            ServersGears.title model
+
+        LocationPickerModel model ->
+            LocationPicker.title model
+
+        LanViewerModel model ->
+            LanViewer.title model
+
+        EmailModel model ->
+            Email.title model
+
+        BugModel model ->
+            Bug.title model
+
+        CalculatorModel model ->
+            Calculator.title model
+
+        BackFlixModel model ->
+            BackFlix.title model
+
+        FloatingHeadsModel model ->
+            FloatingHeads.title model
+
+
+toDesktopApp : AppModel -> DesktopApp
+toDesktopApp model =
+    case model of
+        LogViewerModel _ ->
+            DesktopApp.LogViewer
+
+        TaskManagerModel _ ->
+            DesktopApp.TaskManager
+
+        BrowserModel _ ->
+            DesktopApp.Browser
+
+        ExplorerModel _ ->
+            DesktopApp.Explorer
+
+        DatabaseModel _ ->
+            DesktopApp.Database
+
+        ConnManagerModel _ ->
+            DesktopApp.ConnManager
+
+        BounceManagerModel _ ->
+            DesktopApp.BounceManager
+
+        FinanceModel _ ->
+            DesktopApp.Finance
+
+        MusicModel _ ->
+            DesktopApp.Hebamp
+
+        CtrlPanelModel _ ->
+            DesktopApp.CtrlPanel
+
+        ServersGearsModel _ ->
+            DesktopApp.ServersGears
+
+        LocationPickerModel _ ->
+            DesktopApp.LocationPicker
+
+        LanViewerModel _ ->
+            DesktopApp.LanViewer
+
+        EmailModel _ ->
+            DesktopApp.Email
+
+        BugModel _ ->
+            DesktopApp.Bug
+
+        CalculatorModel _ ->
+            DesktopApp.Calculator
+
+        BackFlixModel _ ->
+            DesktopApp.BackFlix
+
+        FloatingHeadsModel _ ->
+            DesktopApp.FloatingHeads
 
 
 

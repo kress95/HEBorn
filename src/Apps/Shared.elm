@@ -1,14 +1,4 @@
-module Apps.Models
-    exposing
-        ( AppModel(..)
-        , Contexts(..)
-        , toDesktopApp
-        , contexts
-        , name
-        , title
-        , icon
-        , windowInitSize
-        )
+module Apps.Shared exposing (..)
 
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Apps.LogViewer.Models as LogViewer
@@ -31,91 +21,12 @@ import Apps.BackFlix.Models as BackFlix
 import Apps.FloatingHeads.Models as FloatingHeads
 
 
-type AppModel
-    = LogViewerModel LogViewer.Model
-    | TaskManagerModel TaskManager.Model
-    | BrowserModel Browser.Model
-    | ExplorerModel Explorer.Model
-    | DatabaseModel Database.Model
-    | ConnManagerModel ConnManager.Model
-    | BounceManagerModel BounceManager.Model
-    | FinanceModel Finance.Model
-    | MusicModel Hebamp.Model
-    | CtrlPanelModel CtrlPanel.Model
-    | ServersGearsModel ServersGears.Model
-    | LocationPickerModel LocationPicker.Model
-    | LanViewerModel LanViewer.Model
-    | EmailModel Email.Model
-    | BugModel Bug.Model
-    | CalculatorModel Calculator.Model
-    | BackFlixModel BackFlix.Model
-    | FloatingHeadsModel FloatingHeads.Model
-
-
-type Contexts
+type AppContexts
     = ContextualApp
     | ContextlessApp
 
 
-toDesktopApp : AppModel -> DesktopApp
-toDesktopApp model =
-    case model of
-        LogViewerModel _ ->
-            DesktopApp.LogViewer
-
-        TaskManagerModel _ ->
-            DesktopApp.TaskManager
-
-        BrowserModel _ ->
-            DesktopApp.Browser
-
-        ExplorerModel _ ->
-            DesktopApp.Explorer
-
-        DatabaseModel _ ->
-            DesktopApp.Database
-
-        ConnManagerModel _ ->
-            DesktopApp.ConnManager
-
-        BounceManagerModel _ ->
-            DesktopApp.BounceManager
-
-        FinanceModel _ ->
-            DesktopApp.Finance
-
-        MusicModel _ ->
-            DesktopApp.Hebamp
-
-        CtrlPanelModel _ ->
-            DesktopApp.CtrlPanel
-
-        ServersGearsModel _ ->
-            DesktopApp.ServersGears
-
-        LocationPickerModel _ ->
-            DesktopApp.LocationPicker
-
-        LanViewerModel _ ->
-            DesktopApp.LanViewer
-
-        EmailModel _ ->
-            DesktopApp.Email
-
-        BugModel _ ->
-            DesktopApp.Bug
-
-        CalculatorModel _ ->
-            DesktopApp.Calculator
-
-        BackFlixModel _ ->
-            DesktopApp.BackFlix
-
-        FloatingHeadsModel _ ->
-            DesktopApp.FloatingHeads
-
-
-contexts : DesktopApp -> Contexts
+contexts : DesktopApp -> AppContexts
 contexts app =
     case app of
         DesktopApp.LogViewer ->
@@ -287,80 +198,3 @@ icon app =
 
         DesktopApp.FloatingHeads ->
             FloatingHeads.icon
-
-
-title : AppModel -> String
-title model =
-    case model of
-        LogViewerModel model ->
-            LogViewer.title model
-
-        TaskManagerModel model ->
-            TaskManager.title model
-
-        BrowserModel model ->
-            Browser.title model
-
-        ExplorerModel model ->
-            Explorer.title model
-
-        DatabaseModel model ->
-            Database.title model
-
-        ConnManagerModel model ->
-            ConnManager.title model
-
-        BounceManagerModel model ->
-            BounceManager.title model
-
-        FinanceModel model ->
-            Finance.title model
-
-        MusicModel model ->
-            Hebamp.title model
-
-        CtrlPanelModel model ->
-            CtrlPanel.title model
-
-        ServersGearsModel model ->
-            ServersGears.title model
-
-        LocationPickerModel model ->
-            LocationPicker.title model
-
-        LanViewerModel model ->
-            LanViewer.title model
-
-        EmailModel model ->
-            Email.title model
-
-        BugModel model ->
-            Bug.title model
-
-        CalculatorModel model ->
-            Calculator.title model
-
-        BackFlixModel model ->
-            BackFlix.title model
-
-        FloatingHeadsModel model ->
-            FloatingHeads.title model
-
-
-windowInitSize : DesktopApp -> ( Float, Float )
-windowInitSize app =
-    case app of
-        DesktopApp.Email ->
-            Email.windowInitSize
-
-        DesktopApp.Browser ->
-            Browser.windowInitSize
-
-        DesktopApp.Calculator ->
-            Calculator.windowInitSize
-
-        DesktopApp.BackFlix ->
-            BackFlix.windowInitSize
-
-        _ ->
-            ( 600, 400 )

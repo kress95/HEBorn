@@ -7,7 +7,7 @@ import Html.Events exposing (onClick)
 import Html.CssHelpers
 import Utils.Html.Attributes exposing (..)
 import Utils.Maybe as Maybe
-import Apps.Models as Apps
+import Apps.Shared as Apps
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import OS.Resources as OsRes
 import OS.WindowManager.Models exposing (..)
@@ -204,7 +204,7 @@ getWindowTitle : Model -> Window -> Maybe WindowTitle
 getWindowTitle model window =
     model
         |> getApp (getActiveAppId window)
-        |> Maybe.map (getModel >> Apps.title)
+        |> Maybe.map (getModel >> getTitle)
 
 
 group : Model -> Session -> WindowGroups
@@ -220,7 +220,7 @@ group model { visible, hidden } =
                         |> Maybe.map getActiveAppId
                         |> Maybe.andThen (flip getApp model)
                         |> Maybe.map
-                            (getModel >> Apps.toDesktopApp >> Apps.name)
+                            (getModel >> toDesktopApp >> Apps.name)
             in
                 case Maybe.uncurry maybeWindow maybeAppName of
                     Just ( window, appName ) ->

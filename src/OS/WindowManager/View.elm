@@ -11,7 +11,7 @@ import Draggable
 import Utils.Html.Attributes exposing (appAttr, boolAttr, activeContextAttr)
 import Utils.Html.Events exposing (onClickMe, onKeyDown)
 import Utils.Maybe as Maybe
-import Apps.Models as Apps
+import Apps.Shared as Apps
 import Apps.BackFlix.View as BackFlix
 import Apps.BounceManager.View as BounceManager
 import Apps.Browser.View as Browser
@@ -164,10 +164,10 @@ windowWrapper config model app window html =
             ]
 
         title =
-            Apps.title appModel
+            getTitle appModel
 
         icon =
-            Apps.icon <| Apps.toDesktopApp appModel
+            Apps.icon <| toDesktopApp appModel
 
         content =
             div [ class [ Res.WindowBody ] ] [ html ]
@@ -342,104 +342,104 @@ viewAppDelegate :
     -> Html msg
 viewAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
     case getModel app of
-        Apps.BackFlixModel appModel ->
+        BackFlixModel appModel ->
             BackFlix.view (backFlixConfig appId config) appModel
 
-        Apps.BounceManagerModel appModel ->
+        BounceManagerModel appModel ->
             BounceManager.view (bounceManagerConfig appId config) appModel
 
-        Apps.BrowserModel appModel ->
+        BrowserModel appModel ->
             Browser.view (browserConfig appId cid server config) appModel
 
-        Apps.BugModel appModel ->
+        BugModel appModel ->
             Bug.view (bugConfig appId config) appModel
 
-        Apps.CalculatorModel appModel ->
+        CalculatorModel appModel ->
             Calculator.view (calculatorConfig appId config) appModel
 
-        Apps.ConnManagerModel appModel ->
+        ConnManagerModel appModel ->
             ConnManager.view (connManagerConfig appId config) appModel
 
-        Apps.CtrlPanelModel appModel ->
+        CtrlPanelModel appModel ->
             CtrlPanel.view ctrlPanelConfig appModel
 
-        Apps.DatabaseModel appModel ->
+        DatabaseModel appModel ->
             Database.view (dbAdminConfig appId config) appModel
 
-        Apps.EmailModel appModel ->
+        EmailModel appModel ->
             Email.view (emailConfig appId config) appModel
 
-        Apps.ExplorerModel appModel ->
+        ExplorerModel appModel ->
             Explorer.view (explorerConfig appId cid server config) appModel
 
-        Apps.FinanceModel appModel ->
+        FinanceModel appModel ->
             Finance.view (financeConfig appId config) appModel
 
-        Apps.FloatingHeadsModel appModel ->
+        FloatingHeadsModel appModel ->
             FloatingHeads.view
                 (floatingHeadsConfig (getWindowId app) appId config)
                 appModel
 
-        Apps.MusicModel appModel ->
+        MusicModel appModel ->
             Hebamp.view (hebampConfig (getWindowId app) appId config) appModel
 
-        Apps.LanViewerModel appModel ->
+        LanViewerModel appModel ->
             LanViewer.view lanViewerConfig appModel
 
-        Apps.LocationPickerModel appModel ->
+        LocationPickerModel appModel ->
             LocationPicker.view (locationPickerConfig appId config) appModel
 
-        Apps.LogViewerModel appModel ->
+        LogViewerModel appModel ->
             LogViewer.view (logViewerConfig appId cid server config) appModel
 
-        Apps.ServersGearsModel appModel ->
+        ServersGearsModel appModel ->
             ServersGears.view (serversGearsConfig appId cid server config)
                 appModel
 
-        Apps.TaskManagerModel appModel ->
+        TaskManagerModel appModel ->
             TaskManager.view (taskManagerConfig appId cid server config)
                 appModel
 
 
-isDecorated : Apps.AppModel -> Bool
+isDecorated : AppModel -> Bool
 isDecorated app =
     case app of
-        Apps.MusicModel _ ->
+        MusicModel _ ->
             False
 
-        Apps.FloatingHeadsModel _ ->
+        FloatingHeadsModel _ ->
             False
 
         _ ->
             True
 
 
-isResizable : Apps.AppModel -> Bool
+isResizable : AppModel -> Bool
 isResizable app =
     case app of
-        Apps.EmailModel _ ->
+        EmailModel _ ->
             False
 
-        Apps.MusicModel _ ->
+        MusicModel _ ->
             False
 
         _ ->
             True
 
 
-getKeyloggerMsg : Config msg -> AppId -> Apps.AppModel -> (Int -> msg)
+getKeyloggerMsg : Config msg -> AppId -> AppModel -> (Int -> msg)
 getKeyloggerMsg config appId app =
     case app of
-        Apps.CalculatorModel _ ->
+        CalculatorModel _ ->
             Calculator.KeyMsg >> CalculatorMsg >> AppMsg appId >> config.toMsg
 
         _ ->
             always <| config.batchMsg []
 
 
-appAttr_ : Apps.AppModel -> Attribute msg
+appAttr_ : AppModel -> Attribute msg
 appAttr_ =
-    Apps.toDesktopApp >> Apps.name >> appAttr
+    toDesktopApp >> Apps.name >> appAttr
 
 
 appIconAttr : String -> Attribute msg

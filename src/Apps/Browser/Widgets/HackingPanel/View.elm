@@ -6,8 +6,8 @@ module Apps.Browser.Widgets.HackingPanel.View
 
 import Html exposing (..)
 import Html.Events exposing (onClick)
+import Apps.Shared as Apps
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
-import Apps.Models as Apps
 import Game.Meta.Types.Network exposing (NIP)
 
 

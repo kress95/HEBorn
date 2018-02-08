@@ -2,7 +2,6 @@ module OS.WindowManager.Subscriptions exposing (subscriptions)
 
 import Dict exposing (Dict)
 import Utils.Maybe as Maybe
-import Apps.Models exposing (..)
 import Apps.Browser.Subscriptions as Browser
 import Apps.DBAdmin.Subscriptions as Database
 import Apps.Explorer.Subscriptions as Explorer
