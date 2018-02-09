@@ -10,10 +10,9 @@ import Apps.BounceManager.Models as BounceManager
 import Apps.Browser.Models as Browser
 import Apps.Bug.Models as Bug
 import Apps.Calculator.Models as Calculator
-import Apps.Calculator.Messages as Calculator
 import Apps.ConnManager.Models as ConnManager
 import Apps.CtrlPanel.Models as CtrlPanel
-import Apps.DBAdmin.Models as Database
+import Apps.DBAdmin.Models as DBAdmin
 import Apps.Email.Models as Email
 import Apps.Explorer.Models as Explorer
 import Apps.Finance.Models as Finance
@@ -57,24 +56,24 @@ type alias App =
 
 
 type AppModel
-    = LogViewerModel LogViewer.Model
-    | TaskManagerModel TaskManager.Model
-    | BrowserModel Browser.Model
-    | ExplorerModel Explorer.Model
-    | DatabaseModel Database.Model
-    | ConnManagerModel ConnManager.Model
+    = BackFlixModel BackFlix.Model
     | BounceManagerModel BounceManager.Model
-    | FinanceModel Finance.Model
-    | MusicModel Hebamp.Model
-    | CtrlPanelModel CtrlPanel.Model
-    | ServersGearsModel ServersGears.Model
-    | LocationPickerModel LocationPicker.Model
-    | LanViewerModel LanViewer.Model
-    | EmailModel Email.Model
+    | BrowserModel Browser.Model
     | BugModel Bug.Model
     | CalculatorModel Calculator.Model
-    | BackFlixModel BackFlix.Model
+    | ConnManagerModel ConnManager.Model
+    | CtrlPanelModel CtrlPanel.Model
+    | DBAdminModel DBAdmin.Model
+    | EmailModel Email.Model
+    | ExplorerModel Explorer.Model
+    | FinanceModel Finance.Model
     | FloatingHeadsModel FloatingHeads.Model
+    | HebampModel Hebamp.Model
+    | LanViewerModel LanViewer.Model
+    | LocationPickerModel LocationPicker.Model
+    | LogViewerModel LogViewer.Model
+    | ServersGearsModel ServersGears.Model
+    | TaskManagerModel TaskManager.Model
 
 
 
@@ -380,8 +379,8 @@ getTitle model =
         ExplorerModel model ->
             Explorer.title model
 
-        DatabaseModel model ->
-            Database.title model
+        DBAdminModel model ->
+            DBAdmin.title model
 
         ConnManagerModel model ->
             ConnManager.title model
@@ -392,7 +391,7 @@ getTitle model =
         FinanceModel model ->
             Finance.title model
 
-        MusicModel model ->
+        HebampModel model ->
             Hebamp.title model
 
         CtrlPanelModel model ->
@@ -438,8 +437,8 @@ toDesktopApp model =
         ExplorerModel _ ->
             DesktopApp.Explorer
 
-        DatabaseModel _ ->
-            DesktopApp.Database
+        DBAdminModel _ ->
+            DesktopApp.DBAdmin
 
         ConnManagerModel _ ->
             DesktopApp.ConnManager
@@ -450,7 +449,7 @@ toDesktopApp model =
         FinanceModel _ ->
             DesktopApp.Finance
 
-        MusicModel _ ->
+        HebampModel _ ->
             DesktopApp.Hebamp
 
         CtrlPanelModel _ ->

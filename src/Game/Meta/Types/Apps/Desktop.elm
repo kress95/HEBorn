@@ -2,24 +2,24 @@ module Game.Meta.Types.Apps.Desktop exposing (..)
 
 
 type DesktopApp
-    = LogViewer
-    | TaskManager
-    | Browser
-    | Explorer
-    | Database
-    | ConnManager
+    = BackFlix
     | BounceManager
-    | Finance
-    | Hebamp
-    | CtrlPanel
-    | ServersGears
-    | LocationPicker
-    | LanViewer
-    | Email
+    | Browser
     | Bug
     | Calculator
-    | BackFlix
+    | ConnManager
+    | CtrlPanel
+    | DBAdmin
+    | Email
+    | Explorer
+    | Finance
     | FloatingHeads
+    | Hebamp
+    | LanViewer
+    | LocationPicker
+    | LogViewer
+    | ServersGears
+    | TaskManager
 
 
 type alias Reference =

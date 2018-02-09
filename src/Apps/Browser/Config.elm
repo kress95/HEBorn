@@ -6,7 +6,7 @@ import Apps.Params as AppParams exposing (AppParams)
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Context exposing (Context(..))
 import Game.Meta.Types.Network as Network exposing (NIP)
-import Game.Meta.Types.Apps.Desktop exposing (Requester)
+import Game.Meta.Types.Apps.Desktop exposing (Reference, Requester)
 import Game.Servers.Models as Servers
 import Game.Servers.Shared as Servers exposing (CId)
 import Game.Servers.Filesystem.Shared as Filesystem
@@ -22,6 +22,7 @@ import Apps.Browser.Pages.Webserver.Config as Webserver
 type alias Config msg =
     { toMsg : Msg -> msg
     , batchMsg : List msg -> msg
+    , reference : Reference
     , endpoints : List CId
     , activeServer : Servers.Server
     , activeGateway : Servers.Server

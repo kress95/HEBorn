@@ -60,7 +60,7 @@ subsAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
                     (browserConfig appId cid server config)
                 |> Just
 
-        DatabaseModel appModel ->
+        DBAdminModel appModel ->
             appModel
                 |> Database.subscriptions (dbAdminConfig appId config)
                 |> Just

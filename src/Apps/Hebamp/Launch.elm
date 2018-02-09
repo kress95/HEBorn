@@ -11,20 +11,20 @@ type alias LaunchResponse msg =
     ( Model, React msg )
 
 
-launch : Config msg -> Maybe Params -> Reference -> LaunchResponse msg
-launch config maybeParams reference =
+launch : Config msg -> Maybe Params -> LaunchResponse msg
+launch config maybeParams =
     case maybeParams of
         Just (OpenPlaylist playlist) ->
-            launchOpenPlaylist config playlist reference
+            launchOpenPlaylist config playlist
 
         Nothing ->
-            ( initialModel reference [], React.none )
+            ( initialModel config.reference [], React.none )
 
 
-launchOpenPlaylist : Config msg -> List AudioData -> Reference -> LaunchResponse msg
-launchOpenPlaylist _ playlist reference =
+launchOpenPlaylist : Config msg -> List AudioData -> LaunchResponse msg
+launchOpenPlaylist config playlist =
     let
         model =
-            initialModel reference playlist
+            initialModel config.reference playlist
     in
         ( model, React.none )

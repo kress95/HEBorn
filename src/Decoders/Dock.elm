@@ -37,7 +37,7 @@ app str =
             succeed DesktopApp.TaskManager
 
         "db" ->
-            succeed DesktopApp.Database
+            succeed DesktopApp.DBAdmin
 
         "connmngr" ->
             succeed DesktopApp.ConnManager

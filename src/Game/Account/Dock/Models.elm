@@ -13,7 +13,7 @@ initialModel =
     , DesktopApp.Explorer
     , DesktopApp.LogViewer
     , DesktopApp.TaskManager
-    , DesktopApp.Database
+    , DesktopApp.DBAdmin
     , DesktopApp.ConnManager
     , DesktopApp.BounceManager
     , DesktopApp.Finance

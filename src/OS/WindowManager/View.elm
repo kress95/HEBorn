@@ -363,7 +363,7 @@ viewAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
         CtrlPanelModel appModel ->
             CtrlPanel.view ctrlPanelConfig appModel
 
-        DatabaseModel appModel ->
+        DBAdminModel appModel ->
             Database.view (dbAdminConfig appId config) appModel
 
         EmailModel appModel ->
@@ -380,7 +380,7 @@ viewAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
                 (floatingHeadsConfig (getWindowId app) appId config)
                 appModel
 
-        MusicModel appModel ->
+        HebampModel appModel ->
             Hebamp.view (hebampConfig (getWindowId app) appId config) appModel
 
         LanViewerModel appModel ->
@@ -404,7 +404,7 @@ viewAppDelegate config ( cid, server ) ( gCid, gServer ) appId app =
 isDecorated : AppModel -> Bool
 isDecorated app =
     case app of
-        MusicModel _ ->
+        HebampModel _ ->
             False
 
         FloatingHeadsModel _ ->
@@ -420,7 +420,7 @@ isResizable app =
         EmailModel _ ->
             False
 
-        MusicModel _ ->
+        HebampModel _ ->
             False
 
         _ ->

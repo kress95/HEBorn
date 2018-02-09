@@ -134,6 +134,7 @@ browserConfig appId cid server config =
     , batchMsg = config.batchMsg
     , activeServer = server
     , activeGateway = Tuple.second config.activeGateway
+    , reference = appId
     , endpoints =
         config.activeGateway
             |> Tuple.second
@@ -233,6 +234,7 @@ floatingHeadsConfig :
 floatingHeadsConfig windowId appId config =
     { toMsg = FloatingHeadsMsg >> AppMsg appId >> config.toMsg
     , batchMsg = config.batchMsg
+    , reference = appId
     , emails = Storyline.getEmails config.story
     , username = Account.getUsername config.account
     , onReplyEmail = config.onReplyEmail
@@ -246,6 +248,7 @@ hebampConfig : WindowId -> AppId -> Config msg -> Hebamp.Config msg
 hebampConfig windowId appId config =
     { toMsg = HebampMsg >> AppMsg appId >> config.toMsg
     , batchMsg = config.batchMsg
+    , reference = appId
     , onCloseApp = config.toMsg <| Close windowId
     , draggable = draggableHelper windowId config
     }

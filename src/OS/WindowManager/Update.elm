@@ -24,6 +24,7 @@ import Game.Servers.Models as Servers exposing (Server)
 import Game.Servers.Shared as Servers exposing (CId(..))
 import OS.WindowManager.Config exposing (..)
 import OS.WindowManager.Helpers exposing (..)
+import OS.WindowManager.Launch exposing (..)
 import OS.WindowManager.Messages exposing (..)
 import OS.WindowManager.Models exposing (..)
 import OS.WindowManager.Shared exposing (..)
@@ -288,10 +289,10 @@ updateAppDelegate config ( cid, server ) ( gCid, gServer ) appMsg appId app =
 
         DBAdminMsg msg ->
             case getModel app of
-                DatabaseModel appModel ->
+                DBAdminModel appModel ->
                     appModel
                         |> DBAdmin.update (dbAdminConfig appId config) msg
-                        |> Tuple.mapFirst DatabaseModel
+                        |> Tuple.mapFirst DBAdminModel
 
                 model ->
                     React.update model
@@ -342,12 +343,12 @@ updateAppDelegate config ( cid, server ) ( gCid, gServer ) appMsg appId app =
 
         HebampMsg msg ->
             case getModel app of
-                MusicModel appModel ->
+                HebampModel appModel ->
                     appModel
                         |> Hebamp.update
                             (hebampConfig (getWindowId app) appId config)
                             msg
-                        |> Tuple.mapFirst MusicModel
+                        |> Tuple.mapFirst HebampModel
 
                 model ->
                     React.update model

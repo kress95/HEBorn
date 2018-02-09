@@ -1,6 +1,7 @@
 module Apps.Shared exposing (..)
 
 import Game.Meta.Types.Apps.Desktop as DesktopApp exposing (DesktopApp)
+import Game.Meta.Types.Context exposing (Context(..))
 import Apps.LogViewer.Models as LogViewer
 import Apps.TaskManager.Models as TaskManager
 import Apps.Browser.Models as Browser
@@ -21,67 +22,67 @@ import Apps.BackFlix.Models as BackFlix
 import Apps.FloatingHeads.Models as FloatingHeads
 
 
-type AppContexts
-    = ContextualApp
-    | ContextlessApp
+type AppContext
+    = DynamicContext
+    | StaticContext Context
 
 
-contexts : DesktopApp -> AppContexts
-contexts app =
+context : DesktopApp -> AppContext
+context app =
     case app of
         DesktopApp.LogViewer ->
-            ContextualApp
+            DynamicContext
 
         DesktopApp.TaskManager ->
-            ContextualApp
+            DynamicContext
 
         DesktopApp.Browser ->
-            ContextualApp
+            DynamicContext
 
         DesktopApp.Explorer ->
-            ContextualApp
+            DynamicContext
 
-        DesktopApp.Database ->
-            ContextlessApp
+        DesktopApp.DBAdmin ->
+            StaticContext Gateway
 
         DesktopApp.ConnManager ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.BounceManager ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.Finance ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.Hebamp ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.CtrlPanel ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.ServersGears ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.LocationPicker ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.LanViewer ->
-            ContextualApp
+            DynamicContext
 
         DesktopApp.Email ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.Bug ->
-            ContextualApp
+            DynamicContext
 
         DesktopApp.Calculator ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.BackFlix ->
-            ContextlessApp
+            StaticContext Gateway
 
         DesktopApp.FloatingHeads ->
-            ContextlessApp
+            StaticContext Gateway
 
 
 name : DesktopApp -> String
@@ -99,7 +100,7 @@ name app =
         DesktopApp.Explorer ->
             Explorer.name
 
-        DesktopApp.Database ->
+        DesktopApp.DBAdmin ->
             Database.name
 
         DesktopApp.ConnManager ->
@@ -157,7 +158,7 @@ icon app =
         DesktopApp.Explorer ->
             Explorer.icon
 
-        DesktopApp.Database ->
+        DesktopApp.DBAdmin ->
             Database.icon
 
         DesktopApp.ConnManager ->

@@ -76,7 +76,7 @@ launch config ({ windowId } as reference) maybeParams app =
 
         DatabaseApp ->
             Database.initialModel
-                |> DatabaseModel
+                |> DBAdminModel
                 |> flip (,) React.none
 
         ConnManagerApp ->
@@ -111,7 +111,7 @@ launch config ({ windowId } as reference) maybeParams app =
                     Hebamp.launch config_ params reference
 
                 model_ =
-                    MusicModel model
+                    HebampModel model
             in
                 ( model_, react )
 

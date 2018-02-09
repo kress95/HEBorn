@@ -23,3 +23,33 @@ toAppType params =
 
         Hebamp _ ->
             DesktopApp.Hebamp
+
+
+castBrowser : AppParams -> Maybe Browser.Params
+castBrowser params =
+    case params of
+        Browser params ->
+            Just params
+
+        _ ->
+            Nothing
+
+
+castFloatingHeads : AppParams -> Maybe FloatingHeads.Params
+castFloatingHeads params =
+    case params of
+        FloatingHeads params ->
+            Just params
+
+        _ ->
+            Nothing
+
+
+castHebamp : AppParams -> Maybe Hebamp.Params
+castHebamp params =
+    case params of
+        Hebamp params ->
+            Just params
+
+        _ ->
+            Nothing
