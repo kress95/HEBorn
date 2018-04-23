@@ -1,6 +1,7 @@
 module Setup.Pages.Welcome.View exposing (Config, view)
 
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Html.CssHelpers
 import Setup.Resources exposing (..)
@@ -28,5 +29,10 @@ view { onNext } =
         , p []
             [ text "What are you still doing in this screen? You better be going now, if you really wanna play..." ]
         , div []
-            [ button [ onClick onNext ] [ text "I'M IN" ] ]
+            [ button
+                [ onClick onNext
+                , class [ NextPageButton ]
+                ]
+                [ text "I'M IN" ]
+            ]
         ]

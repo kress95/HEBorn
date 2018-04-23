@@ -1,8 +1,8 @@
 module Setup.Pages.PickLocation.View exposing (view)
 
 import Html exposing (..)
+import Html.Attributes exposing (disabled, class)
 import Html.Events exposing (onClick)
-import Html.Attributes exposing (disabled)
 import Html.CssHelpers
 import Native.Untouchable
 import Setup.Resources exposing (..)
@@ -67,10 +67,14 @@ locPickerBox { toMsg, onNext, onPrevious } model =
 buttonNext : (List Settings -> msg) -> Model -> Html msg
 buttonNext onNext model =
     let
-        attrs =
+        onClickAttr =
             if isOkay model then
-                [ onClick <| onNext <| settings model ]
+                onClick <| onNext <| settings model
             else
-                [ disabled True ]
+                disabled True
     in
-        button attrs [ text "NEXT" ]
+        button
+            [ onClickAttr
+            , class [ NextPageButton ]
+            ]
+            [ text "NEXT" ]

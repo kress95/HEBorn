@@ -1,8 +1,8 @@
 module Setup.Pages.Mainframe.View exposing (view)
 
 import Html exposing (..)
-import Html.Events exposing (onClick, onInput, onSubmit)
 import Html.Attributes exposing (placeholder, disabled, action)
+import Html.Events exposing (onClick, onInput, onSubmit)
 import Html.CssHelpers
 import Setup.Resources exposing (..)
 import Setup.Pages.Helpers exposing (withHeader)
@@ -17,11 +17,15 @@ import Setup.Pages.Mainframe.Config exposing (..)
 
 view : Config msg -> Model -> Html msg
 view ({ toMsg, onPrevious } as config) model =
-    withHeader [ class [ StepWelcome ] ]
+    withHeader [ class [ StepHostname ] ]
         [ div [] [ h2 [] [ text "Initial server name:" ] ]
         , hostnameInput config model
         , div []
-            [ button [ onClick onPrevious ] [ text "BACK" ]
+            [ button
+                [ onClick onPrevious
+                , class [ PreviousPageButton ]
+                ]
+                [ text "BACK" ]
             , nextBtn config model
             ]
         ]
@@ -36,6 +40,7 @@ hostnameInput { toMsg } model =
         [ input
             [ onInput <| Mainframe >> toMsg
             , placeholder "Hostname"
+            , class [ MainframeNameField ]
             ]
             [ text <| Maybe.withDefault "" model.hostname ]
         ]
@@ -44,5 +49,7 @@ hostnameInput { toMsg } model =
 nextBtn : Config msg -> Model -> Html msg
 nextBtn { toMsg } model =
     button
-        [ onClick (toMsg <| Validate) ]
+        [ onClick (toMsg <| Validate)
+        , class [ NextPageButton ]
+        ]
         [ text "NEXT" ]

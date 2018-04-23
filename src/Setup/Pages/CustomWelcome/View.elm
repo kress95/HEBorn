@@ -1,6 +1,7 @@
 module Setup.Pages.CustomWelcome.View exposing (Config, view)
 
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Html.CssHelpers
 import Setup.Resources exposing (..)
@@ -22,5 +23,10 @@ view { onNext } =
         , p []
             [ text "We've some new features for you, but you need to setup some things first." ]
         , div []
-            [ button [ onClick onNext ] [ text "LET'S GO" ] ]
+            [ button
+                [ onClick onNext
+                , class [ NextPageButton ]
+                ]
+                [ text "LET'S GO" ]
+            ]
         ]

@@ -46,7 +46,7 @@ view toMsg model =
         , div [ class "validation-error" ] [ text (viewErrorsPassword model) ]
         , div [ class "login-error" ] [ text (viewErrorsLogin model) ]
         , br [] []
-        , button [ class ("signup-button " ++ buttonClass model), onClick SubmitLogin ] [ text "Login" ]
+        , button [ class ("login-button " ++ buttonClass model), onClick SubmitLogin ] [ text "Login" ]
         ]
         |> Html.map toMsg
 

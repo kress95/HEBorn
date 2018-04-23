@@ -1,6 +1,7 @@
 module Setup.Pages.CustomFinish.View exposing (Config, view)
 
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Html.CssHelpers
 import Setup.Resources exposing (..)
@@ -22,7 +23,15 @@ view { onNext, onPrevious } =
         , p []
             [ text "What are you waiting fool? Run, Forrest, run!" ]
         , div []
-            [ button [ onClick onPrevious ] [ text "BACK" ]
-            , button [ onClick onNext ] [ text "ALRIGHT" ]
+            [ button
+                [ onClick onPrevious
+                , class [ PreviousPageButton ]
+                ]
+                [ text "BACK" ]
+            , button
+                [ onClick onNext
+                , class [ NextPageButton ]
+                ]
+                [ text "ALRIGHT" ]
             ]
         ]
