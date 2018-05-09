@@ -8,5 +8,6 @@ require("leaflet_js");
 
 require('./onload.js');
 require('./audio.js');
+require('./greenworks.js');
 require('./map.js');
 require('./geoloc.js');

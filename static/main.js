@@ -13,19 +13,22 @@ let mainWindow
 function createWindow () {
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  if (process.env.NODE_ENV == 'development') {
+    mainWindow.webContents.openDevTools();
+    app.on('certificate-error', (e, wc, url, error, cert, cb) => {
+        e.preventDefault();
+        cb(true);
+    });
 
-  /* uncomment these lines to use electron for development
-  mainWindow.webContents.openDevTools();
-  app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-      event.preventDefault();
-      callback(true);
-  });
-  /**/
+    mainWindow.loadURL('http://localhost:8000')
+  } else {
+    mainWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+  }
+
 
   mainWindow.on('closed', function () {
     mainWindow = null

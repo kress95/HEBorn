@@ -34,6 +34,7 @@ var commonConfig = {
         leaflet_js: __dirname + "/node_modules/leaflet/dist/leaflet.js"
     }
   },
+
   module: {
     noParse: /\.elm$/,
     loaders: [
@@ -76,6 +77,10 @@ var commonConfig = {
     ]
   },
 
+  externals: {
+    'greenworks': 'greenworks'
+  },
+
   plugins: [
     new CopyWebpackPlugin([
       {
@@ -97,8 +102,7 @@ var commonConfig = {
     new webpack.EnvironmentPlugin(
       ["HEBORN_API_HTTP_URL", "HEBORN_API_WEBSOCKET_URL", "HEBORN_VERSION"]
     )
-  ],
-
+  ]
 };
 
 // additional webpack settings for local env

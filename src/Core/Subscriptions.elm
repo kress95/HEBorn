@@ -16,6 +16,7 @@ import Landing.Subscriptions as Landing
 import OS.Models as OS
 import OS.Subscriptions as OS
 import Setup.Subscriptions as Setup
+import Core.Greenworks as Greenworks
 
 
 subscriptions : Model -> Sub Msg
@@ -42,6 +43,7 @@ subscriptions ({ state } as model) =
             [ stateSub
             , windowLoaded LoadingEnd
             , Sub.map MenuMsg menuSub
+            , Greenworks.subscribe Greenworks
             ]
 
 

@@ -27,6 +27,7 @@ import Core.Config exposing (..)
 import Core.Flags as Flags exposing (Flags)
 import Core.Messages exposing (..)
 import Core.Models exposing (..)
+import Core.Greenworks as Greenworks
 
 
 -- TODO: Use onSth pattern
@@ -129,6 +130,16 @@ update msg model =
                 ( { model | contextMenu = menuModel }
                 , Cmd.map MenuMsg menuCmd
                 )
+
+        Greenworks (Greenworks.NumberOfPlayers _) ->
+            let
+                _ =
+                    Debug.log "Msg:" msg
+            in
+                ( model, Cmd.none )
+
+        Greenworks msg ->
+            ( model, Greenworks.getNumberOfPlayers )
 
         _ ->
             dispatch <| updateState msg model

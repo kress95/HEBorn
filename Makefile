@@ -90,6 +90,10 @@ app: build
 	cat static/package.json > build/package.json
 	node electron.js
 
+dev-app:
+		NODE_ENV=development npx electron static
+
+
 ################################################################################
 # Dev
 ################################################################################

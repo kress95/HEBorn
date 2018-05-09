@@ -11,6 +11,7 @@ import Setup.Messages as Setup
 import Driver.Websocket.Channels as Ws
 import Driver.Websocket.Messages as Ws
 import Core.Error as Error exposing (Error)
+import Core.Greenworks as Greenworks
 
 
 type alias RequestId =
@@ -33,6 +34,7 @@ type Msg
     | WebsocketMsg Ws.Msg
     | LoadingEnd Int
     | MenuMsg ContextMenuMagic
+    | Greenworks Greenworks.Notification
 
 
 type alias ContextMenuMagic =
