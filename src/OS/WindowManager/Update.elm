@@ -30,6 +30,8 @@ import Game.Meta.Types.Desktop.Apps as DesktopApp exposing (DesktopApp)
 import Game.Meta.Types.Context exposing (Context(..))
 import Game.Servers.Models as Servers exposing (Server)
 import Game.Servers.Shared as Servers exposing (CId(..))
+import Dict
+import Utils.Ports.Leaflet as Leaflet
 import OS.WindowManager.Config exposing (..)
 import OS.WindowManager.Helpers exposing (..)
 import OS.WindowManager.Launch exposing (..)
@@ -96,6 +98,22 @@ update config msg model =
 
         DragMsg msg ->
             onDragMsg config msg model
+
+        LeafletMsg _ msg ->
+            case msg of
+                Leaflet.Projected _ { x, y } ->
+                    model.windows
+                        |> Dict.keys
+                        |> List.foldl
+                            (\windowId ( model, _ ) ->
+                                withWindow windowId
+                                    model
+                                    (setPosition x y >> React.update)
+                            )
+                            ( model, React.none )
+
+                _ ->
+                    ( model, React.none )
 
         -- dock messages
         ClickIcon desktopApp ->

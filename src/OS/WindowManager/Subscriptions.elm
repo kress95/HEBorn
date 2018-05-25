@@ -4,6 +4,7 @@ import Dict exposing (Dict)
 import Draggable
 import Window
 import Utils.Maybe as Maybe
+import Utils.Ports.Leaflet as Leaflet
 import Apps.LocationPicker.Subscriptions as LocationPicker
 import Apps.TaskManager.Subscriptions as TaskManager
 import Game.Meta.Types.Context exposing (Context(..))
@@ -29,6 +30,7 @@ subscriptions config model =
             [ apps
             , Draggable.subscriptions (DragMsg >> config.toMsg) model.drag
             , Window.resizes (SetAppSize >> config.toMsg)
+            , Sub.map config.toMsg <| Leaflet.subscribe LeafletMsg
             ]
 
 

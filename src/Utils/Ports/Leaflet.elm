@@ -23,6 +23,12 @@ type alias Id =
     String
 
 
+{-| Projection point name.
+-}
+type alias Name =
+    String
+
+
 {-| Latitude coordinate.
 -}
 type alias Latitude =
@@ -43,6 +49,14 @@ type alias Coordinates =
     }
 
 
+{-| 2D Point in the map.
+-}
+type alias Point =
+    { x : Float
+    , y : Float
+    }
+
+
 {-| Map zoom level.
 -}
 type alias Zoom =
@@ -53,6 +67,8 @@ type alias Zoom =
 -}
 type Msg
     = Clicked Coordinates
+    | Moved Point
+    | Projected Name Point
     | Unknown
 
 
@@ -139,6 +155,23 @@ sub =
                             |> required "lat" Decode.float
                             |> required "lng" Decode.float
                             |> Decode.map Clicked
+                            |> Decode.map (flip (,))
+                            |> required "id" Decode.string
+
+                    "moved" ->
+                        decode Point
+                            |> required "x" Decode.float
+                            |> required "y" Decode.float
+                            |> Decode.map Moved
+                            |> Decode.map (flip (,))
+                            |> required "id" Decode.string
+
+                    "projected" ->
+                        decode Point
+                            |> required "x" Decode.float
+                            |> required "y" Decode.float
+                            |> Decode.map (flip Projected)
+                            |> required "name" Decode.string
                             |> Decode.map (flip (,))
                             |> required "id" Decode.string
 

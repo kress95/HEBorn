@@ -5,6 +5,6 @@ var app = Elm.Main.embed(node, {
   'apiHttpUrl': process.env.HEBORN_API_HTTP_URL || "https://localhost:4000/v1",
   'apiWsUrl': process.env.HEBORN_API_WEBSOCKET_URL || "wss://localhost:4000/websocket",
   'version': process.env.HEBORN_VERSION || "dev",
-  'mode': process.env.HEBORN_GAME_MODE || "HE1",
+  'mode': process.env.HEBORN_GAME_MODE || "HE2",
 });
 exports.app = app;

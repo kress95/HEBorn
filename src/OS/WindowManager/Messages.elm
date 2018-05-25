@@ -23,6 +23,7 @@ import Apps.Calculator.Messages as Calculator
 import Apps.BackFlix.Messages as BackFlix
 import Apps.FloatingHeads.Messages as FloatingHeads
 import Apps.VirusPanel.Messages as VirusPanel
+import Utils.Ports.Leaflet as Leaflet
 import OS.WindowManager.Shared exposing (..)
 import OS.WindowManager.Sidebar.Messages as Sidebar
 
@@ -33,6 +34,7 @@ type Msg
     | LazyLaunchEndpoint WindowId DesktopApp
     | SetAppSize Window.Size
     | SidebarMsg Sidebar.Msg
+    | LeafletMsg Leaflet.Id Leaflet.Msg
       -- window handling
     | Close WindowId
     | Minimize WindowId
