@@ -1,5 +1,8 @@
 module Game.Meta.Types.Components.Motherboard exposing (..)
 
+{-| `Motherboard` contém dados relacionados a placa mãe.
+-}
+
 import Dict exposing (Dict)
 import Json.Encode as Encode exposing (Value)
 import Utils.Maybe as Maybe
@@ -8,6 +11,8 @@ import Game.Meta.Types.Components as Components exposing (Components)
 import Game.Meta.Types.Network.Connections as Connections exposing (Connections)
 
 
+{-| `Motherboard` contém o id da placa mãe, conexões de rede e slots.
+-}
 type alias Motherboard =
     { id : Maybe Components.Id
     , ncs : NetConnections
@@ -15,24 +20,36 @@ type alias Motherboard =
     }
 
 
+{-| Redes conectadas na placa mãe, a associação é feita de `Components.Id`
+para `Connections.Id`.
+-}
 type alias NetConnections =
     Dict Components.Id Connections.Id
 
 
+{-| `Dict` de slots da placa mãe.
+-}
 type alias Slots =
     Dict SlotId Slot
 
 
+{-| Id de um `Slot`.
+-}
 type alias SlotId =
     String
 
 
+{-| Slots contém o tipo de componente que o slot suporta e o id do componente
+que talvez esteja associado.
+-}
 type alias Slot =
     { type_ : Components.Type
     , component : Maybe Components.Id
     }
 
 
+{-| Retorna uma placa mãe vazia.
+-}
 empty : Motherboard
 empty =
     { id = Nothing
@@ -41,6 +58,8 @@ empty =
     }
 
 
+{-| Retorna retorna id do componente associado ao `Slot`.
+-}
 getComponent : SlotId -> Motherboard -> Maybe Components.Id
 getComponent id motherboard =
     motherboard.slots
@@ -48,6 +67,8 @@ getComponent id motherboard =
         |> Maybe.andThen .component
 
 
+{-| Associa componente ao `Slot`.
+-}
 linkComponent : SlotId -> Components.Id -> Motherboard -> Motherboard
 linkComponent id component motherboard =
     case Dict.get id motherboard.slots of
@@ -65,6 +86,8 @@ linkComponent id component motherboard =
             motherboard
 
 
+{-| Remove associação entre o componente e o `Slot`.
+-}
 unlinkComponent : SlotId -> Motherboard -> Motherboard
 unlinkComponent id motherboard =
     let
@@ -92,51 +115,71 @@ unlinkComponent id motherboard =
                 motherboard
 
 
+{-| Retorna retorna id do componente associado ao `Slot`.
+-}
 getNC : Components.Id -> Motherboard -> Maybe Connections.Id
 getNC id motherboard =
     Dict.get id motherboard.ncs
 
 
+{-| Associa conexão de rede ao `Slot`.
+-}
 linkNC : Components.Id -> Connections.Id -> Motherboard -> Motherboard
 linkNC id net motherboard =
     { motherboard | ncs = Dict.insert id net motherboard.ncs }
 
 
+{-| Remove associação entre conexão de rede e o `Slot`.
+-}
 unlinkNC : Components.Id -> Motherboard -> Motherboard
 unlinkNC id motherboard =
     { motherboard | ncs = Dict.remove id motherboard.ncs }
 
 
+{-| Tenta pegar conteúdo de um `Slot` da placa mãe.
+-}
 getSlot : SlotId -> Motherboard -> Maybe Slot
 getSlot id motherboard =
     Dict.get id <| getSlots motherboard
 
 
+{-| Retorna todos os slots da placa mãe.
+-}
 getSlots : Motherboard -> Slots
 getSlots =
     .slots
 
 
+{-| Retorna tipo de componente que o `Slot` suporta.
+-}
 getSlotType : Slot -> Components.Type
 getSlotType =
     .type_
 
 
+{-| Retorna componente conectado ao `Slot`.
+-}
 getSlotComponent : Slot -> Maybe Components.Id
 getSlotComponent =
     .component
 
 
+{-| Checa se o `Slot` está vazio.
+-}
 slotIsEmpty : Slot -> Bool
 slotIsEmpty { component } =
     Maybe.isNothing component
 
 
+{-| Retorna conexões de rede da placa mãe.
+-}
 getNCs : Motherboard -> NetConnections
 getNCs =
     .ncs
 
 
+{-| Verifica se `Slot` tem uma conexão de rede.
+-}
 slotHasNC : SlotId -> Motherboard -> Bool
 slotHasNC slotId motherboard =
     motherboard
@@ -146,6 +189,8 @@ slotHasNC slotId motherboard =
         |> Maybe.isJust
 
 
+{-| Encodifica placa mãe.
+-}
 encode : Motherboard -> Value
 encode motherboard =
     case motherboard.id of
@@ -160,6 +205,8 @@ encode motherboard =
             Encode.object [ ( "cmd", Encode.string "detach" ) ]
 
 
+{-| Encodifica `Slots`.
+-}
 encodeSlots : Slots -> Value
 encodeSlots =
     let
@@ -174,6 +221,8 @@ encodeSlots =
         Dict.foldl reducer [] >> Encode.object
 
 
+{-| Encodifica conexões de rede.
+-}
 encodeNCs : NetConnections -> Value
 encodeNCs =
     let

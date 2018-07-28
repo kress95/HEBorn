@@ -1,20 +1,29 @@
 module Game.Meta.Types.Components.Specs exposing (..)
 
+{-| Especificações de componentes.
+-}
+
 import Dict exposing (Dict)
 import Game.Meta.Types.Components.Type as Components
 
 
--- NOTES: We should migrate to slot type in the future.
+-- NOTA: component type deve virar slot type no futuro!
 
 
+{-| Id da especificação
+-}
 type alias Id =
     String
 
 
+{-| `Dict` com todas as especificações.
+-}
 type alias Specs =
     Dict Id Spec
 
 
+{-| Especificação, contém nome do componente, descrição e metadados.
+-}
 type alias Spec =
     { name : String
     , description : String
@@ -22,6 +31,8 @@ type alias Spec =
     }
 
 
+{-| Metadados de um tipo de componente.
+-}
 type Meta
     = CPU MetaCPU
     | HDD MetaHDD
@@ -31,32 +42,67 @@ type Meta
     | MOB MetaMOB
 
 
+{-| Metadados de processador:
+
+  - `clock`
+
+Velocidade de clock do processador.
+
+-}
 type alias MetaCPU =
     { clock : Int }
 
 
+{-| Metadados de disco rídigo:
+
+  - `size`
+
+Espaço do disco.
+
+  - `iops`
+
+Velocidade do disco.
+
+-}
 type alias MetaHDD =
     { size : Int
     , iops : Int
     }
 
 
+{-| Metadados para memória RAM:
+
+  - `size`
+
+Quantidade de RAM.
+
+  - `frequency`
+
+Frequência da memória RAM.
+
+-}
 type alias MetaRAM =
     { size : Int
     , frequency : Int
     }
 
 
+{-| Metadados para NIC.
+-}
 type alias MetaNIC =
     { uplink : Int
     , downlink : Int
     }
 
 
+{-| Metadados para dispositivos USB.
+-}
 type alias MetaUSB =
     { size : Int }
 
 
+{-| Metadados para placa mãe.
+-}
 type alias MetaMOB =
     { cpu : Int
     , hdd : Int
@@ -66,9 +112,11 @@ type alias MetaMOB =
     }
 
 
+{-| Especificações iniciais.
+-}
 empty : Specs
 empty =
-    -- temporary hadcoded specs
+    -- especificações temporariamente hardcoded
     Dict.fromList
         [ ( "cpu_001", Spec "Threadisaster" "" <| CPU <| MetaCPU 256 )
         , ( "ram_001", Spec "Ram Na Montana" "" <| RAM <| MetaRAM 256 100 )
@@ -80,6 +128,8 @@ empty =
         ]
 
 
+{-| Renderiza especificação.
+-}
 render : Spec -> List ( String, String )
 render spec =
     case spec.meta of
@@ -113,21 +163,29 @@ render spec =
             ]
 
 
+{-| Tenta pegar especificação.
+-}
 get : Id -> Specs -> Maybe Spec
 get =
     Dict.get
 
 
+{-| Retorna nome da especificação.
+-}
 getName : Spec -> String
 getName =
     .name
 
 
+{-| Retorna descrição da especificação.
+-}
 getDescription : Spec -> String
 getDescription =
     .description
 
 
+{-| Retorna tipo de componente da especificação.
+-}
 toType : Spec -> Components.Type
 toType { meta } =
     case meta of
