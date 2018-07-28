@@ -14,4 +14,5 @@ update : Config msg -> Msg -> Model -> UpdateResponse msg
 update config msg model =
     case msg of
         Tick time ->
+            -- atualiza timestamp na model
             ( { model | lastTick = time }, React.none )

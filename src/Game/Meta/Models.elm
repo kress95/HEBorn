@@ -8,16 +8,17 @@ module Game.Meta.Models
 import Time exposing (Time)
 
 
+{-| Esta model contém dados difíceis de encaixar em outra model, como onúmero
+de jogadores online e a timestamp do último segundo.
+-}
 type alias Model =
     { online : Int
     , lastTick : Time
     }
 
 
-
--- TODO: move active gateway / context to account
-
-
+{-| Model inicial.
+-}
 initialModel : Model
 initialModel =
     { online = 0
@@ -25,6 +26,8 @@ initialModel =
     }
 
 
+{-| Retorna timestamp do último segundo.
+-}
 getLastTick : Model -> Time
 getLastTick =
     .lastTick
