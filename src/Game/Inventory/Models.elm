@@ -1,5 +1,8 @@
 module Game.Inventory.Models exposing (..)
 
+{-| Inventário contém itens pertencentes ao jogador.
+-}
+
 import Dict exposing (Dict)
 import Game.Meta.Types.Components as Components exposing (Components)
 import Game.Meta.Types.Components.Type as Components
@@ -8,6 +11,9 @@ import Game.Meta.Types.Network.Connections as NetConnections exposing (Connectio
 import Game.Inventory.Shared exposing (..)
 
 
+{-| A model contém componentes, conexões de rede e as especificações de
+componentes.
+-}
 type alias Model =
     { components : Components
     , ncs : Connections
@@ -15,6 +21,8 @@ type alias Model =
     }
 
 
+{-| Model inicial do inventário.
+-}
 initialModel : Model
 initialModel =
     { components = Components.empty
@@ -23,16 +31,22 @@ initialModel =
     }
 
 
+{-| Retorna `Specs`.
+-}
 getSpecs : Model -> Specs
 getSpecs =
     .specs
 
 
+{-| Tenta encontrar `Component` na `Model`.
+-}
 getComponent : Components.Id -> Model -> Maybe Components.Component
 getComponent id model =
     Components.get id model.components
 
 
+{-| Insere `Component` na `Model`.
+-}
 insertComponent : Components.Id -> Components.Component -> Model -> Model
 insertComponent id component model =
     let
@@ -42,6 +56,8 @@ insertComponent id component model =
         { model | components = components }
 
 
+{-| Remove `Component` da `Model`.
+-}
 removeComponent : Components.Id -> Model -> Model
 removeComponent id model =
     let
@@ -51,11 +67,15 @@ removeComponent id model =
         { model | components = components }
 
 
+{-| Tenta encontrar `Connection` na `Model`.
+-}
 getNC : NetConnections.Id -> Model -> Maybe NetConnections.Connection
 getNC id model =
     NetConnections.get id model.ncs
 
 
+{-| Insere `Connection` na `Model.
+-}
 insertNC : NetConnections.Id -> NetConnections.Connection -> Model -> Model
 insertNC id connection model =
     let
@@ -65,6 +85,8 @@ insertNC id connection model =
         { model | ncs = ncs }
 
 
+{-| Remove `Connection` da `Model.
+-}
 removeNC : NetConnections.Id -> Model -> Model
 removeNC id model =
     let
@@ -74,6 +96,8 @@ removeNC id model =
         { model | ncs = ncs }
 
 
+{-| Atualiza disponibilidade da `Entry`.
+-}
 setAvailability : Bool -> Entry -> Model -> Model
 setAvailability available entry model =
     case entry of
@@ -98,6 +122,8 @@ setAvailability available entry model =
                     model
 
 
+{-| Retorna disponibilidade da `Entry`.
+-}
 isAvailable : Entry -> Model -> Maybe Bool
 isAvailable entry model =
     case entry of
@@ -112,9 +138,9 @@ isAvailable entry model =
                 |> Maybe.map NetConnections.isAvailable
 
 
-{-| Groups Inventory by component type and availability state,
-the firt item of the tuple holds available components, the second
-one holds currently used components.
+{-| Agrupa inventário por tipo de componente e disponibilidade, o primeiro item
+da tupla contém componentes disponíveis, o segundo contém componentes já
+utilizados.
 -}
 group : (Entry -> Bool) -> Model -> Groups
 group isAvailable model =
@@ -139,9 +165,11 @@ group isAvailable model =
 
 
 
--- internals
+-- funções internas
 
 
+{-| Retorna um reducer.
+-}
 groupHelper :
     (Entry -> Bool)
     -> String
@@ -156,6 +184,7 @@ groupHelper isAvailable key entry groups =
                 |> Maybe.withDefault ( [], [] )
 
         value =
+            -- agrupa entry de acordo com disponibilidade
             if isAvailable entry then
                 ( entry :: free, using )
             else

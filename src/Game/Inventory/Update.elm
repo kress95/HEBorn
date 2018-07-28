@@ -21,11 +21,15 @@ update config msg model =
             handleComponentFreed config entry model
 
 
+{-| Marca componente como utilizado.
+-}
 handleComponentUsed : Config msg -> Entry -> Model -> UpdateResponse msg
 handleComponentUsed config entry model =
     ( setAvailability False entry model, React.none )
 
 
+{-| Marca componente como livre.
+-}
 handleComponentFreed : Config msg -> Entry -> Model -> UpdateResponse msg
 handleComponentFreed config entry model =
     ( setAvailability True entry model, React.none )
