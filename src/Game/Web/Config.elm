@@ -8,6 +8,25 @@ import Game.Servers.Shared exposing (CId)
 import Game.Web.Messages exposing (..)
 
 
+{-| Parâmetros especiais:
+
+  - `servers`
+
+Deve conter `Servers.Model`.
+
+  - `onLogin`
+
+Mensagem enviada quando receber a resposta do request de login.
+
+  - `onJoinedServer`
+
+Mensagem enviada quando conectar com um servidor.
+
+  - `onJoinFailed`
+
+Mensagem enviada quando a conexão com um servidor falhar.
+
+-}
 type alias Config msg =
     { toMsg : Msg -> msg
     , batchMsg : List msg -> msg

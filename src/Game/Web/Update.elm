@@ -30,9 +30,11 @@ update config msg model =
 
 
 
--- internals
+-- funções internas
 
 
+{-| Realiza login num servidor remoto.
+-}
 onLogin :
     Config msg
     -> CId
@@ -62,6 +64,7 @@ onLogin config cid nip remoteIp password requester model =
         model_ =
             startLoading remoteNip cid requester model
 
+        -- cria Cmd que efetua request de login
         react =
             (Just payload)
                 |> config.onLogin remoteCid
@@ -70,7 +73,7 @@ onLogin config cid nip remoteIp password requester model =
         ( model_, react )
 
 
-{-| Sets endpoint
+{-| Reporta sucesso para a página que tentou a logar no servidor.
 -}
 onJoinedServer : Config msg -> Servers.CId -> Model -> UpdateResponse msg
 onJoinedServer config cid model =
@@ -78,6 +81,7 @@ onJoinedServer config cid model =
         servers =
             config.servers
 
+        -- cid sempre deve ser de um endpoint
         nip =
             case (Servers.get cid servers) of
                 Just server ->
@@ -105,18 +109,19 @@ onJoinedServer config cid model =
         ( model_, react )
 
 
-{-| Reports failure back to the loading page.
+{-| Reporta falha de volta para a página que está carregando.
 -}
 handleJoinFailed : Config msg -> Servers.CId -> Model -> UpdateResponse msg
 handleJoinFailed config cid model =
     let
+        -- cid sempre deve ser de um endpoint
         nip =
             case cid of
                 Servers.EndpointCId nip ->
                     nip
 
                 Servers.GatewayCId _ ->
-                    "Failed to join a gateway"
+                    "Cannot to join a gateway"
                         |> Error.porra
                         |> uncurry Native.Panic.crash
 
