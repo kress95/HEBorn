@@ -10,10 +10,16 @@ import Game.Account.Models exposing (..)
 import Game.Account.Bounces.Shared as Bounces exposing (RemoveError(..))
 
 
+{-| Resultado do request, não é um `Maybe` pois o tratamento de sucesso pode
+ser interessante um dia e a falta de typeclasses do elm nos forçaria a
+reescrever tudo se deixarmos pra mudar o tipo depois.
+-}
 type alias Data =
     Result RemoveError ()
 
 
+{-| Cria um `Cmd` de request para remover um `Bounce`.
+-}
 removeRequest : Bounces.ID -> ID -> FlagsSource a -> Cmd Data
 removeRequest bounceId id flagsSrc =
     flagsSrc

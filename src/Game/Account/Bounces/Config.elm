@@ -6,6 +6,25 @@ import Game.Account.Bounces.Shared exposing (ID)
 import Game.Account.Database.Models as Database
 
 
+{-| Parâmetros especiais:
+
+    - `accountId`
+
+`Id` da conta do usuário.
+
+    - `database`
+
+Model do `Database`.
+
+    - `onReloadBounce`
+
+Lançado quando receber um pedido para recarregar bounces.
+
+    - `onReloadIfBounceLoaded`
+
+Lançado após receber um evento de `Bounce` atualizado, recarrega bounces.
+
+-}
 type alias Config msg =
     { flags : Core.Flags
     , batchMsg : List msg -> msg

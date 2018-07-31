@@ -32,6 +32,9 @@ update config msg model =
             handleRequestReload config id ref model
 
 
+{-| Cria bounce na model e emite dispatch `onRelaodBounce` caso haja uma
+bounce otimista.
+-}
 handleCreated :
     Config msg
     -> String
@@ -41,19 +44,17 @@ handleCreated :
     -> UpdateResponse msg
 handleCreated config requestId id bounce model =
     let
+        -- remove requestId do dict de bounces otimistas
         removeRef model =
-            case Dict.get requestId model.optimistics of
-                Just ref ->
-                    { model | optimistics = Dict.remove ref model.optimistics }
+            { model | optimistics = Dict.remove requestId model.optimistics }
 
-                Nothing ->
-                    model
-
+        -- insere bounce na model e remove referencia
         model_ =
             model
                 |> insert id bounce
                 |> removeRef
 
+        -- emite onReloadBounce caso haja um bounce otimista
         react =
             case Dict.get requestId model.optimistics of
                 Just ref ->
@@ -65,6 +66,8 @@ handleCreated config requestId id bounce model =
         ( model_, react )
 
 
+{-| Atualiza bounce na model e emite dispatch `onReloadIfBounceLoaded`.
+-}
 handleUpdated :
     Config msg
     -> ID
@@ -79,11 +82,15 @@ handleUpdated { onReloadIfBounceLoaded } id bounce model =
         ( insert id bounce model, react )
 
 
+{-| Remove bounce da model.
+-}
 handleDeleted : Config msg -> ID -> Model -> UpdateResponse msg
 handleDeleted config id model =
     ( remove id model, React.none )
 
 
+{-| Registra bounce otimista.
+-}
 handleWaitForBounce :
     Config msg
     -> String
@@ -94,6 +101,8 @@ handleWaitForBounce config requestId ref model =
     ( subscribeFor requestId ref model, React.none )
 
 
+{-| Envia dispatch de `onReloadBounce`.
+-}
 handleRequestReload :
     Config msg
     -> ID

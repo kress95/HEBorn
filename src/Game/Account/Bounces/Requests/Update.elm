@@ -13,10 +13,16 @@ import Game.Account.Database.Models as Database
 import Game.Meta.Types.Network as Network
 
 
+{-| Resultado do request, não é um `Maybe` pois o tratamento de sucesso pode
+ser interessante um dia e a falta de typeclasses do elm nos forçaria a
+reescrever tudo se deixarmos pra mudar o tipo depois.
+-}
 type alias Data =
     Result UpdateError ()
 
 
+{-| Cria um `Cmd` de request para atualizar um `Bounce`.
+-}
 updateRequest :
     Database.HackedServers
     -> Bounces.ID
